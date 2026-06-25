@@ -52,6 +52,7 @@ struct is_available_instance_function_openxr_params {
 
 typedef struct {
   XrInstance host_instance;
+  PFN_vkGetInstanceProcAddr host_vkGetInstanceProcAddr;
   VkInstance vk_instance;
   VkPhysicalDevice vk_phys_dev;
 

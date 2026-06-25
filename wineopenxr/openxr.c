@@ -4,6 +4,8 @@
 
 #define _GNU_SOURCE
 #include <dlfcn.h>
+#include <fcntl.h>
+#include <unistd.h>
 #include <time.h>
 
 #include "ntstatus.h"
@@ -17,6 +19,50 @@
 #include "openxr_private.h"
 
 WINE_DEFAULT_DEBUG_CHANNEL(openxr);
+#define wine_dbgstr_xrhandle(h) wine_dbgstr_longlong((ULONGLONG)(h))
+
+static BOOL should_silence_openxr_loader_errors(void)
+{
+  const char *value = getenv("PROTON_USE_EXTERNAL_VR");
+
+  return !value || !value[0] || !strcmp(value, "0");
+}
+
+static int silence_openxr_loader_errors_begin(void)
+{
+  int saved_stderr, devnull;
+
+  if (!should_silence_openxr_loader_errors())
+    return -1;
+
+  if ((saved_stderr = dup(STDERR_FILENO)) == -1)
+    return -1;
+
+  if ((devnull = open("/dev/null", O_WRONLY)) == -1)
+  {
+    close(saved_stderr);
+    return -1;
+  }
+
+  if (dup2(devnull, STDERR_FILENO) == -1)
+  {
+    close(devnull);
+    close(saved_stderr);
+    return -1;
+  }
+
+  close(devnull);
+  return saved_stderr;
+}
+
+static void silence_openxr_loader_errors_end(int saved_stderr)
+{
+  if (saved_stderr == -1)
+    return;
+
+  dup2(saved_stderr, STDERR_FILENO);
+  close(saved_stderr);
+}
 
 static struct {
   const char *win32_ext, *linux_ext;
@@ -39,6 +85,7 @@ XrResult WINAPI wine_xrCreateInstance(const XrInstanceCreateInfo *createInfo, Xr
   XrInstanceCreateInfo our_createInfo;
   const char *ext_name;
   const char **new_list;
+  int saved_stderr;
 
   TRACE("%p, %p\n", createInfo, instance);
 
@@ -77,7 +124,9 @@ XrResult WINAPI wine_xrCreateInstance(const XrInstanceCreateInfo *createInfo, Xr
     TRACE("  -%s\n", createInfo->enabledExtensionNames[i]);
   }
 
+  saved_stderr = silence_openxr_loader_errors_begin();
   res = xrCreateInstance(createInfo, instance);
+  silence_openxr_loader_errors_end(saved_stderr);
   if (res != XR_SUCCESS) {
     WARN("xrCreateInstance failed: %d\n", res);
     goto cleanup;
@@ -148,10 +197,13 @@ XrResult WINAPI wine_xrEnumerateInstanceExtensionProperties(const char *layerNam
                                                             XrExtensionProperties *properties) {
   uint32_t i, j, dst, count, extra_extensions_count;
   XrResult res;
+  int saved_stderr;
 
   TRACE("\n");
 
+  saved_stderr = silence_openxr_loader_errors_begin();
   res = xrEnumerateInstanceExtensionProperties(layerName, propertyCapacityInput, propertyCountOutput, properties);
+  silence_openxr_loader_errors_end(saved_stderr);
   if (res != XR_SUCCESS) {
     return res;
   }
@@ -177,7 +229,6 @@ XrResult WINAPI wine_xrEnumerateInstanceExtensionProperties(const char *layerNam
           FIXME("Force enabled extension %s already supported by the runtime.\n", substitute_extensions[j].linux_ext);
           substitute_extensions[j].force_enable = FALSE;
         }
-
         if (substitute_extensions[j].remove_original) {
           dst = i;
         } else {
@@ -223,7 +274,7 @@ XrResult WINAPI wine_xrGetVulkanGraphicsDeviceKHR(XrInstance instance,
                                                   VkInstance vkInstance,
                                                   VkPhysicalDevice *vkPhysicalDevice) {
   XrResult res;
-  TRACE("%p, 0x%s, %p, %p\n", instance, wine_dbgstr_longlong(systemId), vkInstance, vkPhysicalDevice);
+  TRACE("0x%s, 0x%s, %p, %p\n", wine_dbgstr_xrhandle(instance), wine_dbgstr_longlong(systemId), vkInstance, vkPhysicalDevice);
   res = g_xr_host_instance_dispatch_table.p_xrGetVulkanGraphicsDeviceKHR(
       wine_instance_from_handle(instance)->host_instance, systemId, vulkan_instance_from_handle(vkInstance)->host.instance,
       vkPhysicalDevice);
@@ -237,7 +288,7 @@ XrResult WINAPI wine_xrGetVulkanGraphicsDevice2KHR(XrInstance instance,
   XrVulkanGraphicsDeviceGetInfoKHR our_getinfo;
   XrResult res;
 
-  TRACE("instance %p, getInfo %p, vulkanPhysicalDevice %p.\n", instance, getInfo, vulkanPhysicalDevice);
+  TRACE("instance 0x%s, getInfo %p, vulkanPhysicalDevice %p.\n", wine_dbgstr_xrhandle(instance), getInfo, vulkanPhysicalDevice);
 
   if (getInfo->next) {
     WARN("Unsupported chained structure %p.\n", getInfo->next);
@@ -264,7 +315,7 @@ XrResult WINAPI wine_xrGetVulkanInstanceExtensionsKHR(XrInstance instance,
   XrResult res;
   uint32_t lin_len;
 
-  TRACE("%p, 0x%s, %u, %p, %p\n", instance, wine_dbgstr_longlong(systemId), bufferCapacityInput, bufferCountOutput,
+  TRACE("0x%s, 0x%s, %u, %p, %p\n", wine_dbgstr_xrhandle(instance), wine_dbgstr_longlong(systemId), bufferCapacityInput, bufferCountOutput,
         buffer);
 
   /* Linux SteamVR does not return xlib_surface, but Windows SteamVR _does_
@@ -301,16 +352,18 @@ static VkResult WINAPI vk_create_instance_callback(const VkInstanceCreateInfo *c
                                                    void *(*pfnGetInstanceProcAddr)(VkInstance, const char *),
                                                    void *context) {
   struct vk_create_callback_context *c = context;
+  wine_XrInstance *wine_instance = wine_instance_from_handle(c->wine_instance);
   XrVulkanInstanceCreateInfoKHR our_create_info;
   VkInstanceCreateInfo our_vulkan_create_info;
   const char **enabled_extensions = NULL;
   unsigned int i;
   VkResult ret;
 
-  our_create_info = *(const XrVulkanInstanceCreateInfoKHR *)c->create_info;
+  our_create_info = *(const XrVulkanInstanceCreateInfoKHR *)(ULONG_PTR)c->create_info;
   our_create_info.pfnGetInstanceProcAddr = (PFN_vkGetInstanceProcAddr)pfnGetInstanceProcAddr;
   our_create_info.vulkanCreateInfo = create_info;
-  our_create_info.vulkanAllocator = allocator;
+  our_create_info.vulkanAllocator = NULL;
+  wine_instance->host_vkGetInstanceProcAddr = (PFN_vkGetInstanceProcAddr)pfnGetInstanceProcAddr;
 
   for (i = 0; i < create_info->enabledExtensionCount; ++i) {
     if (!strcmp(create_info->ppEnabledExtensionNames[i], "VK_KHR_surface")) {
@@ -331,7 +384,7 @@ static VkResult WINAPI vk_create_instance_callback(const VkInstanceCreateInfo *c
   }
 
   c->ret = g_xr_host_instance_dispatch_table.p_xrCreateVulkanInstanceKHR(
-      wine_instance_from_handle(c->wine_instance)->host_instance, &our_create_info, vk_instance, &ret);
+      wine_instance->host_instance, &our_create_info, vk_instance, &ret);
   free(enabled_extensions);
   return ret;
 }
@@ -344,24 +397,30 @@ static VkResult WINAPI vk_create_device_callback(VkPhysicalDevice phys_dev,
                                                  void *context) {
   /* Only Unix calls here, called from the Unix side. */
   struct vk_create_callback_context *c = context;
+  wine_XrInstance *wine_instance = wine_instance_from_handle(c->wine_instance);
   XrVulkanDeviceCreateInfoKHR our_create_info;
   VkResult ret;
 
-  our_create_info = *(const XrVulkanDeviceCreateInfoKHR *)c->create_info;
-  our_create_info.pfnGetInstanceProcAddr = (PFN_vkGetInstanceProcAddr)pfnGetInstanceProcAddr;
+  if (!wine_instance->host_vkGetInstanceProcAddr) {
+    ERR("xrCreateVulkanDeviceKHR called before xrCreateVulkanInstanceKHR stored vkGetInstanceProcAddr\n");
+    return VK_ERROR_INITIALIZATION_FAILED;
+  }
+
+  our_create_info = *(const XrVulkanDeviceCreateInfoKHR *)(ULONG_PTR)c->create_info;
+  our_create_info.pfnGetInstanceProcAddr = wine_instance->host_vkGetInstanceProcAddr;
   our_create_info.vulkanPhysicalDevice = phys_dev;
   our_create_info.vulkanCreateInfo = create_info;
-  our_create_info.vulkanAllocator = allocator;
+  our_create_info.vulkanAllocator = NULL;
   c->ret = g_xr_host_instance_dispatch_table.p_xrCreateVulkanDeviceKHR(
-      wine_instance_from_handle(c->wine_instance)->host_instance, &our_create_info, vk_device, &ret);
+      wine_instance->host_instance, &our_create_info, vk_device, &ret);
   return ret;
 }
 
 NTSTATUS init_openxr(void *args) {
   struct init_openxr_params *params = args;
 
-  params->create_instance_callback = (UINT64)&vk_create_instance_callback;
-  params->create_device_callback = (UINT64)&vk_create_device_callback;
+  params->create_instance_callback = (UINT64)(ULONG_PTR)&vk_create_instance_callback;
+  params->create_device_callback = (UINT64)(ULONG_PTR)&vk_create_device_callback;
 
   return STATUS_SUCCESS;
 }
@@ -460,6 +519,7 @@ NTSTATUS is_available_instance_function_openxr(void *args)
   wine_XrInstance *wine_instance = wine_instance_from_handle(params->instance);
   PFN_xrVoidFunction fn;
   unsigned int i;
+  int saved_stderr = -1;
 
   for (i = 0; i < ARRAY_SIZE(always_supported); ++i)
   {
@@ -470,6 +530,8 @@ NTSTATUS is_available_instance_function_openxr(void *args)
     }
   }
 
-  params->ret = xrGetInstanceProcAddr(wine_instance ? wine_instance->host_instance : NULL, params->name, &fn);
+  saved_stderr = silence_openxr_loader_errors_begin();
+  params->ret = xrGetInstanceProcAddr(wine_instance ? wine_instance->host_instance : (XrInstance)0, params->name, &fn);
+  silence_openxr_loader_errors_end(saved_stderr);
   return STATUS_SUCCESS;
 }
