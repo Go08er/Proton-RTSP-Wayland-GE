@@ -1,8 +1,31 @@
-/dist
-/dist-*
-/obj-*
-/syn-*
+# SPDX-License-Identifier: BSD-3-Clause
 
-/.vagrant/
-/vagrant_share/
 /build/
+/dist/
+/downloads/
+/logs/
+/sources/
+/work/
+/worktrees/
+/handoff-backups/
+/.podman-home/
+/.cache/
+/.agents/
+/.codex/
+/.env
+/.env.*
+/compatdata/
+/shadercache/
+/steamapps/
+user_settings.py
+**/__pycache__/
+*.py[cod]
+*.log
+*.dmp
+*.reg
+*.sqlite*
+*.tar
+*.tar.*
+*.zip
+*.7z
+tests/bin/
