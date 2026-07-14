@@ -1,8 +1,12 @@
 <!-- SPDX-License-Identifier: BSD-3-Clause -->
 
-# Proton-RTSP-11.1-Wayland-GE
+# Proton-RTSP-Wayland-GE Alpha 2
 
-An unofficial, experimental Proton compatibility tool based on the RTSP Proton 11 source tree. It carries a curated set of 101 Wayland-focused Wine patches sourced from GE-Proton11-1 while preserving RTSP's GStreamer and media integration.
+An unofficial, experimental Proton compatibility tool based on the pinned RTSP
+Proton 11 source tree. Alpha 2 carries 105 audited Wayland-focused Wine patches
+and the current WineOpenXR decoupling repair from a pinned Proton-GE development
+snapshot, plus a one-line RTSP build adapter, while preserving RTSP's GStreamer
+and media integration.
 
 The name is ordered deliberately: RTSP is the base distribution, while the
 `GE` suffix identifies the source of the selected Wayland patch subset. This is
@@ -11,7 +15,11 @@ an RTSP-derived build, not a Proton-GE distribution.
 This is not an official Valve, Proton-GE, RTSP, XRizer, WiVRn, or Monado release. The name describes its technical provenance; it does not imply affiliation or endorsement.
 
 > [!IMPORTANT]
-> Native Wayland and XR support are opt-in. The default launch path remains unchanged. Compatibility has been tested narrowly and should not be assumed for every game, compositor, GPU, or XR runtime.
+> Alpha 2 uses Proton-GE commit `9fad3bbe270409e67a8d2f4d123afc73d848306a`,
+> selected from `master` on 2026-07-13. It is a pinned development snapshot,
+> not GE-Proton11-2 and not a release candidate for publication. Native Wayland
+> and XR compatibility should not be assumed for every game, compositor, GPU,
+> or XR runtime.
 
 ## What this project changes
 
@@ -19,24 +27,33 @@ This is not an official Valve, Proton-GE, RTSP, XRizer, WiVRn, or Monado release
 - Packages the xrandr helper and X11 locale/Compose data used by the Wayland launcher.
 - Recognizes `PROTON_USE_WAYLAND=1` and `PROTON_ENABLE_WAYLAND=1` as opt-in native Wayland launch flags.
 - Retains the RTSP GStreamer, Media Foundation, and `winegstreamer` integration.
+- Applies the current GE WineOpenXR decoupling repair to RTSP's standalone
+  WineOpenXR source, followed by a one-line makedep integration fix.
+- Remaps Cargo's local checkout root in the bundled Rust AV1 decoder so runtime
+  diagnostic strings do not disclose the builder's home directory.
 - Adds `PROTON_XR_MODE=xrizer` for an explicit OpenVR-to-XRizer launch path.
-- Leaves Proton's normal XR behavior unchanged when `PROTON_XR_MODE` is absent or set to `auto`.
+- Keeps Proton's normal XR routing when `PROTON_XR_MODE` is absent or set to
+  `auto`; no forced DLL disable is added in that mode.
 
 This project does **not** bundle or install XRizer, WiVRn, Monado, SteamVR, or OpenComposite. Install and configure the XR components you intend to use separately.
 
 ## Current status
 
-| Area | Status | Scope |
+| Area | Alpha 2 status | Scope |
 | --- | --- | --- |
-| Default X11/XWayland path | Smoke-tested | Basic Wine process startup |
-| Native Wayland, 64-bit and 32-bit | Smoke-tested | `wineboot` and command execution |
-| D3D11 under native Wayland | Smoke-tested | Device creation and a window/swapchain test |
-| RTSP media payload | Build-verified | 64-bit and 32-bit GStreamer/Wine artifacts and registry routing |
-| OpenVR → XRizer → WiVRn | Final candidate tested successfully | VRChat reached a focused XR session under native Wayland and exited cleanly after roughly eight minutes |
-| Direct Windows OpenXR in `auto` mode | Not yet tested | Do not use the XRizer mode for this path |
-| SteamVR and OpenComposite in `auto` mode | Not yet tested | Default behavior is preserved but not yet validated here |
+| Source composition | Pinned and replay-audited | RTSP base, 105 byte-matched GE Wayland patches, byte-matched WineOpenXR repair, and hash-locked one-line RTSP adapter |
+| Build and artifact checks | Passed locally | The staged tool passed source locks, licensing, media routing, metadata, link/permission safety, and a binary-safe privacy scan of 6,181 files |
+| Default X11/XWayland path | Runtime test pending | Basic process and non-XR game startup |
+| Native Wayland startup | Passed locally | 64-bit and 32-bit command execution used a disposable prefix |
+| Native Wayland D3D11 | 64-bit smoke passed | DXVK created a device and presented one frame; a separate new 32-bit probe also aborts on the Alpha 1 control and is not counted as a pass |
+| RTSP media playback | Runtime test pending | Artifact and registry checks do not prove playback compatibility |
+| OpenVR → XRizer → WiVRn | Runtime test pending | Test `auto` first, then the scoped XRizer fallback |
+| Direct Windows OpenXR, SteamVR, and OpenComposite | Runtime test pending | Must remain in `auto` unless a route specifically requires the fallback |
 
-The successful VR result is one configuration test, not a general compatibility claim.
+Alpha 1 previously passed 64-bit and 32-bit Wine, native-Wayland D3D11, RTSP
+artifact checks, and one roughly eight-minute focused VRChat session through
+XRizer 0.5.0 and WiVRn. Those results are useful regression evidence, but they
+are not Alpha 2 runtime results and are not a general compatibility claim.
 
 ## Installation
 
@@ -55,15 +72,15 @@ The successful VR result is one configuration test, not a general compatibility 
    ~/.var/app/com.valvesoftware.Steam/data/Steam/compatibilitytools.d/
    ```
 3. Start Steam again.
-4. Open a game's **Properties → Compatibility**, enable the option to force a compatibility tool, and select **Proton RTSP 11.1 Wayland (GE patches)**.
+4. Open a game's **Properties → Compatibility**, enable the option to force a compatibility tool, and select **Proton RTSP Wayland GE Alpha 2**.
 
 Back up important saves and prefixes before changing compatibility tools. Do not delete an existing compatdata prefix merely as a first troubleshooting step.
 
 When an archive and adjacent checksum are provided, verify them before extraction:
 
 ```sh
-sha512sum -c Proton-RTSP-11.1-Wayland-GE.tar.gz.sha512sum
-sha512sum -c Proton-RTSP-11.1-Wayland-GE-source.tar.gz.sha512sum
+sha512sum -c Proton-RTSP-Wayland-GE-Alpha2.tar.gz.sha512sum
+sha512sum -c Proton-RTSP-Wayland-GE-Alpha2-source.tar.gz.sha512sum
 ```
 
 Keep the matching source archive available with the binary. It contains the
@@ -83,7 +100,14 @@ Opt into native Wayland:
 PROTON_USE_WAYLAND=1 %command%
 ```
 
-Use XRizer with a separately installed native OpenXR runtime:
+Test the normal XR behavior first with a separately installed XR bridge and
+runtime:
+
+```text
+PROTON_USE_WAYLAND=1 %command%
+```
+
+If an OpenVR title specifically needs the tested XRizer fallback:
 
 ```text
 PROTON_XR_MODE=xrizer PROTON_USE_WAYLAND=1 %command%
@@ -142,7 +166,10 @@ route.
 
 ## XR mode architecture
 
-`PROTON_XR_MODE=auto` is the default and preserves Proton's normal behavior, including its Windows OpenXR bridge.
+`PROTON_XR_MODE=auto` is the default and preserves Proton's normal behavior,
+including its Windows OpenXR bridge. Alpha 2 also applies the pinned GE
+WineOpenXR decoupling repair to that bridge. Its effect on this RTSP base still
+requires game testing.
 
 `PROTON_XR_MODE=xrizer` is intended only for this route:
 
@@ -150,7 +177,9 @@ route.
 Windows OpenVR title → XRizer → native OpenXR runtime
 ```
 
-In that explicit mode, the launcher disables Proton's `wineopenxr` DLL for the process. This prevents DXVK from initializing Proton's Windows OpenXR bridge in parallel while XRizer is already using the native OpenXR runtime.
+In that explicit mode, the launcher disables Proton's `wineopenxr` DLL for the
+process. This remains a conservative fallback if the repaired `auto` route
+still lets the Windows OpenXR bridge contend with XRizer for the native runtime.
 
 The mode is a scoped form of the tested `wineopenxr` override; it does not reproduce Proton 10 wholesale and does not replace an XR runtime. It also does not modify the default mode.
 
@@ -206,14 +235,25 @@ Do not upload an entire compatdata prefix, registry export, home directory, or e
 ## Source and build provenance
 
 - Base project: [SpookySkeletons/proton-ge-rtsp](https://github.com/SpookySkeletons/proton-ge-rtsp)
-- Wayland patch reference: [GloriousEggroll/proton-ge-custom](https://github.com/GloriousEggroll/proton-ge-custom), GE-Proton11-1
+- Wayland and WineOpenXR patch reference: [GloriousEggroll/proton-ge-custom](https://github.com/GloriousEggroll/proton-ge-custom), pinned development snapshot
 - RTSP Proton commit: `3b4a5f407a5e0cabeef6d3757f29a23f277b429a`
 - RTSP Wine base commit: `fd920bd63abb7bf8b52b0f8e40da922ab9e784a4`
-- GE-Proton11-1 commit: `fd07a035fadfbe989aef887cb999d0ef236c50d0`
+- Proton-GE snapshot commit: `9fad3bbe270409e67a8d2f4d123afc73d848306a`
+- Snapshot label: `master-2026-07-13` (`development-snapshot`, not GE-Proton11-2)
 - DXVK commit: `2cae043bdf767c8a7a2e0ee8d41537acfe773e8e`
-- Applied subset: 101 audited Wine commits above the RTSP Wine base
+- Applied subset: 105 audited Wine commits above the RTSP Wine base
+- WineOpenXR repair: `patches/wineopenxr/wineopenxr_decouple.patch` from the
+  same pinned Proton-GE snapshot
+- WineOpenXR build adapter: one RTSP-specific line removal that preserves the
+  makedep wrapper's injected `ntdll.so` while the root build supplies
+  `-lopenxr_loader`
 
-The GE-Proton11-1 material is used as a patch source and behavior reference. GE-Proton is not the runtime base of this project, and unrelated GE patch groups are intentionally excluded.
+The Proton-GE snapshot is used as a patch source and behavior reference.
+Proton-GE is not the runtime base of this project, and unrelated GE patch
+groups are intentionally excluded. No GitHub publication or release upload is
+part of the Alpha 2 preparation workflow. `scripts/build.sh` defaults to
+`PACKAGE_RELEASE=0`, so it produces a local game-test directory without release
+archives; packaging requires a later explicit opt-in after acceptance.
 
 Build orchestration is documented in [`docs/BUILDING.md`](docs/BUILDING.md), the launcher and XR design in [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md), and the deliberately narrow test scope in [`docs/TESTING.md`](docs/TESTING.md). Generated source trees, build products, compatibility prefixes, and private logs are not intended to be committed.
 
@@ -237,8 +277,9 @@ Proton distribution.
   retains its existing BSD-3-Clause terms and copyright notices; see
   [`LICENSE.proton`](LICENSE.proton) and
   [`LICENSE.upstream-proton`](LICENSE.upstream-proton).
-- Wine and the 101 selected GE Wine patches are LGPL-2.1-or-later. Original
-  patch authorship is retained in the bundled format-patch files; see
+- Wine, the 105 selected GE Wine patches, and the WineOpenXR integration
+  modification are LGPL-2.1-or-later. Original patch authorship is retained in
+  the bundled format-patch files; see
   [`LICENSE.wine`](LICENSE.wine) and
   [`COPYING.LIB.wine`](COPYING.LIB.wine).
 - Every other fetched or bundled component remains subject to its own terms.

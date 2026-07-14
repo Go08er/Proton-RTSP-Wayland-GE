@@ -1,0 +1,12 @@
+diff --git a/Makefile.in b/Makefile.in
+index 5be3dd26..05583209 100644
+--- a/Makefile.in
++++ b/Makefile.in
+@@ -1,7 +1,6 @@
+ MODULE     = wineopenxr.dll
+ UNIXLIB    = wineopenxr.so
+ IMPORTS    = advapi32 user32 dxgi winevulkan
+-UNIX_LIBS  = -lopenxr_loader
+ 
+ EXTRADEFS  = -DWINE_NO_LONG_TYPES
+ 

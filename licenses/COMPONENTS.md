@@ -10,7 +10,7 @@ It is not a substitute for the original license files copied into
 | --- | --- | --- |
 | Original project scripts, documentation, tests, selection manifest, and project-authored Proton additions | BSD-3-Clause | `../LICENSE` |
 | Proton and RTSP top-level code | BSD-3-Clause | `../LICENSE.proton`, `../LICENSE.upstream-proton` |
-| Wine and the 101 selected GE Wine patches | LGPL-2.1-or-later | `../LICENSE.wine`, `../COPYING.LIB.wine` |
+| Wine, the 105 selected GE Wine patches, and the WineOpenXR integration modification | LGPL-2.1-or-later | `../LICENSE.wine`, `../COPYING.LIB.wine`, `../patches/wineopenxr-rtsp-makedep-integration.patch` |
 | DXVK | Zlib | `upstream/dxvk/LICENSE` |
 | DXVK-NVAPI | MIT | `upstream/dxvk-nvapi/LICENSE` |
 | vkd3d and vkd3d-proton | LGPL-2.1-or-later, with separately licensed subprojects | `upstream/vkd3d/`, `upstream/vkd3d-proton/` |
@@ -44,8 +44,9 @@ repository-level MIT license; no separate model-specific notice was present in
 the exact downloaded snapshot. This fact is recorded rather than inventing a
 different license.
 
-The X11 locale tree was copied by the pinned GE-Proton11-1 commit without a
-local COPYING file. Its layout and generated `locale.dir` were compared with
+The X11 locale tree was copied by pinned Proton-GE development snapshot
+`9fad3bbe270409e67a8d2f4d123afc73d848306a` without a local COPYING file. Its
+layout and generated `locale.dir` were compared with
 the official X.Org libX11 1.8.13 source; `locale.dir` is byte-identical while
 the intentionally reduced Compose mapping differs. The full libX11 COPYING
 file is therefore retained as the applicable provenance notice without

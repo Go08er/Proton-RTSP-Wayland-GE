@@ -107,7 +107,45 @@ index 7c28b8a..ec6f2d9 100644
  WINE_i386_DEPENDS = vkd3d
  WINE_x86_64_DEPENDS = piper vkd3d
  WINE_aarch64_DEPENDS = piper
-@@ -1299,6 +1347,76 @@ all-dist: $(OBJ)/.icu-aarch64-dist
+@@ -1239,9 +1287,10 @@ all-dist: $(DIST_WINEMONO)
+ ##
+ ## xalia
+ ##
+ 
+ XALIA_VER := 0.4.9
+ XALIA_ZIP := xalia-$(XALIA_VER)-net48-mono.zip
++XALIA_ZIP_SHA256 := e2c94a40f68f63660cc06405a641bc4e5a2e9b9320b9608e01a21feb6f6709c5
+ DIST_XALIA_DIR := $(DST_DIR)/share/xalia
+ DIST_XALIA := $(OBJ)/.xalia-dist
+ XALIA_ZIP_URL := https://github.com/madewokherd/xalia/releases/download/xalia-$(XALIA_VER)/$(XALIA_ZIP)
+@@ -1249,4 +1298,5 @@ XALIA_ZIP_URL := https://github.com/madewokherd/xalia/releases/download/xalia-$(XALIA_VER)/$(XALIA_ZIP)
+ $(SRC)/contrib/$(XALIA_ZIP):
+-	mkdir -p $(dir $@)
+-	wget --no-use-server-timestamps -O $@ $(XALIA_ZIP_URL) || (rm $@; false)
++	mkdir -p $(dir $@)
++	wget --no-use-server-timestamps -O $@ $(XALIA_ZIP_URL) || (rm $@; false)
++	printf '%s  %s\n' '$(XALIA_ZIP_SHA256)' '$@' | sha256sum -c - || (rm -f $@; false)
+ 
+@@ -1253,10 +1303,11 @@ $(SRC)/contrib/$(XALIA_ZIP):
+ $(DIST_XALIA): $(SRC)/contrib/$(XALIA_ZIP) $(SRC)/xalia-fixups.gudl
+-	rm -rf $(DIST_XALIA_DIR)
+-	mkdir -p $(DIST_XALIA_DIR)
+-	unzip $< -d $(DIST_XALIA_DIR)
+-	mv $(DIST_XALIA_DIR)/main.gudl $(DIST_XALIA_DIR)/main.gudl.orig
+-	cat $(SRC)/xalia-fixups.gudl $(DIST_XALIA_DIR)/main.gudl.orig|sed 's/\xef\xbb\xbf//' > $(DIST_XALIA_DIR)/main.gudl
+-	rm $(DIST_XALIA_DIR)/main.gudl.orig
+-	touch $@
++	rm -rf $(DIST_XALIA_DIR)
++	mkdir -p $(DIST_XALIA_DIR)
++	printf '%s  %s\n' '$(XALIA_ZIP_SHA256)' '$<' | sha256sum -c -
++	unzip $< -d $(DIST_XALIA_DIR)
++	mv $(DIST_XALIA_DIR)/main.gudl $(DIST_XALIA_DIR)/main.gudl.orig
++	cat $(SRC)/xalia-fixups.gudl $(DIST_XALIA_DIR)/main.gudl.orig|sed 's/\xef\xbb\xbf//' > $(DIST_XALIA_DIR)/main.gudl
++	rm $(DIST_XALIA_DIR)/main.gudl.orig
++	touch $@
+ 
+ all-dist: $(DIST_XALIA)
+@@ -1299,6 +1350,76 @@ all-dist: $(OBJ)/.icu-aarch64-dist
  endif
  
  

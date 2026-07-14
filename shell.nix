@@ -32,6 +32,7 @@ pkgs.mkShell {
     vulkan-tools
     which
     zstd
+    pkgsCross.mingw32.stdenv.cc
     pkgsCross.mingwW64.stdenv.cc
   ];
 }

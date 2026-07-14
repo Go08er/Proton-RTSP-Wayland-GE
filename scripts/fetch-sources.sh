@@ -5,14 +5,11 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 WORK_ROOT="${WORK_ROOT:-/tmp/proton-rtsp-wayland-ge-work}"
 SOURCES_DIR="${SOURCES_DIR:-$WORK_ROOT/sources}"
+source "$ROOT_DIR/config/upstream-pins.sh"
 
 RTSP_REPO="https://github.com/SpookySkeletons/proton-ge-rtsp.git"
-RTSP_COMMIT="3b4a5f407a5e0cabeef6d3757f29a23f277b429a"
 GE_REPO="https://github.com/GloriousEggroll/proton-ge-custom.git"
-GE_COMMIT="fd07a035fadfbe989aef887cb999d0ef236c50d0"
 XALIA_REPO="https://github.com/madewokherd/xalia.git"
-XALIA_COMMIT="6d946216c29052c29c660ad4cac950a6bd08a2b4"
-XALIA_SDL3_CS_COMMIT="e26a111c1b90301e37475a4dfb6f5ce47447d677"
 
 fail() {
   printf 'FAIL: %s\n' "$*" >&2
@@ -41,7 +38,10 @@ clone_at_commit() {
   git_safe -C "$path" checkout --detach "$commit"
 }
 
-mkdir -p "$SOURCES_DIR"
+mkdir -p "$WORK_ROOT" "$SOURCES_DIR"
+# Any fetch attempt invalidates a prior preparation result, including a failed
+# or interrupted attempt.  apply-patches.sh writes a new state only at the end.
+rm -f -- "$WORK_ROOT/.prepared"
 clone_at_commit proton-ge-rtsp "$RTSP_REPO" "$RTSP_COMMIT"
 clone_at_commit proton-ge-custom "$GE_REPO" "$GE_COMMIT"
 clone_at_commit xalia "$XALIA_REPO" "$XALIA_COMMIT"
@@ -54,4 +54,5 @@ actual_sdl3_cs="$(git -C "$SOURCES_DIR/xalia/xalia/external/SDL3-CS" rev-parse H
   || fail "Xalia SDL3-CS is at $actual_sdl3_cs, expected $XALIA_SDL3_CS_COMMIT"
 
 printf 'Pinned sources are ready under %s\n' "$SOURCES_DIR"
+printf 'GE source: %s (%s, %s)\n' "$GE_COMMIT" "$GE_SOURCE_KIND" "$GE_SOURCE_LABEL"
 printf 'Next: WORK_ROOT=%q %q\n' "$WORK_ROOT" "$ROOT_DIR/scripts/apply-patches.sh"

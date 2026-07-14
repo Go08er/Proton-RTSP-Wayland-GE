@@ -1,0 +1,56 @@
+diff --git a/Makefile.in b/Makefile.in
+--- a/Makefile.in
++++ b/Makefile.in
+@@ -413,6 +413,12 @@ $(eval $(call rules-cargo,gst_plugins_rs,i386,unix))
+ $(eval $(call rules-cargo,gst_plugins_rs,x86_64,unix))
+ $(eval $(call rules-cargo,gst_plugins_rs,aarch64,unix))
+ 
++GST_PLUGINS_RS_RUSTFLAGS = --remap-path-prefix=$(CARGO_HOME)=/usr/src/cargo
++GST_PLUGINS_RS_i386_ENV += RUSTFLAGS="$(GST_PLUGINS_RS_RUSTFLAGS)"
++GST_PLUGINS_RS_x86_64_ENV += RUSTFLAGS="$(GST_PLUGINS_RS_RUSTFLAGS)"
++GST_PLUGINS_RS_aarch64_ENV += RUSTFLAGS="$(GST_PLUGINS_RS_RUSTFLAGS)"
++
++
+ $(OBJ)/.gst_plugins_rs-x86_64-post-build:
+ 	mkdir -p $(GST_PLUGINS_RS_x86_64_DST)/lib/x86_64-linux-gnu/gstreamer-1.0/
+ 	cp -a $(GST_PLUGINS_RS_x86_64_OBJ)/x86_64-unknown-linux-gnu/release/libgstdav1d.so $(GST_PLUGINS_RS_x86_64_DST)/lib/x86_64-linux-gnu/gstreamer-1.0/
+
+diff --git a/proton b/proton
+index c57e95b..7bfb603 100755
+--- a/proton
++++ b/proton
+@@ -45,7 +45,7 @@ from random import randrange
+ #To enable debug logging, copy "user_settings.sample.py" to "user_settings.py"
+ #and edit it if needed.
+ 
+-CURRENT_PREFIX_VERSION="11.0-100"
++CURRENT_PREFIX_VERSION="11.0-101"
+ 
+ PFX="Proton: "
+ ld_path_var = "LD_LIBRARY_PATH"
+@@ -1947,19 +1947,19 @@ class Session:
+             self.dlloverrides["winewayland.drv"] = "b"
+             self.env["WINE_USE_EGL"] = "1"
+             self.env["WINE_DISABLE_FULLSCREEN_HACK"] = "1"
+-            if "WINE_MOVE_HACK" not in self.env:
+-                self.env["WINE_MOVE_HACK"] = "1"
++            self.env.setdefault("WINE_MOVE_HACK", "1")
+             self.env["PROTON_USE_XALIA"] = "0"
+-            if "PROTON_NO_STEAMINPUT" not in self.env:
+-                self.env["PROTON_NO_STEAMINPUT"] = "1"
++            self.env.setdefault("PROTON_NO_STEAMINPUT", "1")
++            if nonzero(self.env["PROTON_NO_STEAMINPUT"]):
++                # Keep controller state coherent when Steam Input is disabled
++                # explicitly as well as when Wayland selects the default.
+                 if "SDL_GAMECONTROLLER_IGNORE_DEVICES" in self.env:
+                     del self.env["SDL_GAMECONTROLLER_IGNORE_DEVICES"]
+                 if "SteamVirtualGamepadInfo" in self.env:
+                     del self.env["SteamVirtualGamepadInfo"]
+                 if "SDL_GAMECONTROLLER_ALLOW_STEAM_VIRTUAL_GAMEPAD" in self.env:
+                     del self.env["SDL_GAMECONTROLLER_ALLOW_STEAM_VIRTUAL_GAMEPAD"]
+-            if "XLOCALEDIR" not in self.env:
+-                self.env["XLOCALEDIR"] = g_proton.dist_dir + "share/X11/locale"
++            self.env.setdefault("XLOCALEDIR", g_proton.dist_dir + "share/X11/locale")
+             if "DISPLAY" in self.env:
+                 del self.env["DISPLAY"]
+ 
