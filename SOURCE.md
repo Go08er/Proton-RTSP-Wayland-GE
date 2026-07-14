@@ -2,8 +2,7 @@
 
 # Corresponding source
 
-If Alpha 2 is accepted and locally packaged, its binary archive is intended to
-be accompanied by:
+The Alpha 2 binary archive is accompanied by:
 
 - `Proton-RTSP-Wayland-GE-Alpha2-source.tar.gz`
 - `Proton-RTSP-Wayland-GE-Alpha2-source.tar.gz.sha512sum`
@@ -26,8 +25,11 @@ directories are explicitly supplied to the packaging command.
 
 The GE inputs come from development snapshot
 `9fad3bbe270409e67a8d2f4d123afc73d848306a`, selected from `master` on
-2026-07-13. They are not GE-Proton11-2 release inputs. Packaging is disabled by
-default with `PACKAGE_RELEASE=0`; this document does not authorize publication.
+2026-07-13. The corresponding Proton-GE Wine commit is
+`c37dd7179b4c7716331d1f7ed401c469038fbe44`. These are not GE-Proton11-2
+release inputs. Packaging remains disabled by default with
+`PACKAGE_RELEASE=0`; the public prerelease uses the explicit
+`PACKAGE_RELEASE=1` path.
 
 Important external snapshots include:
 

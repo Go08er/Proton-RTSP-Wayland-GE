@@ -70,9 +70,9 @@ the i686 executables to exercise the 32-bit path.
 | Basic Wine startup, 64-bit and 32-bit | Passed under native Wayland with a disposable prefix |
 | 64-bit D3D11 device and swapchain under native Wayland | Passed; DXVK loaded the repaired WineOpenXR provider, handled the unavailable runtime, selected NVIDIA, created the device, and presented one frame |
 | Additional 32-bit D3D11 diagnostic | Exited 3 during DXVK device creation on both Alpha 2 and the unchanged Alpha 1 control; not attributed to the Alpha 2 patch set and not a pass |
-| RTSP/media playback | Runtime test pending |
-| OpenVR → XRizer → WiVRn in `auto` | Runtime test pending |
-| OpenVR → XRizer → WiVRn with `PROTON_XR_MODE=xrizer` | Runtime test pending |
+| RTSP/media playback | Runtime test pending; a dead world URL exercised repeated failure cleanup but not successful playback |
+| OpenVR → XRizer → WiVRn in `auto` | Failed: DXVK repeatedly returned `VK_ERROR_EXTENSION_NOT_PRESENT` while both XRizer and WineOpenXR used the active runtime |
+| OpenVR → XRizer → WiVRn with `PROTON_XR_MODE=xrizer` | Passed: WineOpenXR stayed disabled, XRizer reached `FOCUSED`, WiVRn remained connected for 5 minutes 19 seconds, and the process exited cleanly |
 | Direct Windows OpenXR, SteamVR, and OpenComposite | Runtime test pending |
 | Broad compositor/GPU coverage | Not claimed |
 
@@ -83,7 +83,14 @@ is retained as a separate issue: basic 32-bit Wine works, but neither Alpha 2
 nor its Alpha 1 control completed that newly added DXVK probe. Do not convert
 that comparison into an Alpha 2 regression claim.
 
-## Prior Alpha 1 evidence
+The accepted forced-XRizer game run contained no `VK_ERROR`, `DXGI_ERROR`,
+`XR_ERROR`, device loss, GPU reset, out-of-memory event, encoder fault, network
+fault, or new crash dump. Twelve PipeWire playback overflows and isolated DXVK
+shared-image warnings remain monitoring items, not demonstrated Alpha 2
+regressions. Repeated GStreamer cleanup assertions coincided with a known dead
+world-media URL and also existed in the working Alpha 1 control.
+
+## Alpha 1 regression evidence
 
 The accepted Alpha 1 build passed basic 64-bit and 32-bit Wine startup, D3D11
 device and swapchain smoke tests under native Wayland, and RTSP GStreamer
@@ -93,18 +100,20 @@ cleanly, and recorded exit code 0.
 
 That log did not contain `VK_ERROR`, graphics-device loss, out-of-memory, or
 the earlier `InitializeEngineGraphics` failure. It is useful as a regression
-baseline only. Alpha 2 changes both the selected GE patch stack and WineOpenXR,
-so none of those runtime results should be reported as Alpha 2 results.
+baseline only. Alpha 2 independently passed the forced-XRizer route described
+above.
 
 ## Diagnostic logs
 
-Start Alpha 2 XR diagnosis in the default `auto` route:
+Use `auto` when diagnosing a route that is supposed to retain Proton's Windows
+OpenXR bridge:
 
 ```text
 PROTON_LOG=1 WINEDEBUG=-all,+timestamp,+pid,+tid,+loaddll PROTON_USE_WAYLAND=1 %command%
 ```
 
-Use the explicit fallback only for the follow-up comparison:
+For OpenVR through XRizer and a native OpenXR runtime, use the accepted scoped
+route:
 
 ```text
 PROTON_LOG=1 WINEDEBUG=-all,+timestamp,+pid,+tid,+loaddll PROTON_XR_MODE=xrizer PROTON_USE_WAYLAND=1 %command%

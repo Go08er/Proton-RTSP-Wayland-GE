@@ -5,8 +5,8 @@
 Proton-RTSP-Wayland-GE Alpha 2 is an unofficial assembly based on the projects
 listed below. It is not affiliated with or endorsed by Valve, CodeWeavers,
 GloriousEggroll, SpookySkeletons, Khronos, XRizer, WiVRn, Monado, or VRChat.
-Alpha 2 is prepared for local evaluation and has not been published as a
-release.
+Alpha 2 is distributed as an experimental public prerelease with its matching
+corresponding-source archive.
 
 ## Pinned source revisions
 
@@ -15,6 +15,7 @@ release.
 - GE patch reference: `GloriousEggroll/proton-ge-custom`, development snapshot
   `master-2026-07-13`, commit
   `9fad3bbe270409e67a8d2f4d123afc73d848306a` (not GE-Proton11-2)
+- Proton-GE Wine commit: `c37dd7179b4c7716331d1f7ed401c469038fbe44`
 - DXVK: `2cae043bdf767c8a7a2e0ee8d41537acfe773e8e`
 - libxml2: `b7fa62cbe8ef0df5869e000d5b690bdedd07f33e`
 - libxkbcommon: `dd642359f8d43c09968e34ca7f1eb1121b2dfd70`

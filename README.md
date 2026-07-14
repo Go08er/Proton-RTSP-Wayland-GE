@@ -17,9 +17,10 @@ This is not an official Valve, Proton-GE, RTSP, XRizer, WiVRn, or Monado release
 > [!IMPORTANT]
 > Alpha 2 uses Proton-GE commit `9fad3bbe270409e67a8d2f4d123afc73d848306a`,
 > selected from `master` on 2026-07-13. It is a pinned development snapshot,
-> not GE-Proton11-2 and not a release candidate for publication. Native Wayland
-> and XR compatibility should not be assumed for every game, compositor, GPU,
-> or XR runtime.
+> not GE-Proton11-2. The corresponding Proton-GE Wine commit is
+> `c37dd7179b4c7716331d1f7ed401c469038fbe44`. Alpha 2 is an experimental
+> public prerelease; native Wayland and XR compatibility should not be assumed
+> for every game, compositor, GPU, or XR runtime.
 
 ## What this project changes
 
@@ -46,14 +47,15 @@ This project does **not** bundle or install XRizer, WiVRn, Monado, SteamVR, or O
 | Default X11/XWayland path | Runtime test pending | Basic process and non-XR game startup |
 | Native Wayland startup | Passed locally | 64-bit and 32-bit command execution used a disposable prefix |
 | Native Wayland D3D11 | 64-bit smoke passed | DXVK created a device and presented one frame; a separate new 32-bit probe also aborts on the Alpha 1 control and is not counted as a pass |
-| RTSP media playback | Runtime test pending | Artifact and registry checks do not prove playback compatibility |
-| OpenVR → XRizer → WiVRn | Runtime test pending | Test `auto` first, then the scoped XRizer fallback |
+| RTSP media playback | Runtime test pending | Artifact and registry checks do not prove playback compatibility; a dead world URL exercised only failure cleanup |
+| OpenVR → XRizer → WiVRn in `auto` | Failed locally | Both XRizer and WineOpenXR reached the active runtime; DXVK then failed device creation with `VK_ERROR_EXTENSION_NOT_PRESENT` |
+| OpenVR → XRizer → WiVRn with `PROTON_XR_MODE=xrizer` | Passed locally | Reached `FOCUSED`, ran for 5 minutes 19 seconds without reconnecting, and exited cleanly with no Vulkan, DXGI, OpenXR, device-loss, or OOM error |
 | Direct Windows OpenXR, SteamVR, and OpenComposite | Runtime test pending | Must remain in `auto` unless a route specifically requires the fallback |
 
-Alpha 1 previously passed 64-bit and 32-bit Wine, native-Wayland D3D11, RTSP
-artifact checks, and one roughly eight-minute focused VRChat session through
-XRizer 0.5.0 and WiVRn. Those results are useful regression evidence, but they
-are not Alpha 2 runtime results and are not a general compatibility claim.
+Alpha 1 remains useful regression evidence, but the Alpha 2 XR result above is
+the relevant accepted route. The newer Proton-GE snapshot did not remove the
+active-runtime conflict in `auto`; the scoped XRizer mode remains required for
+the tested VRChat → XRizer 0.5.0 → WiVRn configuration.
 
 ## Installation
 
@@ -100,14 +102,15 @@ Opt into native Wayland:
 PROTON_USE_WAYLAND=1 %command%
 ```
 
-Test the normal XR behavior first with a separately installed XR bridge and
-runtime:
+For direct Windows OpenXR, SteamVR, OpenComposite, or another route that does
+not specifically use XRizer, preserve normal Proton XR behavior:
 
 ```text
 PROTON_USE_WAYLAND=1 %command%
 ```
 
-If an OpenVR title specifically needs the tested XRizer fallback:
+For an OpenVR title using XRizer and a native OpenXR runtime, use the tested
+scoped route:
 
 ```text
 PROTON_XR_MODE=xrizer PROTON_USE_WAYLAND=1 %command%
@@ -168,8 +171,9 @@ route.
 
 `PROTON_XR_MODE=auto` is the default and preserves Proton's normal behavior,
 including its Windows OpenXR bridge. Alpha 2 also applies the pinned GE
-WineOpenXR decoupling repair to that bridge. Its effect on this RTSP base still
-requires game testing.
+WineOpenXR decoupling repair to that bridge. With VRChat, XRizer 0.5.0, and an
+active WiVRn runtime, local testing still reproduced
+`VK_ERROR_EXTENSION_NOT_PRESENT` during DXVK device creation in this mode.
 
 `PROTON_XR_MODE=xrizer` is intended only for this route:
 
@@ -178,8 +182,8 @@ Windows OpenVR title → XRizer → native OpenXR runtime
 ```
 
 In that explicit mode, the launcher disables Proton's `wineopenxr` DLL for the
-process. This remains a conservative fallback if the repaired `auto` route
-still lets the Windows OpenXR bridge contend with XRizer for the native runtime.
+process. This prevented the tested dual-bridge conflict: WineOpenXR was not
+loaded, XRizer reached `FOCUSED`, and the session shut down cleanly.
 
 The mode is a scoped form of the tested `wineopenxr` override; it does not reproduce Proton 10 wholesale and does not replace an XR runtime. It also does not modify the default mode.
 
@@ -239,6 +243,7 @@ Do not upload an entire compatdata prefix, registry export, home directory, or e
 - RTSP Proton commit: `3b4a5f407a5e0cabeef6d3757f29a23f277b429a`
 - RTSP Wine base commit: `fd920bd63abb7bf8b52b0f8e40da922ab9e784a4`
 - Proton-GE snapshot commit: `9fad3bbe270409e67a8d2f4d123afc73d848306a`
+- Proton-GE Wine commit: `c37dd7179b4c7716331d1f7ed401c469038fbe44`
 - Snapshot label: `master-2026-07-13` (`development-snapshot`, not GE-Proton11-2)
 - DXVK commit: `2cae043bdf767c8a7a2e0ee8d41537acfe773e8e`
 - Applied subset: 105 audited Wine commits above the RTSP Wine base
@@ -250,10 +255,10 @@ Do not upload an entire compatdata prefix, registry export, home directory, or e
 
 The Proton-GE snapshot is used as a patch source and behavior reference.
 Proton-GE is not the runtime base of this project, and unrelated GE patch
-groups are intentionally excluded. No GitHub publication or release upload is
-part of the Alpha 2 preparation workflow. `scripts/build.sh` defaults to
-`PACKAGE_RELEASE=0`, so it produces a local game-test directory without release
-archives; packaging requires a later explicit opt-in after acceptance.
+groups are intentionally excluded. `scripts/build.sh` defaults to
+`PACKAGE_RELEASE=0`, so ordinary local builds do not produce release archives.
+The accepted Alpha 2 prerelease is packaged only with the explicit
+`PACKAGE_RELEASE=1` opt-in and its matching corresponding-source archive.
 
 Build orchestration is documented in [`docs/BUILDING.md`](docs/BUILDING.md), the launcher and XR design in [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md), and the deliberately narrow test scope in [`docs/TESTING.md`](docs/TESTING.md). Generated source trees, build products, compatibility prefixes, and private logs are not intended to be committed.
 
