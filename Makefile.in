@@ -13,7 +13,7 @@ MFLAGS += V=1 VERBOSE=1
 --verbose? := --verbose
 endif
 
-SHELL := /bin/bash
+SHELL := bash
 
 ##
 ## General/global config
@@ -125,6 +125,7 @@ all-dist: | $(DST_DIR)
 dist: all
 
 J = $(patsubst -j%,%,$(filter -j%,$(MAKEFLAGS)))
+NINJA_JOBS ?= $(if $(J),$(J),1)
 
 include $(SRC)/make/utility.mk
 include $(SRC)/make/rules-source.mk
@@ -366,6 +367,12 @@ $(eval $(call rules-source,gst_plugins_rs,$(SRCDIR)/gst-plugins-rs))
 $(eval $(call rules-cargo,gst_plugins_rs,i386,unix))
 $(eval $(call rules-cargo,gst_plugins_rs,x86_64,unix))
 $(eval $(call rules-cargo,gst_plugins_rs,aarch64,unix))
+
+GST_PLUGINS_RS_RUSTFLAGS = --remap-path-prefix=$(CARGO_HOME)=/usr/src/cargo
+GST_PLUGINS_RS_i386_ENV += RUSTFLAGS="$(GST_PLUGINS_RS_RUSTFLAGS)"
+GST_PLUGINS_RS_x86_64_ENV += RUSTFLAGS="$(GST_PLUGINS_RS_RUSTFLAGS)"
+GST_PLUGINS_RS_aarch64_ENV += RUSTFLAGS="$(GST_PLUGINS_RS_RUSTFLAGS)"
+
 
 $(OBJ)/.gst_plugins_rs-x86_64-post-build:
 	mkdir -p $(GST_PLUGINS_RS_x86_64_DST)/lib/x86_64-linux-gnu/gstreamer-1.0/
@@ -1242,6 +1249,7 @@ all-dist: $(DIST_WINEMONO)
 
 XALIA_VER := 0.4.9
 XALIA_ZIP := xalia-$(XALIA_VER)-net48-mono.zip
+XALIA_ZIP_SHA256 := e2c94a40f68f63660cc06405a641bc4e5a2e9b9320b9608e01a21feb6f6709c5
 DIST_XALIA_DIR := $(DST_DIR)/share/xalia
 DIST_XALIA := $(OBJ)/.xalia-dist
 XALIA_ZIP_URL := https://github.com/madewokherd/xalia/releases/download/xalia-$(XALIA_VER)/$(XALIA_ZIP)
@@ -1249,10 +1257,12 @@ XALIA_ZIP_URL := https://github.com/madewokherd/xalia/releases/download/xalia-$(
 $(SRC)/contrib/$(XALIA_ZIP):
 	mkdir -p $(dir $@)
 	wget --no-use-server-timestamps -O $@ $(XALIA_ZIP_URL) || (rm $@; false)
+	printf '%s  %s\n' '$(XALIA_ZIP_SHA256)' '$@' | sha256sum -c - || (rm -f $@; false)
 
 $(DIST_XALIA): $(SRC)/contrib/$(XALIA_ZIP) $(SRC)/xalia-fixups.gudl
 	rm -rf $(DIST_XALIA_DIR)
 	mkdir -p $(DIST_XALIA_DIR)
+	printf '%s  %s\n' '$(XALIA_ZIP_SHA256)' '$<' | sha256sum -c -
 	unzip $< -d $(DIST_XALIA_DIR)
 	mv $(DIST_XALIA_DIR)/main.gudl $(DIST_XALIA_DIR)/main.gudl.orig
 	cat $(SRC)/xalia-fixups.gudl $(DIST_XALIA_DIR)/main.gudl.orig|sed 's/\xef\xbb\xbf//' > $(DIST_XALIA_DIR)/main.gudl

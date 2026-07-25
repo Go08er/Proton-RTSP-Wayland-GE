@@ -18,6 +18,10 @@ import uuid
 import json
 import time
 
+# Keep the compatibility-tool directory immutable.  Python bytecode caches for
+# bundled helpers embed the local installation path and are not needed here.
+sys.dont_write_bytecode = True
+
 from ctypes import CDLL
 from ctypes import CFUNCTYPE
 from ctypes import POINTER
@@ -41,7 +45,7 @@ from random import randrange
 #To enable debug logging, copy "user_settings.sample.py" to "user_settings.py"
 #and edit it if needed.
 
-CURRENT_PREFIX_VERSION="11.0-100"
+CURRENT_PREFIX_VERSION="11.0-101"
 
 PFX="Proton: "
 ld_path_var = "LD_LIBRARY_PATH"
@@ -2016,6 +2020,10 @@ class Session:
             else:
                 s = dll + "=" + setting
         append_to_env_str(self.env, "WINEDLLOVERRIDES", s, ";")
+
+        if self.log_file:
+            self.log_file.write("Final WINEDLLOVERRIDES: " + self.env["WINEDLLOVERRIDES"] + "\n")
+            self.log_file.flush()
 
         if platform.machine() == 'aarch64':
             if os.environ.get("SteamGameId", 0) == "1167630": # Teardown
