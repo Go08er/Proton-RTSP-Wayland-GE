@@ -45,8 +45,10 @@ WineVulkan translates them to the native runtime's real requirements
 ```
 
 Wine's X11 and null drivers already advertise these two Wine-managed
-capabilities. Alpha 4 adds the same two assignments to WineWayland. This is a
-source-level match, not yet proof that every automatic XR route works in game.
+capabilities. Alpha 4 adds the same two assignments to WineWayland. A
+2026-07-25 VRChat OpenVR → XRizer 0.5.0 → WiVRn test passed in automatic mode
+without the former Vulkan extension failure. That validates this route, not
+every direct OpenXR, SteamVR, or OpenComposite route.
 
 For OpenVR through XRizer, the fallback remains:
 

@@ -77,14 +77,32 @@ the i686 executables to exercise the 32-bit path.
 | Default X11/XWayland control | Pending |
 | 64-bit native Wayland D3D11 | Passed locally: WineWayland loaded with X11 disabled, NVIDIA device creation reached feature level 11.1, and a one-frame mailbox swapchain presented without a Vulkan, DXGI, or device-loss error |
 | 32-bit standalone D3D11 diagnostic | Not accepted: both programs returned 3; device creation reached feature level 11.1, while the swapchain log ended with `VK_ERROR_OUT_OF_DEVICE_MEMORY`. The device result matches the historical Alpha 1/2 harness limitation and is not attributed to Alpha 4 without a controlled regression |
-| OpenVR → XRizer → WiVRn in `auto` | Pending; this is the primary test for the new WineWayland XR capability repair |
+| OpenVR → XRizer → WiVRn in `auto` | Passed on 2026-07-25: with no WineOpenXR override, VRChat reached `FOCUSED`, rendered and tracked correctly for about 5 minutes 50 seconds, and exited cleanly with no Vulkan, DXGI, OpenXR, device-loss, or graphics-initialization error |
 | Scoped `PROTON_XR_MODE=xrizer` fallback | Pending; Alpha 3 remains the known-good comparison |
-| Controller and WineOpenXR lifecycle fixes | Pending |
-| RTSP/media playback | Pending |
+| Controller and WineOpenXR lifecycle fixes | Passed for this route: the expected game controller mapping worked, WineOpenXR probed and unloaded before device creation, XRizer owned the application session, and ordinary shutdown reached `EXITING`; forced termination and overlapping launches remain untested |
+| RTSP/media playback | Limited pass on 2026-07-25: ordinary YouTube video/audio, one seek, one pause/resume, and a short RTSP playback check worked; broader protocols, formats, livestream duration, and stress coverage remain pending |
 
-The local D3D11 smokes ran in `auto`, but no active OpenXR runtime was available.
-WineOpenXR and XRizer handled that condition without blocking the successful
-64-bit graphics path. This is not playback or XR acceptance.
+The active-runtime log records `XR mode: auto`, no `wineopenxr=d` override,
+WineWayland without Winex11, successful NVIDIA device creation, XRizer
+`FOCUSED`, and an orderly `STOPPING` → `IDLE` → `EXITING` shutdown. The prior
+Alpha 3 automatic route failed with `VK_ERROR_EXTENSION_NOT_PRESENT`; Alpha 4
+recorded no `VK_ERROR`.
+
+Its warning profile does not implicate the two-line capability repair. The
+unchanged RTSP DXVK emitted 243 image-relocation diagnostics and three
+shared-handle warnings; accepted Alpha 3 emitted the same families. Five
+GStreamer cleanup assertions exactly match Alpha 3. Two additional
+`gst_caps_get_size` assertions appeared during the extra RTSP check, but the
+relevant call sites are unchanged from the RTSP Wine base and playback
+continued. Treat those as an inherited RTSP media-path watch item unless a
+same-stream stock-RTSP control or a visible failure shows otherwise. XRizer
+binding warnings and Steam Runtime, launcher, and Discord-bridge messages are
+external to this distribution's patch set.
+
+The generated Proton log header still reports the RTSP base version while the
+tool path reports Alpha 4. This does not affect execution, but the public
+artifact should use an unambiguous diagnostic version if that can be changed
+without altering compatibility-prefix semantics.
 
 ## Published Alpha 3 historical status
 
