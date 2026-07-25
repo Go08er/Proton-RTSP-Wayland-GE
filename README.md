@@ -59,16 +59,16 @@ Keep the matching source archive with the binary.
 
 ### NixOS
 
-Add the tag-pinned repository as a flake input:
+Add the Alpha 3 package-definition commit as a flake input:
 
 ```nix
 inputs.proton-rtsp-wayland-ge.url =
-  "github:Go08er/Proton-RTSP-Wayland-GE/v11.1.0-alpha.3";
+  "github:Go08er/Proton-RTSP-Wayland-GE/291e4562189f337a258ccad2e0abced1df0e76fe";
 inputs.proton-rtsp-wayland-ge.inputs.nixpkgs.follows = "nixpkgs";
 ```
 
-The tagged URL stays on Alpha 3. Omit `/v11.1.0-alpha.3` to follow the default
-branch instead.
+The commit-pinned URL stays on the verified Alpha 3 package definition. The
+bare `github:Go08er/Proton-RTSP-Wayland-GE` URL follows the default branch.
 
 Then add its default package to `programs.steam.extraCompatPackages`:
 
