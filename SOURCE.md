@@ -2,7 +2,7 @@
 
 # Corresponding source
 
-A future Alpha 3 binary archive must be accompanied by:
+The Alpha 3 binary archive is accompanied by:
 
 - `Proton-RTSP-Wayland-GE-Alpha3-source.tar.gz`
 - `Proton-RTSP-Wayland-GE-Alpha3-source.tar.gz.sha512sum`

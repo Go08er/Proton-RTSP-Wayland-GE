@@ -1,6 +1,6 @@
 <!-- SPDX-License-Identifier: BSD-3-Clause -->
 
-# Proton-RTSP-Wayland-GE Alpha 3 development candidate
+# Proton-RTSP-Wayland-GE Alpha 3 release candidate
 
 This compatibility tool lets Linux players run their Steam library on native Wayland from an RTSP Proton base, avoiding XWayland scaling blur and including a tested `PROTON_XR_MODE=xrizer` OpenVR-to-XRizer path.
 
@@ -15,9 +15,12 @@ This compatibility tool lets Linux players run their Steam library on native Way
 
 Alpha 3's 110-patch GE master source replay has been audited, built, and
 artifact-verified. A quick comparison test on July 24 found it performed
-comparably to Alpha 2 with no observed regression; broader runtime testing has
-not been completed. Back up important saves and compatdata prefixes before
-changing compatibility tools.
+comparably to Alpha 2 with no observed regression. The exact packaged release
+candidate also passed a focused VRChat smoke test covering native-Wayland
+XRizer startup, one world transition, ordinary YouTube playback with one seek
+and pause/resume, clean exit, and WiVRn stability. Minimize/restore,
+livestreams, and broader XR routes remain untested. Back up important saves and
+compatdata prefixes before changing compatibility tools.
 
 ## Installation
 
