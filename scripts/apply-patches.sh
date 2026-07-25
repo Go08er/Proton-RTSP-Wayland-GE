@@ -3,7 +3,7 @@
 set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-WORK_ROOT="${WORK_ROOT:-/tmp/proton-rtsp-wayland-ge-alpha4-11-3}"
+WORK_ROOT="${WORK_ROOT:-/tmp/proton-rtsp-wayland-ge-beta1-11-3}"
 SOURCES_DIR="${SOURCES_DIR:-$WORK_ROOT/sources}"
 RTSP_TREE="${RTSP_TREE:-$SOURCES_DIR/proton-ge-rtsp}"
 GE_TREE="${GE_TREE:-$SOURCES_DIR/proton-ge-custom}"
@@ -15,7 +15,7 @@ OPENXR_INTEGRATION_PATCH="$ROOT_DIR/patches/$RTSP_WINEOPENXR_INTEGRATION_PATCH"
 OPENXR_SESSION_PATCH="$ROOT_DIR/patches/$RTSP_WINEOPENXR_SESSION_PATCH"
 STEAM_INPUT_ADAPTER_PATCH="$ROOT_DIR/patches/$RTSP_STEAM_INPUT_ADAPTER_PATCH"
 WINEWAYLAND_XR_PATCH="$ROOT_DIR/patches/$RTSP_WINEWAYLAND_XR_PATCH"
-ALPHA4_PATCH="$ROOT_DIR/patches/$PROTON_ALPHA4_PATCH"
+BETA1_PATCH="$ROOT_DIR/patches/$PROTON_BETA1_PATCH"
 PIPER_PATCH="$ROOT_DIR/patches/piper-phonemize-pin.patch"
 PREPARED_STATE="$WORK_ROOT/.prepared"
 
@@ -217,7 +217,7 @@ require_sha256 "$OPENXR_INTEGRATION_PATCH" "$RTSP_WINEOPENXR_INTEGRATION_SHA256"
 require_sha256 "$OPENXR_SESSION_PATCH" "$RTSP_WINEOPENXR_SESSION_SHA256"
 require_sha256 "$STEAM_INPUT_ADAPTER_PATCH" "$RTSP_STEAM_INPUT_ADAPTER_SHA256"
 require_sha256 "$WINEWAYLAND_XR_PATCH" "$RTSP_WINEWAYLAND_XR_SHA256"
-require_sha256 "$ALPHA4_PATCH" "$PROTON_ALPHA4_SHA256"
+require_sha256 "$BETA1_PATCH" "$PROTON_BETA1_SHA256"
 mapfile -t WAYLAND_PATCHES < <(
   find "$PATCH_BUNDLE" -maxdepth 1 -type f -name '*.patch' -print | LC_ALL=C sort
 )
@@ -231,8 +231,8 @@ git -C "$RTSP_TREE" apply --check "$ROOT_DIR/patches/proton-alpha2.patch"
 git -C "$RTSP_TREE" apply "$ROOT_DIR/patches/proton-alpha2.patch"
 git -C "$RTSP_TREE" apply --check "$ROOT_DIR/patches/proton-alpha3.patch"
 git -C "$RTSP_TREE" apply "$ROOT_DIR/patches/proton-alpha3.patch"
-git -C "$RTSP_TREE" apply --check "$ALPHA4_PATCH"
-git -C "$RTSP_TREE" apply "$ALPHA4_PATCH"
+git -C "$RTSP_TREE" apply --check "$BETA1_PATCH"
+git -C "$RTSP_TREE" apply "$BETA1_PATCH"
 grep -Fqx "XALIA_ZIP_SHA256 := $XALIA_ZIP_SHA256" "$RTSP_TREE/Makefile.in" \
   || fail "prepared Makefile does not contain the pinned Xalia archive hash"
 
@@ -258,9 +258,9 @@ git -c user.name='Proton RTSP Wayland Build' \
     -C "$WINE_TREE" am --3way --keep-cr "$WINEWAYLAND_XR_PATCH"
 
 [[ "$(git -C "$WINE_TREE" rev-list --count "$RTSP_WINE_BASE..HEAD")" == "$FINAL_WINE_PATCH_COUNT" ]] \
-  || fail "Wine patch count does not match the audited Alpha 4 series"
+  || fail "Wine patch count does not match the audited Beta 1 series"
 [[ "$(git -C "$WINE_TREE" rev-parse 'HEAD^{tree}')" == "$FINAL_WINE_TREE" ]] \
-  || fail "prepared Wine tree does not match the deterministic Alpha 4 lock"
+  || fail "prepared Wine tree does not match the deterministic Beta 1 lock"
 [[ "$(git -C "$WINE_TREE" diff-tree --no-commit-id --name-only -r HEAD)" == \
     "dlls/winewayland.drv/vulkan.c" ]] \
   || fail "WineWayland XR repair changed an unexpected path"
@@ -304,9 +304,9 @@ require_expected_untracked_roots
 diff -qr --no-dereference "$GE_TREE/locale" "$RTSP_TREE/locale" > /dev/null \
   || fail "copied locale tree differs from the pinned GE source"
 [[ "$(tracked_diff_sha256 root)" == "$FINAL_RTSP_TRACKED_DIFF_SHA256" ]] \
-  || fail "prepared Proton tracked diff does not match the Alpha 4 lock"
+  || fail "prepared Proton tracked diff does not match the Beta 1 lock"
 [[ "$(tracked_diff_sha256 wineopenxr)" == "$FINAL_WINEOPENXR_DIFF_SHA256" ]] \
-  || fail "prepared WineOpenXR diff does not match the Alpha 4 lock"
+  || fail "prepared WineOpenXR diff does not match the Beta 1 lock"
 
 piper_status="$(git -C "$PIPER_TREE" status --porcelain --untracked-files=all)"
 [[ "$piper_status" == " M CMakeLists.txt" ]] \

@@ -2,7 +2,7 @@
 
 # GE-Proton11-3 Wayland selection
 
-Alpha 4 selects 138 files from
+Beta 1 selects 138 files from
 `patches/wine-hotfixes/wine-wayland/` at annotated release
 `GE-Proton11-3`, peeled commit
 `8c8003f7f5473d883fbe1bc7ac070c79955754e8`.

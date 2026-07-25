@@ -1,7 +1,7 @@
 From a0b489b6f64219c27cd6581ce53703c90f8c985e Mon Sep 17 00:00:00 2001
 From: Go08er <149829787+Go08er@users.noreply.github.com>
 Date: Sat, 25 Jul 2026 11:02:54 -0500
-Subject: [PATCH] proton: Prepare the GE-Proton11-3 Alpha 4 launcher
+Subject: [PATCH] proton: Prepare the GE-Proton11-3 Beta 1 launcher
 
 Advance the prefix identity and adapt GE-Proton11-3 native-Wayland Steam Input suppression to the RTSP launcher. Force Steam Input off for WineWayland, select the game AppID while it runs, and restore Steam global input routing afterward.
 ---
@@ -9,7 +9,7 @@ Advance the prefix identity and adapt GE-Proton11-3 native-Wayland Steam Input s
  1 file changed, 45 insertions(+), 5 deletions(-)
 
 diff --git a/proton b/proton
-index 83bf4432..23ebf939 100755
+index c3d73f239afd8555af55c75576b26070130b36d4..c6bb23c06587196b8594fdd0d7c97107f0b8ce9c 100755
 --- a/proton
 +++ b/proton
 @@ -45,7 +45,7 @@ from random import randrange
@@ -29,7 +29,7 @@ index 83bf4432..23ebf939 100755
          self.dlloverrides = {
                  "steam.exe": "b", #always use our special built-in steam.exe
                  "dotnetfx35.exe": "b", #replace the broken installer, as does Windows
-@@ -1949,10 +1950,13 @@ class Session:
+@@ -1936,10 +1937,13 @@ class Session:
              self.env["WINE_DISABLE_FULLSCREEN_HACK"] = "1"
              self.env.setdefault("WINE_MOVE_HACK", "1")
              self.env["PROTON_USE_XALIA"] = "0"
@@ -46,7 +46,7 @@ index 83bf4432..23ebf939 100755
                  if "SDL_GAMECONTROLLER_IGNORE_DEVICES" in self.env:
                      del self.env["SDL_GAMECONTROLLER_IGNORE_DEVICES"]
                  if "SteamVirtualGamepadInfo" in self.env:
-@@ -2098,6 +2102,32 @@ class Session:
+@@ -2084,6 +2088,32 @@ class Session:
              local_env = self.env
          return subprocess.call(args, env=local_env, stderr=self.log_file, stdout=self.log_file)
  
@@ -79,7 +79,7 @@ index 83bf4432..23ebf939 100755
      def run(self):
          if shutil.which('steam-runtime-launcher-interface-0') is not None:
              adverb = ['steam-runtime-launcher-interface-0', 'proton']
-@@ -2128,7 +2158,17 @@ class Session:
+@@ -2114,7 +2144,17 @@ class Session:
              else:
                  argv = [g_proton.wine_bin, "c:\\windows\\system32\\steam.exe"]
  

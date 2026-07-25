@@ -1,8 +1,9 @@
 <!-- SPDX-License-Identifier: BSD-3-Clause -->
 
-# Proton-RTSP-Wayland-GE Alpha 4 development candidate
+# Proton-RTSP-Wayland-GE Beta 1 candidate
 
-Run Steam games on native Wayland from the RTSP Proton 11 base, with an explicit OpenVR-to-XRizer fallback and the released GE-Proton11-3 Wayland work.
+Run Steam games on native Wayland from the RTSP Proton 11 base with the
+released GE-Proton11-3 Wayland work.
 
 ## Why you'd want it
 
@@ -14,24 +15,33 @@ Run Steam games on native Wayland from the RTSP Proton 11 base, with an explicit
 
 ## Current status
 
-Alpha 4 is an unpublished development candidate pinned to the exact
+Beta 1 is an unpublished release candidate pinned to the exact
 `GE-Proton11-3` release. It replays 138 selected GE Wine patches byte-for-byte,
 adapts GE's WineWayland controller and WineOpenXR session fixes to the older
 RTSP layout, and adds a two-line WineWayland XR capability repair intended to
-fix `VK_ERROR_EXTENSION_NOT_PRESENT` in automatic XR mode.
+fix `VK_ERROR_EXTENSION_NOT_PRESENT` on native Wayland.
+Its intended release tag is `v11.1.0-beta.1`.
 
-The deterministic source replay, fresh non-release build, and artifact gate
-pass. The verifier checked all 6,181 files, the media registry, licenses,
-launcher policy, filesystem safety, and private-path leakage. A local 64-bit
-D3D11 device and one-frame swapchain smoke also passed under native Wayland.
+For the Alpha 4 precursor, the deterministic source replay, fresh non-release
+build, and artifact gate passed. Its verifier checked all 6,181 files, the
+media registry, licenses, launcher policy, filesystem safety, and private-path
+leakage. A local 64-bit D3D11 device and one-frame swapchain smoke also passed
+under native Wayland.
 
-On 2026-07-25, VRChat through XRizer 0.5.0 and WiVRn passed in automatic mode
-without the former Vulkan extension failure. Rendering, tracking, controller
-mapping, audio, a world transition, ordinary YouTube playback with seek and
-pause/resume, a short RTSP check, and normal shutdown all worked. This covers
-that route only; direct Windows OpenXR, SteamVR, OpenComposite, broader media,
-and the default X11/XWayland path still need testing. The published Alpha 3
-remains the current download and known-good fallback.
+On 2026-07-25, the Alpha 4 precursor passed VRChat through XRizer 0.5.0 and
+WiVRn using Proton's normal XR routing, without the former Vulkan extension
+failure. Rendering, tracking, controller mapping, audio, a world transition,
+ordinary YouTube playback with seek and pause/resume, a short RTSP check, and
+normal shutdown all worked. Its warnings were inherited from unchanged RTSP
+components or external software; none implicated the project-authored
+WineWayland repair.
+
+Beta 1 removes the no-longer-needed project-specific XR selector and gives the
+generated Proton log an unambiguous build identity. Those changes do not alter
+the normal route that passed in Alpha 4, but the exact Beta 1 artifact still
+requires verification and a short game smoke before release. Direct Windows
+OpenXR, SteamVR, OpenComposite, broader media, and the default X11/XWayland
+path remain untested. Published Alpha 3 remains the current download.
 
 ## Install the published Alpha 3
 
@@ -42,7 +52,7 @@ It includes:
 - `Proton-RTSP-Wayland-GE-Alpha3.tar.gz`
 - `Proton-RTSP-Wayland-GE-Alpha3-source.tar.gz`
 
-There is no Alpha 4 release asset yet.
+There is no Beta 1 release asset yet.
 
 1. Exit Steam completely.
 2. Extract the release directory into:
@@ -74,7 +84,7 @@ Keep the matching source archive with the binary.
 ### NixOS: published Alpha 3 only
 
 The repository's Nix package intentionally remains pinned to the published
-Alpha 3 archive until an Alpha 4 asset and hash exist:
+Alpha 3 archive until a verified Beta 1 asset and hash exist:
 
 ```nix
 inputs.proton-rtsp-wayland-ge.url =
@@ -98,24 +108,24 @@ from the pinned Alpha 3 hash.
 | --- | --- |
 | Default Proton/XWayland | `%command%` |
 | Native Wayland; test this first | `PROTON_USE_WAYLAND=1 %command%` |
-| OpenVR through XRizer and a native OpenXR runtime | `PROTON_XR_MODE=xrizer PROTON_USE_WAYLAND=1 %command%` |
 | Select a compositor output | `PROTON_WAYLAND_MONITOR=<output-name> PROTON_USE_WAYLAND=1 %command%` |
 | Compact native-Wayland log | `PROTON_LOG=1 WINEDEBUG=-all,+timestamp,+pid,+tid,+loaddll PROTON_USE_WAYLAND=1 %command%` |
-| Compact XRizer log | `PROTON_LOG=1 WINEDEBUG=-all,+timestamp,+pid,+tid,+loaddll PROTON_XR_MODE=xrizer PROTON_USE_WAYLAND=1 %command%` |
 
 `PROTON_ENABLE_WAYLAND=1` remains an alias for
 `PROTON_USE_WAYLAND=1`. NTSync is selected automatically when the kernel
 interface is available. Disable logging after testing because detailed Wine
 logs can become large and reduce performance.
 
+Beta 1 uses Proton's normal XR routing. Do not set `PROTON_XR_MODE`; this
+project no longer defines or consumes that variable. The tested VRChat →
+XRizer → WiVRn route works without it.
+
 ## Known issues and test focus
 
-- Alpha 3 automatic mode failed on the tested VRChat → XRizer 0.5.0 → WiVRn
+- Alpha 3's normal route failed on the tested VRChat → XRizer 0.5.0 → WiVRn
   26.6.2 route when DXVK requested Wine's XR Vulkan device extension through
-  WineWayland. Alpha 4 directly advertises that capability and passed the
-  same route in game. Other XR routes remain untested.
-- Keep `PROTON_XR_MODE=xrizer` as the fallback for an OpenVR application using
-  XRizer. Do not use it for a direct Windows OpenXR application.
+  WineWayland. The Alpha 4 precursor directly advertises that capability and
+  passed the same route in game. Other XR routes remain untested.
 - GE-Proton11-3 forces Steam Input off under WineWayland and temporarily
   selects the running game's AppID in the host Steam client. The expected
   controller mapping and ordinary exit passed once; overlapping launches and
@@ -129,15 +139,32 @@ logs can become large and reduce performance.
 
 1. Test `%command%` to establish the default-path baseline.
 2. Add `PROTON_USE_WAYLAND=1` to isolate the native Wayland path.
-3. Add `PROTON_XR_MODE=xrizer` only when the application uses OpenVR through XRizer.
-4. Add `PROTON_LOG=1` for a single diagnostic run.
+3. Add `PROTON_LOG=1` for a single diagnostic run.
+
+Advanced XRizer fallback: if an OpenVR application using XRizer still fails
+during XR initialization, try:
+
+```text
+WINEDLLOVERRIDES="wineopenxr=d" PROTON_USE_WAYLAND=1 %command%
+```
+
+`wineopenxr=d` disables Wine's Windows OpenXR bridge for that launch so XRizer
+can be the only Windows-to-host XR bridge. It does not install XRizer or select
+the host OpenXR runtime. Remove it after troubleshooting and for direct Windows
+OpenXR applications; do not treat it as the default for SteamVR or
+OpenComposite. Those routes may fail while WineOpenXR is disabled.
+
+If launch options already set `WINEDLLOVERRIDES`, add `;wineopenxr=d` inside
+the same quoted value instead of defining the variable twice.
 
 Sanitize logs before posting them — see [`docs/REPORTING.md`](docs/REPORTING.md).
 
 ## Repository layout and provenance
 
 The public `alpha3` branch and release remain immutable comparison points.
-Local `alpha4` carries the GE-Proton11-3 integration without changing Alpha 3.
+The tested local `alpha4` branch remains immutable evidence. Local `beta1`
+promotes that GE-Proton11-3 integration and retires the custom XR selector
+without changing either earlier branch.
 Small upstream contributions remain separate from release assembly; see
 [`docs/UPSTREAM-MRS.md`](docs/UPSTREAM-MRS.md).
 
@@ -145,7 +172,7 @@ Small upstream contributions remain separate from release assembly; see
 - RTSP Wine base: `fd920bd63abb7bf8b52b0f8e40da922ab9e784a4`
 - GE-Proton11-3 peeled commit: `8c8003f7f5473d883fbe1bc7ac070c79955754e8`
 - GE-Proton11-3 Wine: `9578fa3613f3379179b576968bc77c8161ab6ea8`
-- Final Alpha 4 Wine tree: `f795acc107bfff20ee6c9442beb151ed9be4ae84`
+- Final Beta 1 Wine tree: `f795acc107bfff20ee6c9442beb151ed9be4ae84`
 
 See [`SOURCE.md`](SOURCE.md) for the complete source record.
 

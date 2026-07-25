@@ -7,7 +7,8 @@ When reporting a problem, include:
 - whether XWayland or native Wayland was used;
 - the game API: OpenVR, OpenXR, D3D11, D3D12, or Vulkan;
 - the XR bridge and native runtime, if applicable;
-- whether the problem also occurs in the default `auto` XR mode;
+- whether the problem also occurs with normal XR routing and no WineOpenXR
+  DLL override;
 - a minimal, sanitized log excerpt surrounding the first relevant error.
 
 ### Sanitize logs before sharing

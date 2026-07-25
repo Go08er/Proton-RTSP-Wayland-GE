@@ -2,13 +2,13 @@
 
 # Source and redistribution notice
 
-Proton-RTSP-Wayland-GE Alpha 4 is an unpublished, unofficial assembly based on
+Proton-RTSP-Wayland-GE Beta 1 is an unpublished, unofficial assembly based on
 the projects listed below. Published Alpha 3 remains available separately and
 retains its own immutable source record. This project is not affiliated with
 or endorsed by Valve, CodeWeavers, GloriousEggroll, SpookySkeletons, Khronos,
 XRizer, WiVRn, Monado, or VRChat.
 
-## Alpha 4 pinned revisions
+## Beta 1 pinned revisions
 
 - RTSP Proton: `SpookySkeletons/proton-ge-rtsp` at
   `3b4a5f407a5e0cabeef6d3757f29a23f277b429a`
@@ -31,12 +31,12 @@ XRizer, WiVRn, Monado, or VRChat.
 - Xalia SDL3-CS:
   `e26a111c1b90301e37475a4dfb6f5ce47447d677`
 
-Alpha 4 carries 138 selected Wine patches byte-for-byte from the pinned GE
+Beta 1 carries 138 selected Wine patches byte-for-byte from the pinned GE
 release, plus its exact WineOpenXR decoupling patch. The separate
 WineOpenXR session-lifetime patch is a source-equivalent backport from the
 same release. The Steam controller patch is a semantic adapter: the older RTSP
 Wine layout routes cfgmgr32 enumeration through SetupAPI, so only GE's SetupAPI
-half is required. The two-line WineWayland VR capability repair and Alpha 4
+half is required. The two-line WineWayland VR capability repair and Beta 1
 launcher integration are project-authored. Exact attribution is retained in
 each format patch.
 

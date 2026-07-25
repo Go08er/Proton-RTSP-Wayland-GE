@@ -5,11 +5,12 @@
 ## Project launcher and build wiring
 
 - `proton-rtsp-wayland.patch` adds the native WineWayland build, xrandr and
-  locale packaging, launcher selection, and scoped `PROTON_XR_MODE=xrizer`
-  behavior while retaining RTSP's media stack.
+  locale packaging, launcher selection, and final DLL-override diagnostics
+  while retaining RTSP's media stack. Beta 1 does not define or consume
+  `PROTON_XR_MODE`.
 - `proton-alpha2.patch` and `proton-alpha3.patch` preserve the earlier prefix
   transitions.
-- `proton-alpha4.patch` advances the prefix to `11.0-103` and adapts
+- `proton-beta1.patch` advances the prefix to `11.0-103` and adapts
   GE-Proton11-3's WineWayland Steam Input AppID selection/reset behavior.
 - `piper-phonemize-pin.patch` replaces Piper's mutable dependency URL with the
   exact commit and archive hash used by the build.
@@ -38,7 +39,8 @@ trees and blobs, and every bundled GE patch before replay.
   SetupAPI, so importing GE's newer standalone cfgmgr32 hunk would duplicate
   the policy.
 - `winewayland-advertise-wine-vr-device-extensions.patch` is the
-  project-authored Alpha 4 repair. It makes WineWayland advertise the same
+  project-authored repair introduced for Alpha 4 and retained in Beta 1. It
+  makes WineWayland advertise the same
   synthetic `VK_WINE_openvr_device_extensions` and
   `VK_WINE_openxr_device_extensions` capabilities already exposed by Wine's
   X11 path.

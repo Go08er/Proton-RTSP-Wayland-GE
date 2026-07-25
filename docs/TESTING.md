@@ -20,11 +20,11 @@ i686-w64-mingw32-gcc -O2 -Wall -Wextra \
   -o tests/d3d11-swapchain-smoke-i686.exe tests/d3d11-swapchain-smoke.c -ld3d11 -ldxgi
 ```
 
-Run them with the built Alpha 4 game-test directory and a disposable prefix,
+Run them with the built Beta 1 game-test directory and a disposable prefix,
 never a live game prefix. For example:
 
 ```sh
-TOOL_DIR=/path/to/Proton-RTSP-Wayland-GE-Alpha4
+TOOL_DIR=/path/to/Proton-RTSP-Wayland-GE-Beta1
 mkdir -p /tmp/proton-rtsp-wayland-ge-d3d11-smoke
 STEAM_COMPAT_DATA_PATH=/tmp/proton-rtsp-wayland-ge-d3d11-smoke \
   PROTON_USE_WAYLAND=1 \
@@ -38,7 +38,7 @@ The device test exits after creating D3D11 successfully. The swapchain test
 opens a small window, presents one frame, and exits. Repeat the commands with
 the i686 executables to exercise the 32-bit path.
 
-## Alpha 4 game-test checklist
+## Beta 1 game-test checklist
 
 1. Run `scripts/verify.sh` on the built tool.
 2. Confirm the default launch path starts without an injected `wineopenxr=d`
@@ -48,16 +48,16 @@ the i686 executables to exercise the 32-bit path.
 5. Exercise 64-bit and 32-bit Wine startup.
 6. Exercise D3D11 device creation and a window/swapchain under native Wayland.
 7. Verify a desktop/non-XR title or mode before adding XR.
-8. For an OpenVR title using XRizer, test the default `auto` mode first. Confirm
-   whether Alpha 4's WineWayland VR capability repair allows graphics-device
-   initialization and XR session creation to succeed.
-9. If the `auto` route fails in a way consistent with the prior WineOpenXR
-   conflict, add `PROTON_XR_MODE=xrizer` and confirm the final DLL overrides
-   include `wineopenxr=d`.
+8. For an OpenVR title using XRizer, use normal Proton routing. Do not set
+   `PROTON_XR_MODE`; Beta 1 no longer defines or consumes it. Confirm
+   graphics-device initialization and XR session creation succeed.
+9. Only if that route fails in a way consistent with provider contention, try
+   `WINEDLLOVERRIDES="wineopenxr=d"` for one diagnostic launch and confirm the
+   final DLL overrides contain `wineopenxr=d`.
 10. Confirm the OpenXR session reaches its ready/focused state and shuts down
     cleanly in each route tested.
-11. Test direct Windows OpenXR, SteamVR, or OpenComposite only in `auto` unless
-    the route's design explicitly requires the fallback.
+11. Remove the raw override before testing direct Windows OpenXR, SteamVR, or
+    OpenComposite. Disabling WineOpenXR may break those routes.
 12. Re-test RTSP and other media playback used by the title; artifact and
     registry checks alone do not validate playback.
 13. Create and destroy more than one XR session or restart the XR application;
@@ -66,7 +66,24 @@ the i686 executables to exercise the 32-bit path.
     than Steam's desktop layout and that ordinary exit restores Steam's global
     input selection. Also run one XWayland/non-XR control.
 
-## Alpha 4 current status
+## Beta 1 candidate status
+
+| Path | Status |
+| --- | --- |
+| Source base | Exact Alpha 4 source commit `5b2a7e3a`; Alpha 4 branch, artifact, log, and report remain unchanged |
+| Pinned GE source and Wine replay | Unchanged: annotated `GE-Proton11-3`, 140 Wine commits, final Wine tree `f795acc107bfff20ee6c9442beb151ed9be4ae84` |
+| Launcher policy | Prepared: custom `PROTON_XR_MODE` parser and automatic DLL override removed; normal Proton XR routing remains |
+| Prepared Proton lock | Recomputed after a clean top-level patch replay; Wine and WineOpenXR locks remain unchanged |
+| Diagnostic identity | Prepared: the build wrapper will record the Beta 1, RTSP, and GE identities without changing prefix semantics |
+| Build and artifact verification | Pending for the exact Beta 1 candidate |
+| Game smoke | Pending for the exact Beta 1 candidate; Alpha 4 precursor evidence is recorded below |
+
+Promotion does not change the normal XR route that passed in Alpha 4: the
+retired selector injected a DLL override only when explicitly set to
+`xrizer`. A fresh build, verifier pass, and short no-custom-flag game smoke are
+still required before Beta 1 is published.
+
+## Alpha 4 precursor evidence
 
 | Path | Status |
 | --- | --- |
@@ -99,10 +116,10 @@ same-stream stock-RTSP control or a visible failure shows otherwise. XRizer
 binding warnings and Steam Runtime, launcher, and Discord-bridge messages are
 external to this distribution's patch set.
 
-The generated Proton log header still reports the RTSP base version while the
-tool path reports Alpha 4. This does not affect execution, but the public
-artifact should use an unambiguous diagnostic version if that can be changed
-without altering compatibility-prefix semantics.
+The generated Alpha 4 Proton log header reports the RTSP base version while
+the tool path reports Alpha 4. This does not affect execution. Beta 1 prepares
+an unambiguous diagnostic label in the distribution build wrapper without
+changing compatibility-prefix semantics.
 
 ## Published Alpha 3 historical status
 
@@ -166,19 +183,24 @@ above.
 
 ## Diagnostic logs
 
-Use `auto` when diagnosing a route that is supposed to retain Proton's Windows
-OpenXR bridge:
+Use normal Proton routing when diagnosing a route that is supposed to retain
+Wine's Windows OpenXR bridge:
 
 ```text
 PROTON_LOG=1 WINEDEBUG=-all,+timestamp,+pid,+tid,+loaddll PROTON_USE_WAYLAND=1 %command%
 ```
 
-For OpenVR through XRizer and a native OpenXR runtime, use the accepted scoped
-route:
+Only if OpenVR through XRizer fails in a way consistent with provider
+contention, try this low-level diagnostic fallback:
 
 ```text
-PROTON_LOG=1 WINEDEBUG=-all,+timestamp,+pid,+tid,+loaddll PROTON_XR_MODE=xrizer PROTON_USE_WAYLAND=1 %command%
+PROTON_LOG=1 WINEDEBUG=-all,+timestamp,+pid,+tid,+loaddll WINEDLLOVERRIDES="wineopenxr=d" PROTON_USE_WAYLAND=1 %command%
 ```
+
+This disables WineOpenXR for the entire launch. Remove it after diagnosis and
+before testing direct Windows OpenXR. Beta 1 does not parse
+`PROTON_XR_MODE`; occurrences later in this document are retained as
+historical evidence for older builds.
 
 Use plain `PROTON_LOG=1` only when the compact log is insufficient, then remove
 it for ordinary play. The prior Alpha 1 run produced an 18.2 MB, 198,216-line

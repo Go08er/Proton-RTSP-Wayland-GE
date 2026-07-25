@@ -2,19 +2,21 @@
 
 # Corresponding source
 
-## Alpha 4 development record
+## Beta 1 development record
 
-Alpha 4 is not published. If this candidate is accepted and packaged, its
-companion source files will be named:
+Beta 1 is not published. The intended tag is `v11.1.0-beta.1`. If this
+candidate is accepted and packaged, its files will be named:
 
-- `Proton-RTSP-Wayland-GE-Alpha4-source.tar.gz`
-- `Proton-RTSP-Wayland-GE-Alpha4-source.tar.gz.sha512sum`
+- `Proton-RTSP-Wayland-GE-Beta1.tar.gz`
+- `Proton-RTSP-Wayland-GE-Beta1.tar.gz.sha512sum`
+- `Proton-RTSP-Wayland-GE-Beta1-source.tar.gz`
+- `Proton-RTSP-Wayland-GE-Beta1-source.tar.gz.sha512sum`
 
 The build workflow invokes `scripts/package-corresponding-source.sh` only when
 `PACKAGE_RELEASE=1` is explicitly selected. The default build does not create
 release archives.
 
-The prepared Alpha 4 source consists of:
+The prepared Beta 1 source consists of:
 
 - RTSP Proton commit
   `3b4a5f407a5e0cabeef6d3757f29a23f277b429a`;
@@ -31,7 +33,7 @@ The prepared Alpha 4 source consists of:
   virtual-controller fix;
 - the project-authored two-line WineWayland OpenVR/OpenXR Vulkan capability
   repair;
-- the Alpha 4 launcher patch, dependency sources, X11 locale data, and
+- the Beta 1 launcher patch, dependency sources, X11 locale data, and
   license files.
 
 The resulting Wine history is locked to 140 commits above the RTSP Wine base
@@ -52,7 +54,8 @@ The published `v11.1.0-alpha.3` release remains paired with:
 - `Proton-RTSP-Wayland-GE-Alpha3-source.tar.gz.sha512sum`
 
 Those files describe Alpha 3's `a5c30efa` development snapshot and must not be
-relabeled as Alpha 4 source.
+relabeled as Beta 1 source. The tested Alpha 4 artifact and evidence likewise
+remain Alpha 4 and are not relabeled.
 
 ## External source locks
 

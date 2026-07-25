@@ -7,7 +7,7 @@ should be opened from the smallest applicable topic branch against RTSP commit
 `3b4a5f407a5e0cabeef6d3757f29a23f277b429a`
 (`rtsp-11.0-20260609-1`).
 
-Alpha 4 is also an integration branch, not a pull request branch. Its new work
+Beta 1 is also an integration branch, not a pull request branch. Its new work
 has not been proposed upstream:
 
 - the two-line WineWayland OpenVR/OpenXR capability mapping is already a
@@ -20,7 +20,7 @@ has not been proposed upstream:
 Do not bundle those three changes with the 138-patch GE release replay in a
 single upstream request.
 
-## Ready topic 1 — Explicit XRizer launcher mode
+## Retired historical topic — Explicit XRizer launcher mode
 
 - **Branch:** `feat/xr-mode-launcher`
 - **Commit:** `6c7eee9ce22cdb7cae54e374630c0e9322ce9274`
@@ -28,18 +28,18 @@ single upstream request.
 - **Diff:** one file, 14 added lines
 - **Depends on:** nothing
 - **Attribution:** project maintainer
+- **Status:** retained as Alpha 3 history; do not propose or merge
 
 XRizer implements the Windows OpenVR API over the host OpenXR runtime.
-Initializing Proton's Windows OpenXR bridge at the same time can make both
-paths compete for the runtime during graphics-device creation. The explicit
-mode disables `wineopenxr` only for an XRizer launch while leaving Proton's
-default behavior unchanged for SteamVR, OpenComposite, and direct Windows
-OpenXR applications.
+The selector was useful while diagnosing the older native-Wayland graphics
+failure, but Alpha 4 passed the same VRChat → XRizer 0.5.0 → WiVRn 26.6.2
+route with normal Proton routing after the WineWayland capability repair.
+Beta 1 therefore removes the selector from both the integrated launcher and
+the future contribution plan. A user can still apply Wine's raw
+`wineopenxr=d` DLL override for a one-off XRizer diagnostic without adding a
+project-specific Proton interface.
 
-The tested VRChat → XRizer 0.5.0 → WiVRn 26.6.2 route fails in automatic mode
-and passes with `PROTON_XR_MODE=xrizer`. This result is route-specific.
-
-## Ready topic 2 — WineOpenXR state decoupling
+## Ready topic — WineOpenXR state decoupling
 
 - **Branch:** `feat/wineopenxr-decouple`
 - **Commit:** `52b017cc7a2791bee38bc99b1e3e45f697cf1a1b`
@@ -95,9 +95,9 @@ their source layout to the maintainer's preference.
 
 The following also remain integration-only:
 
-- the published Alpha 3 110-patch GE bundle and Alpha 4 138-patch GE release
-  replay;
-- Alpha release naming and metadata;
+- the published Alpha 3 110-patch GE bundle, tested Alpha 4 precursor, and
+  Beta 1 138-patch GE release replay;
+- distribution release naming and metadata;
 - archive verification, privacy scanning, and corresponding-source packaging;
 - Nix packaging;
 - local job budgeting and diagnostics.

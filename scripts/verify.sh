@@ -4,9 +4,10 @@ set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 TOOL_DIR="${1:-}"
-BUILD_NAME="${BUILD_NAME:-Proton-RTSP-Wayland-GE-Alpha4}"
-DISPLAY_NAME="${DISPLAY_NAME:-Proton RTSP Wayland GE Alpha 4}"
+BUILD_NAME="${BUILD_NAME:-Proton-RTSP-Wayland-GE-Beta1}"
+DISPLAY_NAME="${DISPLAY_NAME:-Proton RTSP Wayland GE Beta 1}"
 SOURCE_ARCHIVE_NAME="${SOURCE_ARCHIVE_NAME:-${BUILD_NAME}-source.tar.gz}"
+GE_SOURCE_LABEL="${GE_SOURCE_LABEL:-GE-Proton11-3}"
 
 fail() {
   printf 'FAIL: %s\n' "$*" >&2
@@ -106,8 +107,12 @@ require_executable files/bin/wine
 require_executable files/bin/wineserver
 require_executable files/bin/xrandr
 
-grep -Eq '^[0-9]+[[:space:]]+proton-rtsp-' "$TOOL_DIR/version" \
-  || fail "version does not identify the RTSP Proton base"
+read -r version_epoch version_identity version_extra < "$TOOL_DIR/version"
+version_prefix="${BUILD_NAME}+proton-rtsp-"
+version_suffix="+${GE_SOURCE_LABEL}"
+[[ "$version_epoch" =~ ^[0-9]+$ && -z "${version_extra:-}" \
+    && "$version_identity" == "$version_prefix"*"$version_suffix" ]] \
+  || fail "version does not identify this build, the RTSP base, and the GE source"
 grep -Fq '"version" "2"' "$TOOL_DIR/toolmanifest.vdf" \
   || fail "tool manifest version is incorrect"
 grep -Fq '"commandline" "/proton %verb%"' "$TOOL_DIR/toolmanifest.vdf" \
@@ -229,12 +234,12 @@ PY
 
 grep -Fq 'self.check_environment("PROTON_USE_WAYLAND", "wayland")' "$TOOL_DIR/proton" \
   || fail "native Wayland flag handling is missing"
-grep -Fq 'self.env.get("PROTON_XR_MODE", "auto")' "$TOOL_DIR/proton" \
-  || fail "XR mode selector is missing"
-grep -Fq 'self.dlloverrides["wineopenxr"] = "d"' "$TOOL_DIR/proton" \
-  || fail "scoped XRizer override is missing"
+! rg -n 'PROTON_XR_MODE|self\.xr_mode' "$TOOL_DIR/proton" > /dev/null \
+  || fail "retired project-specific XR mode handling remains in the launcher"
+! grep -Fq 'self.dlloverrides["wineopenxr"] = "d"' "$TOOL_DIR/proton" \
+  || fail "project-injected WineOpenXR disable remains in the launcher"
 grep -Fqx 'CURRENT_PREFIX_VERSION="11.0-103"' "$TOOL_DIR/proton" \
-  || fail "Alpha 4 prefix identity is missing"
+  || fail "Beta 1 prefix identity is missing"
 grep -Fq 'self.env["PROTON_NO_STEAMINPUT"] = "1"' "$TOOL_DIR/proton" \
   || fail "GE-Proton11-3 WineWayland Steam Input policy is missing"
 grep -Fq 'self.force_steam_input_appid = True' "$TOOL_DIR/proton" \

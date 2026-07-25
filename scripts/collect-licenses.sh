@@ -6,7 +6,7 @@ ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 TOOL_DIR="${1:-}"
 SOURCE_TREE="${SOURCE_TREE:-}"
 PROJECT_DIR="${PROJECT_DIR:-$ROOT_DIR}"
-BUILD_NAME="${BUILD_NAME:-Proton-RTSP-Wayland-GE-Alpha4}"
+BUILD_NAME="${BUILD_NAME:-Proton-RTSP-Wayland-GE-Beta1}"
 XALIA_SOURCE_DIR="${XALIA_SOURCE_DIR:-}"
 
 fail() {

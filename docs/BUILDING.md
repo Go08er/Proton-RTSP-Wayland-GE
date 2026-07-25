@@ -4,7 +4,7 @@
 
 The scripts build from pinned upstream revisions in a neutral temporary path.
 This avoids embedding a maintainer's home-directory path in binaries and
-generated Wine registry data. Alpha 4 uses the exact annotated
+generated Wine registry data. Beta 1 uses the exact annotated
 `GE-Proton11-3` release at peeled commit
 `8c8003f7f5473d883fbe1bc7ac070c79955754e8`.
 
@@ -72,7 +72,7 @@ are never excluded from scanning.
 The default work directory is:
 
 ```text
-/tmp/proton-rtsp-wayland-ge-alpha4-11-3
+/tmp/proton-rtsp-wayland-ge-beta1-11-3
 ```
 
 Keep custom work paths similarly short. The pinned eSpeak NG phoneme compiler
@@ -92,7 +92,7 @@ The default is `PACKAGE_RELEASE=0`. It builds and verifies the compatibility
 tool at:
 
 ```text
-/tmp/proton-rtsp-wayland-ge-alpha4-11-3/sources/proton-ge-rtsp/build/Proton-RTSP-Wayland-GE-Alpha4
+/tmp/proton-rtsp-wayland-ge-beta1-11-3/sources/proton-ge-rtsp/build/Proton-RTSP-Wayland-GE-Beta1
 ```
 
 It does not create release archives, push commits, publish a GitHub release, or
@@ -122,7 +122,8 @@ Build products and fetched source trees are excluded from version control.
 Treat every release change as a new source state:
 
 1. Fetch the annotated tag and record both its tag object and peeled commit.
-2. Use a new work path, build name, display name, and prefix version.
+2. Use a new work path, build name, and display name. Advance the prefix
+   version only when prefix contents or migration behavior change.
 3. Regenerate the selected Wayland bundle from the tagged tree and audit every
    inclusion and exclusion.
 4. Copy exact GE patches under new filenames. Re-audit each RTSP layout

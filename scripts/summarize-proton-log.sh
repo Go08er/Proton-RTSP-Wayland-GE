@@ -48,7 +48,7 @@ printf 'Lines: %s\n' "$line_count"
 printf 'Bytes: %s\n' "$byte_count"
 
 show_matches "Launch routing" 20 \
-  '^(Proton:|SteamGameId:|Options:|XR mode:|Effective WINEDEBUG:|Final WINEDLLOVERRIDES:)'
+  '^(Proton:|SteamGameId:|Options:|Effective WINEDEBUG:|Final WINEDLLOVERRIDES:)'
 
 show_matches "Graphics and XR lifecycle" 120 \
   'ntsync: up and running|Initializing XRizer version|^[[:space:]]*(Head|Left|Right):|^info:  DXVK: [0-9a-f]|^info:  Found device:|^info:  Creating device:|^info:  (NVIDIA|AMD|Intel|llvmpipe).*:$|DXVK: Using [0-9]+ compiler threads|OpenXR session state changed|Received game texture'

@@ -1,14 +1,14 @@
 #!/usr/bin/env bash
 # SPDX-License-Identifier: BSD-3-Clause
 
-# Alpha 4 release input.  The annotated GE-Proton11-3 tag is recorded along
+# Beta 1 release input.  The annotated GE-Proton11-3 tag is recorded along
 # with its peeled commit and independently verified Git trees/blobs.
 RTSP_COMMIT="3b4a5f407a5e0cabeef6d3757f29a23f277b429a"
 RTSP_WINE_BASE="fd920bd63abb7bf8b52b0f8e40da922ab9e784a4"
 RTSP_PIPER_COMMIT="9d06b74959570772e8bcbe7a3f696664d2421167"
 FINAL_WINE_TREE="f795acc107bfff20ee6c9442beb151ed9be4ae84"
 FINAL_WINE_PATCH_COUNT="140"
-FINAL_RTSP_TRACKED_DIFF_SHA256="60d05800799acce05b9a219bb3595fcfec404c24fa476a0a8cb6a30ff8f83153"
+FINAL_RTSP_TRACKED_DIFF_SHA256="dd0c64b462d399fa267d6107b3aea7ca007792e109ade88b5252032d7949faa4"
 FINAL_WINEOPENXR_DIFF_SHA256="7e9b9fabd2eabea87c2ea02975281026904c683e10a5a9d65451265597e46b84"
 GE_TAG_OBJECT="1a65daf2708a7c8196f651ef4706a75deb56d7b5"
 GE_COMMIT="8c8003f7f5473d883fbe1bc7ac070c79955754e8"
@@ -38,8 +38,8 @@ RTSP_STEAM_INPUT_ADAPTER_PATCH="winewayland-steam-input-ge-proton11-3-rtsp-adapt
 RTSP_STEAM_INPUT_ADAPTER_SHA256="1a0bf54c6c9af9b0da26bed30f04ef9dd1352c58dd6ddc4b190dec1c427c4dd2"
 RTSP_WINEWAYLAND_XR_PATCH="winewayland-advertise-wine-vr-device-extensions.patch"
 RTSP_WINEWAYLAND_XR_SHA256="aa16c39363cee1ac14cce28ba8db23d657e7e4f67d59ffff8875afa9ecb1a0b1"
-PROTON_ALPHA4_PATCH="proton-alpha4.patch"
-PROTON_ALPHA4_SHA256="20f3204c0eaf2f2e6f6e8abf1a0a3d5182c39d9b0067e591790c9ced50493a6a"
+PROTON_BETA1_PATCH="proton-beta1.patch"
+PROTON_BETA1_SHA256="9cc44bc2cb2379a5fe210c6424665d47f144a93effadd45fd342bd098b060955"
 
 # Dependency gitlinks from the exact GE root tree above.  Preparation verifies
 # that each value still matches that tree before cloning or reusing it.
