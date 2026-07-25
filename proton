@@ -529,6 +529,7 @@ class Proton:
         self.user_settings_file = self.path("user_settings.py")
         self.wine_bin = self.bin_dir + "wine"
         self.wineserver_bin = self.bin_dir + "wineserver"
+        self.xrandr_bin = self.bin_dir + "xrandr"
         self.dist_lock = FileLock(self.path("dist.lock"), timeout=-1)
         self.host_pe_arch = "x86_64-windows"
         self.wow64_pe_arch = "i386-windows"
@@ -541,6 +542,7 @@ class Proton:
             self.bin_dir = self.path("files/bin-arm64/")
             self.wine_bin = self.bin_dir + "wine"
             self.wineserver_bin = self.bin_dir + "wineserver"
+            self.xrandr_bin = self.bin_dir + "xrandr"
 
     def path(self, d):
         return self.base_dir + d
@@ -1461,6 +1463,7 @@ class Session:
             self.dlloverrides["opencl"] = "n,d"
 
         self.compat_config = default_compat_config()
+        self.xrandr_bin = g_proton.xrandr_bin
         self.cmdlineappend = []
 
         if "STEAM_COMPAT_CONFIG" in os.environ:
@@ -1568,6 +1571,28 @@ class Session:
         else:
             self.compat_config.discard(config_name)
         return True
+
+    def get_primary_monitor(self):
+        try:
+            result = subprocess.run(
+                [self.xrandr_bin],
+                check=True,
+                capture_output=True,
+                text=True,
+            )
+        except FileNotFoundError:
+            log("xrandr is not installed or not in PATH.")
+            return None
+        except subprocess.CalledProcessError as err:
+            log("failed to run xrandr: %s" % err)
+            return None
+
+        for line in result.stdout.splitlines():
+            parts = line.split()
+            if len(parts) >= 3 and parts[1] == "connected" and parts[2] == "primary":
+                return parts[0]
+
+        return None
 
     def try_log_slr_versions(self):
         try:
@@ -1705,6 +1730,8 @@ class Session:
         self.check_environment("PROTON_DISABLE_NVAPI", "disablenvapi")
         self.check_environment("PROTON_FORCE_NVAPI", "forcenvapi")
         self.check_environment("PROTON_HIDE_APU", "hideapu")
+        self.check_environment("PROTON_ENABLE_WAYLAND", "wayland")
+        self.check_environment("PROTON_USE_WAYLAND", "wayland")
 
         if "noesync" in self.compat_config:
             self.env.pop("WINEESYNC", "")
@@ -1891,6 +1918,33 @@ class Session:
         if (os.environ.get("SteamGameId", 0) == "1183470"): # Imperiums: Greek Wars
             self.env.setdefault("WINE_MONO_HIDETYPES", "1")
         self.env.setdefault("WINE_MONO_HIDETYPES", "0")
+
+        if "wayland" in self.compat_config and "WAYLAND_DISPLAY" in self.env:
+            if "PROTON_WAYLAND_MONITOR" in self.env:
+                self.env["WAYLANDDRV_PRIMARY_MONITOR"] = self.env["PROTON_WAYLAND_MONITOR"]
+            if "WAYLANDDRV_PRIMARY_MONITOR" not in self.env:
+                primary_monitor = self.get_primary_monitor()
+                if primary_monitor:
+                    self.env["WAYLANDDRV_PRIMARY_MONITOR"] = primary_monitor
+            self.dlloverrides["winex11.drv"] = "d"
+            self.dlloverrides["winewayland.drv"] = "b"
+            self.env["WINE_USE_EGL"] = "1"
+            self.env["WINE_DISABLE_FULLSCREEN_HACK"] = "1"
+            self.env.setdefault("WINE_MOVE_HACK", "1")
+            self.env["PROTON_USE_XALIA"] = "0"
+            self.env.setdefault("PROTON_NO_STEAMINPUT", "1")
+            if nonzero(self.env["PROTON_NO_STEAMINPUT"]):
+                # Keep controller state coherent when Steam Input is disabled
+                # explicitly as well as when Wayland selects the default.
+                if "SDL_GAMECONTROLLER_IGNORE_DEVICES" in self.env:
+                    del self.env["SDL_GAMECONTROLLER_IGNORE_DEVICES"]
+                if "SteamVirtualGamepadInfo" in self.env:
+                    del self.env["SteamVirtualGamepadInfo"]
+                if "SDL_GAMECONTROLLER_ALLOW_STEAM_VIRTUAL_GAMEPAD" in self.env:
+                    del self.env["SDL_GAMECONTROLLER_ALLOW_STEAM_VIRTUAL_GAMEPAD"]
+            self.env.setdefault("XLOCALEDIR", g_proton.dist_dir + "share/X11/locale")
+            if "DISPLAY" in self.env:
+                del self.env["DISPLAY"]
 
         # NVIDIA software may check for the "DriverStore" by querying the
         # NGXCore\NGXPath registry key via `D3DDDI_QUERYREGISTRY_SERVICEKEY` for
