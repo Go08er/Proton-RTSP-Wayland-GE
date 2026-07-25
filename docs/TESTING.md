@@ -60,18 +60,23 @@ the i686 executables to exercise the 32-bit path.
 12. Re-test RTSP and other media playback used by the title; artifact and
     registry checks alone do not validate playback.
 
-## Alpha 3 source status
+## Alpha 3 current status
 
 | Path | Status |
 | --- | --- |
 | Pinned GE source | `a5c30efa111c6a834395e70da88c801536c68f6d`, selected from `master` on 2026-07-24 |
 | Active Wayland patch bundle | 110 files copied byte-for-byte from the pinned GE tree |
 | Wine replay | Passed: 110 linear commits above the RTSP Wine base, final tree `9be5057739e8c749bd3b438e402bd53cae12a0ce` |
-| Build and artifact verification | Pending |
-| Runtime and game tests | Pending; Alpha 2 remains the tested fallback |
+| Build and artifact verification | Passed on the staged Alpha 3 game-test artifact |
+| Quick game comparison | Informal pass on 2026-07-24: comparable to Alpha 2, with no observed regression |
+| OpenVR → XRizer → WiVRn in `auto` | Failed on Alpha 3: XRizer and WineOpenXR both initialized before DXVK device creation returned `VK_ERROR_EXTENSION_NOT_PRESENT` |
+| Broader runtime testing | Pending; minimize/restore and the no-XR control were not tested |
 | Focused regression | Minimize and restore behavior must be retested because selected patch `0092` changed |
 
-## Alpha 2 status
+## Historical Alpha 2 status
+
+These Alpha 2 results are retained as comparison evidence; they are not Alpha
+3 acceptance results.
 
 | Path | Status |
 | --- | --- |
@@ -101,7 +106,7 @@ shared-image warnings remain monitoring items, not demonstrated Alpha 2
 regressions. Repeated GStreamer cleanup assertions coincided with a known dead
 world-media URL and also existed in the working Alpha 1 control.
 
-## Alpha 1 regression evidence
+## Historical Alpha 1 regression evidence
 
 The accepted Alpha 1 build passed basic 64-bit and 32-bit Wine startup, D3D11
 device and swapchain smoke tests under native Wayland, and RTSP GStreamer
@@ -158,7 +163,7 @@ video, capture, or Spout failure; they did not disrupt that Alpha 1 XR session.
 
 Before sharing a log, remove personal paths, account and session identifiers, network information, command lines, environment values, hardware UUIDs, and unrelated registry content. Never publish an entire compatibility prefix.
 
-## Alpha 2 accepted runtime baseline
+## Historical Alpha 2 accepted runtime baseline
 
 | Area | Alpha 2 status | Scope |
 | --- | --- | --- |

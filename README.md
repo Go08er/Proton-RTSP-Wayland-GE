@@ -13,10 +13,11 @@ This compatibility tool lets Linux players run their Steam library on native Way
 
 ## Alpha status
 
-Alpha 3 is an unbuilt development candidate. Its 110-patch GE master source
-replay is audited, but build, artifact, and game acceptance remain pending.
-Alpha 2 remains the tested fallback. Back up important saves and compatdata
-prefixes before changing compatibility tools.
+Alpha 3's 110-patch GE master source replay has been audited, built, and
+artifact-verified. A quick comparison test on July 24 found it performed
+comparably to Alpha 2 with no observed regression; broader runtime testing has
+not been completed. Back up important saves and compatdata prefixes before
+changing compatibility tools.
 
 ## Installation
 
@@ -62,7 +63,7 @@ Keep the matching source archive with the binary.
 
 ## Known issues
 
-- The default `auto` mode fails on the tested VRChat / XRizer 0.5.0 / WiVRn route with `VK_ERROR_EXTENSION_NOT_PRESENT` during DXVK device creation. Use `PROTON_XR_MODE=xrizer` for that route.
+- On the tested VRChat OpenVR → XRizer 0.5.0 → WiVRn 26.6.2 native-Wayland route, Alpha 3 `auto` initialized both XRizer and WineOpenXR before DXVK device creation failed with `VK_ERROR_EXTENSION_NOT_PRESENT`; use `PROTON_XR_MODE=xrizer` for that route.
 - Do not use `PROTON_XR_MODE=xrizer` for a direct Windows OpenXR application. Keep SteamVR, OpenComposite, and other XR routes on `auto` unless you have tested that exact setup.
 - Native Wayland depends on compositor protocol support. Overlays, input methods, window management, and desktop integration can behave differently from XWayland.
 - Native Wayland disables Xalia and defaults Steam Input off for that process. You can try `PROTON_NO_STEAMINPUT=0` as a controlled compatibility test.
