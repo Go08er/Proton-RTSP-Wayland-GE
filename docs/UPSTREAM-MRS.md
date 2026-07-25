@@ -55,7 +55,7 @@ XRizer implements the Windows OpenVR API over the host OpenXR runtime, so initia
 - **branch:** `feat/wineopenxr-decouple`
 - **subject:** `wineopenxr: Decouple XR and VR registry state`
 - **depends on:** none
-- **attribution:** Proton-GE commit `20ce609c432d3cc5e6c6051680ee1a75e0930782`, carried unchanged at GE snapshot `9fad3bbe270409e67a8d2f4d123afc73d848306a`; RTSP makedep adapter by the project maintainer
+- **attribution:** Proton-GE commit `20ce609c432d3cc5e6c6051680ee1a75e0930782`, carried unchanged at GE snapshot `a5c30efa111c6a834395e70da88c801536c68f6d`; RTSP makedep adapter by the project maintainer
 
 **Commit body:**
 
@@ -63,9 +63,9 @@ OpenXR applications launched outside Steam need the XR registry cache and Vulkan
 
 **Proton-GE source mapping:**
 
-- `patches/wineopenxr-decouple-9fad3bbe.patch` → `Makefile.in`
+- `patches/wineopenxr-decouple-a5c30efa.patch` → `Makefile.in`
   - `@@ -1,6 +1,7 @@`: add the direct OpenXR loader link used by Proton-GE. This line is canceled by the RTSP adapter below and is not present in the proposed commit's final tree.
-- `patches/wineopenxr-decouple-9fad3bbe.patch` → `openxr.c`
+- `patches/wineopenxr-decouple-a5c30efa.patch` → `openxr.c`
   - `@@ -4,6 +4,8 @@`
   - `@@ -17,6 +19,50 @@`
   - `@@ -39,6 +85,7 @@ XrResult WINAPI wine_xrCreateInstance`
@@ -80,7 +80,7 @@ OpenXR applications launched outside Steam need the XR registry cache and Vulkan
   - `@@ -344,24 +397,30 @@ static VkResult WINAPI vk_create_device_callback`
   - `@@ -460,6 +519,7 @@ NTSTATUS is_available_instance_function_openxr`
   - `@@ -470,6 +530,8 @@ NTSTATUS is_available_instance_function_openxr`
-- `patches/wineopenxr-decouple-9fad3bbe.patch` → `openxr_loader.c`
+- `patches/wineopenxr-decouple-a5c30efa.patch` → `openxr_loader.c`
   - `@@ -1,7 +1,14 @@`
   - `@@ -9,10 +16,141 @@`
   - `@@ -110,11 +248,39 @@ static BOOL get_vulkan_extensions`
@@ -93,9 +93,9 @@ OpenXR applications launched outside Steam need the XR registry cache and Vulkan
   - `@@ -1782,6 +1967,7 @@ XrResult WINAPI xrCreateVulkanInstanceKHR`
   - `@@ -1978,8 +2164,14 @@ BOOL CDECL wineopenxr_init_registry`
   - `@@ -2000,9 +2192,83 @@ BOOL CDECL wineopenxr_init_registry`
-- `patches/wineopenxr-decouple-9fad3bbe.patch` → `openxr_loader.h`
+- `patches/wineopenxr-decouple-a5c30efa.patch` → `openxr_loader.h`
   - `@@ -52,6 +52,7 @@ struct is_available_instance_function_openxr_params`
-- `patches/wineopenxr-decouple-9fad3bbe.patch` → `wineopenxr.spec`
+- `patches/wineopenxr-decouple-a5c30efa.patch` → `wineopenxr.spec`
   - `@@ -3,3 +3,5 @@`: export the private registration entry points.
 
 **RTSP adapter source mapping:**

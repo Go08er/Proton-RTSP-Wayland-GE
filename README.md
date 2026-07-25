@@ -1,6 +1,6 @@
 <!-- SPDX-License-Identifier: BSD-3-Clause -->
 
-# Proton-RTSP-Wayland-GE Alpha 2
+# Proton-RTSP-Wayland-GE Alpha 3 development candidate
 
 This compatibility tool lets Linux players run their Steam library on native Wayland from an RTSP Proton base, avoiding XWayland scaling blur and including a tested `PROTON_XR_MODE=xrizer` OpenVR-to-XRizer path.
 
@@ -13,7 +13,10 @@ This compatibility tool lets Linux players run their Steam library on native Way
 
 ## Alpha status
 
-Alpha 2 is experimental, so expect breakage across some games, compositors, GPUs, and XR runtimes. Back up important saves and compatdata prefixes before changing compatibility tools.
+Alpha 3 is an unbuilt development candidate. Its 110-patch GE master source
+replay is audited, but build, artifact, and game acceptance remain pending.
+Alpha 2 remains the tested fallback. Back up important saves and compatdata
+prefixes before changing compatibility tools.
 
 ## Installation
 
@@ -32,13 +35,13 @@ Alpha 2 is experimental, so expect breakage across some games, compositors, GPUs
    ~/.var/app/com.valvesoftware.Steam/data/Steam/compatibilitytools.d/
    ```
 3. Start Steam again.
-4. Open a game's **Properties → Compatibility**, enable the option to force a compatibility tool, and select **Proton RTSP Wayland GE Alpha 2**.
+4. Open a game's **Properties → Compatibility**, enable the option to force a compatibility tool, and select **Proton RTSP Wayland GE Alpha 3**.
 
 When an archive and adjacent checksum are provided, verify them before extraction:
 
 ```sh
-sha512sum -c Proton-RTSP-Wayland-GE-Alpha2.tar.gz.sha512sum
-sha512sum -c Proton-RTSP-Wayland-GE-Alpha2-source.tar.gz.sha512sum
+sha512sum -c Proton-RTSP-Wayland-GE-Alpha3.tar.gz.sha512sum
+sha512sum -c Proton-RTSP-Wayland-GE-Alpha3-source.tar.gz.sha512sum
 ```
 
 Keep the matching source archive with the binary.
@@ -81,8 +84,8 @@ Sanitize logs before posting them — see [`docs/REPORTING.md`](docs/REPORTING.m
 
 - RTSP Proton commit: `3b4a5f407a5e0cabeef6d3757f29a23f277b429a`
 - RTSP Wine base commit: `fd920bd63abb7bf8b52b0f8e40da922ab9e784a4`
-- Proton-GE snapshot commit: `9fad3bbe270409e67a8d2f4d123afc73d848306a`
-- Proton-GE Wine commit: `c37dd7179b4c7716331d1f7ed401c469038fbe44`
+- Proton-GE snapshot commit: `a5c30efa111c6a834395e70da88c801536c68f6d`
+- Proton-GE Wine commit: `fc39a66977983a16a31318f98386386ec2dd6b55`
 - DXVK commit: `2cae043bdf767c8a7a2e0ee8d41537acfe773e8e`
 
 See [`SOURCE.md`](SOURCE.md) for the complete source and build record.

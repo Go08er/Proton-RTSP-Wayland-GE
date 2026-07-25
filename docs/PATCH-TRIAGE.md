@@ -1,6 +1,6 @@
 # Wayland patch triage
 
-This table classifies the Proton-GE `9fad3bbe` Wayland patch selection by its primary code path and plausible VRChat relevance.
+This table classifies the Proton-GE `a5c30efa` Wayland patch selection by its primary code path and plausible VRChat relevance.
 
 | # | subject | area | class | vrchat | note |
 | --- | --- | --- | --- | --- | --- |
@@ -109,9 +109,14 @@ This table classifies the Proton-GE `9fad3bbe` Wayland patch selection by its pr
 | 0183 | server: Use MOUSEEVENTF_MOVE if the cursor win changes. | server | INPUT | LIKELY | |
 | 0184 | win32u: Fix is_window_visible/drawable when topmost window is the desktop window of another thread. | win32u | CORE | LIKELY | |
 | 0185 | winewayland: Treat 0x0 windows as roleless. | winewayland.drv | CORE | LIKELY | |
+| 0187 | winewayland: Fix y coordinate of IME cursor rectangle. | winewayland.drv | IME | LIKELY | |
+| 0188 | fixup! winewayland: Do not recursively lock with NtUserMessageCall. | winewayland.drv | CORE | YES | Prevents a compositor-thread deadlock. |
+| 0190 | winewayland: Fix race between processing and requested configuration. | winewayland.drv | DISPLAY | LIKELY | |
+| 0192 | winewayland: Set an event queue name for the buffer queue. | winewayland.drv | PERIPHERAL | NO | Queue naming only. |
+| 0193 | winewayland: Log protocol errors when they occur. | winewayland.drv | PERIPHERAL | NO | Diagnostics only. |
 
 ## Summary
 
-- Class counts: CORE 15; INPUT 34; DISPLAY 24; IME 5; VR 0; PERIPHERAL 25; BUILD 2.
-- VRChat counts: YES 20; LIKELY 29; NO 14; UNKNOWN 42.
+- Class counts: CORE 16; INPUT 34; DISPLAY 25; IME 6; VR 0; PERIPHERAL 27; BUILD 2.
+- VRChat counts: YES 21; LIKELY 31; NO 16; UNKNOWN 42.
 - `UNKNOWN`: 0013, 0014, 0018, 0031, 0034, 0035, 0036, 0038, 0050, 0052, 0053, 0054, 0085, 0090, 0092, 0093, 0095, 0097, 0098, 0101, 0102, 0115, 0116, 0117, 0118, 0119, 0120, 0121, 0122, 0124, 0126, 0127, 0131, 0134, 0135, 0136, 0141, 0144, 0146, 0151, 0153, 0174.

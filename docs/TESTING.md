@@ -60,6 +60,17 @@ the i686 executables to exercise the 32-bit path.
 12. Re-test RTSP and other media playback used by the title; artifact and
     registry checks alone do not validate playback.
 
+## Alpha 3 source status
+
+| Path | Status |
+| --- | --- |
+| Pinned GE source | `a5c30efa111c6a834395e70da88c801536c68f6d`, selected from `master` on 2026-07-24 |
+| Active Wayland patch bundle | 110 files copied byte-for-byte from the pinned GE tree |
+| Wine replay | Passed: 110 linear commits above the RTSP Wine base, final tree `9be5057739e8c749bd3b438e402bd53cae12a0ce` |
+| Build and artifact verification | Pending |
+| Runtime and game tests | Pending; Alpha 2 remains the tested fallback |
+| Focused regression | Minimize and restore behavior must be retested because selected patch `0092` changed |
+
 ## Alpha 2 status
 
 | Path | Status |

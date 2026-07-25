@@ -2,26 +2,26 @@
 
 # Source and redistribution notice
 
-Proton-RTSP-Wayland-GE Alpha 2 is an unofficial assembly based on the projects
+Proton-RTSP-Wayland-GE Alpha 3 is an unofficial assembly based on the projects
 listed below. It is not affiliated with or endorsed by Valve, CodeWeavers,
 GloriousEggroll, SpookySkeletons, Khronos, XRizer, WiVRn, Monado, or VRChat.
-Alpha 2 is distributed as an experimental public prerelease with its matching
-corresponding-source archive.
+Alpha 3 is currently a local development candidate. It must not be presented
+as a tested release until its build, artifact, and game-test gates pass.
 
 ## Pinned source revisions
 
 - RTSP Proton: `SpookySkeletons/proton-ge-rtsp` at `3b4a5f407a5e0cabeef6d3757f29a23f277b429a`
 - RTSP Wine base: `fd920bd63abb7bf8b52b0f8e40da922ab9e784a4`
 - GE patch reference: `GloriousEggroll/proton-ge-custom`, development snapshot
-  `master-2026-07-13`, commit
-  `9fad3bbe270409e67a8d2f4d123afc73d848306a` (not GE-Proton11-2)
-- Proton-GE Wine commit: `c37dd7179b4c7716331d1f7ed401c469038fbe44`
+  `master-2026-07-24`, commit
+  `a5c30efa111c6a834395e70da88c801536c68f6d` (not GE-Proton11-2)
+- Proton-GE Wine commit: `fc39a66977983a16a31318f98386386ec2dd6b55`
 - DXVK: `2cae043bdf767c8a7a2e0ee8d41537acfe773e8e`
 - libxml2: `b7fa62cbe8ef0df5869e000d5b690bdedd07f33e`
 - libxkbcommon: `dd642359f8d43c09968e34ca7f1eb1121b2dfd70`
 - wayland-protocols: `810f1adaf33521cc55fc510566efba2a1418174f`
 - xrandr source archive: version `1.5.4`, SHA-256 `2cafccb2aaf2491a4068676117a0d4f90ab307724b96fffc54cd1da953779400`
-- piper-phonemize snapshot: `5ecbb9b59abcffe03a9775ae82491c9ac5037f4d`; Alpha 2 immutable archive SHA-256 `cd89aff6c3728776ffbf382bd6574876cc67d13402140fc5e3ec8c2bc813335f` (the earlier mutable branch archive is historical and is not an Alpha 2 input)
+- piper-phonemize snapshot: `5ecbb9b59abcffe03a9775ae82491c9ac5037f4d`; Alpha 3 immutable archive SHA-256 `cd89aff6c3728776ffbf382bd6574876cc67d13402140fc5e3ec8c2bc813335f` (the earlier mutable branch archive is historical and is not an Alpha 3 input)
 - eSpeak NG source: `0f65aa301e0d6bae5e172cc74197d32a6182200f`
 - Xalia 0.4.9: `6d946216c29052c29c660ad4cac950a6bd08a2b4`
 - SDL3-CS used by Xalia: `e26a111c1b90301e37475a4dfb6f5ce47447d677`
@@ -30,7 +30,7 @@ corresponding-source archive.
 - Wine Gecko 2.47.4 x86_64 archive SHA-256: `fd88fc7e537d058d7a8abf0c1ebc90c574892a466de86706a26d254710a82814`
 - Wine Mono 11.0.0 x86 archive SHA-256: `0cd723aa28897f7d7d2702eed6c72e4262255980e212bc2b3c94bfa234abe5fd`
 
-The Alpha 2 Wine patch list contains 105 Wayland-focused patches copied from
+The Alpha 3 Wine patch list contains 110 Wayland-focused patches copied from
 the pinned Proton-GE snapshot. The build also applies that snapshot's exact
 `patches/wineopenxr/wineopenxr_decouple.patch` to RTSP's standalone WineOpenXR
 source, followed by a hash-locked one-line RTSP build-system adapter that keeps

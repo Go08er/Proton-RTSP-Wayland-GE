@@ -4,9 +4,9 @@
 
 The scripts build from pinned upstream revisions in a neutral temporary path.
 This avoids embedding a maintainer's home-directory path in binaries and
-generated Wine registry data. Alpha 2 uses Proton-GE commit
-`9fad3bbe270409e67a8d2f4d123afc73d848306a`, selected from `master` on
-2026-07-13. This is a development snapshot, not GE-Proton11-2.
+generated Wine registry data. Alpha 3 uses Proton-GE commit
+`a5c30efa111c6a834395e70da88c801536c68f6d`, selected from `master` on
+2026-07-24. This is a development snapshot, not GE-Proton11-2.
 
 ## Requirements
 
@@ -92,7 +92,7 @@ The default is `PACKAGE_RELEASE=0`. It builds and verifies the compatibility
 tool at:
 
 ```text
-/tmp/proton-rtsp-wayland-ge-work/sources/proton-ge-rtsp/build/Proton-RTSP-Wayland-GE-Alpha2
+/tmp/proton-rtsp-wayland-ge-work/sources/proton-ge-rtsp/build/Proton-RTSP-Wayland-GE-Alpha3
 ```
 
 It does not create release archives, push commits, publish a GitHub release, or

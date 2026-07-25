@@ -5,11 +5,11 @@
 ## Source composition
 
 The build starts from the pinned `SpookySkeletons/proton-ge-rtsp` Proton 11
-tree. Alpha 2 applies an audited 105-patch Wine Wayland subset plus the current
+tree. Alpha 3 applies an audited 110-patch Wine Wayland subset plus the current
 WineOpenXR decoupling repair from Proton-GE development snapshot
-`9fad3bbe270409e67a8d2f4d123afc73d848306a`. It adds the matching Wayland build
+`a5c30efa111c6a834395e70da88c801536c68f6d`. It adds the matching Wayland build
 dependencies and X11 locale data while retaining the RTSP media/GStreamer
-configuration. The GE snapshot was selected from `master` on 2026-07-13; it is
+configuration. The GE snapshot was selected from `master` on 2026-07-24; it is
 not GE-Proton11-2.
 
 Native Wayland remains opt-in. Without `PROTON_USE_WAYLAND=1` or `PROTON_ENABLE_WAYLAND=1`, the launcher preserves the normal Proton path.
@@ -22,10 +22,10 @@ Default mode keeps Proton's ordinary XR behavior:
 PROTON_XR_MODE=auto
 ```
 
-In Alpha 2, the default path includes the pinned GE WineOpenXR repair applied
+In Alpha 3, the default path includes the pinned GE WineOpenXR repair applied
 to RTSP's standalone `wineopenxr` source. Upstream names the exact input
 `wineopenxr_decouple.patch`; its behavior on this RTSP base is not considered
-validated until the Alpha 2 game matrix passes.
+validated until the Alpha 3 game matrix passes.
 
 The GE patch is retained byte-for-byte. A separate one-line RTSP integration
 patch removes its redundant `UNIX_LIBS=-lopenxr_loader` assignment because
@@ -49,8 +49,8 @@ DXVK normally initializes both OpenVR and OpenXR extension providers. In the
 prior Alpha 1 OpenVR-to-XRizer test, Proton's `wineopenxr` provider attempted
 to use the same native runtime in parallel and graphics-device creation failed.
 `PROTON_XR_MODE=xrizer` adds `wineopenxr=d` to the final Wine DLL overrides for
-that process. It remains an explicit fallback while Alpha 2's repaired `auto`
-route is tested; the Alpha 1 result does not establish Alpha 2 behavior.
+that process. It remains an explicit fallback while Alpha 3's repaired `auto`
+route is tested; earlier results do not establish Alpha 3 behavior.
 
 This mode does not install XRizer, choose a native OpenXR runtime, or modify the default mode. A direct Windows OpenXR application should not use it.
 
