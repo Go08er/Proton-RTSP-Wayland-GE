@@ -128,9 +128,10 @@ XRizer → WiVRn route works without it.
 
 - Alpha 3's normal route failed on the tested VRChat → XRizer 0.5.0 → WiVRn
   26.6.2 route when DXVK requested Wine's XR Vulkan device extension through
-  WineWayland.
+  WineWayland; Beta 1 carries the repair.
 - GE-Proton11-3 forces Steam Input off under WineWayland and temporarily
-  selects the running game's AppID in the host Steam client.
+  selects the running game's AppID in the host Steam client; the expected
+  controller mapping and ordinary exit passed once.
 - Native Wayland depends on compositor protocol support. Overlays, input
   methods, and window management can differ from XWayland.
 - The RTSP media stack does not guarantee every codec, site, stream, or
