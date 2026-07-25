@@ -67,11 +67,12 @@ the i686 executables to exercise the 32-bit path.
 | Pinned GE source | `a5c30efa111c6a834395e70da88c801536c68f6d`, selected from `master` on 2026-07-24 |
 | Active Wayland patch bundle | 110 files copied byte-for-byte from the pinned GE tree |
 | Wine replay | Passed: 110 linear commits above the RTSP Wine base, final tree `9be5057739e8c749bd3b438e402bd53cae12a0ce` |
-| Build and artifact verification | Passed on the staged Alpha 3 game-test artifact |
+| Build and artifact verification | Passed for the packaged binary and corresponding-source release candidate; a neutral extraction passed the 6,181-file verifier and privacy scan |
 | Quick game comparison | Informal pass on 2026-07-24: comparable to Alpha 2, with no observed regression |
+| Packaged release-candidate smoke | Passed on 2026-07-24 under `PROTON_XR_MODE=xrizer`: native-Wayland startup, XR rendering/tracking/input/audio, one world transition, ordinary YouTube VOD playback with one seek and pause/resume, normal exit, and WiVRn/headset stability |
 | OpenVR → XRizer → WiVRn in `auto` | Failed on Alpha 3: XRizer and WineOpenXR both initialized before DXVK device creation returned `VK_ERROR_EXTENSION_NOT_PRESENT` |
-| Broader runtime testing | Pending; minimize/restore and the no-XR control were not tested |
-| Focused regression | Minimize and restore behavior must be retested because selected patch `0092` changed |
+| Broader runtime testing | Pending; minimize/restore, livestreams, the no-XR control, and direct OpenXR/SteamVR/OpenComposite routes were not tested |
+| Focused regression | Minimize and restore behavior remains untested even though selected patch `0092` changed |
 
 ## Historical Alpha 2 status
 

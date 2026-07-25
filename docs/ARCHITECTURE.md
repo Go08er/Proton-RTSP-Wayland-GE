@@ -24,8 +24,10 @@ PROTON_XR_MODE=auto
 
 In Alpha 3, the default path includes the pinned GE WineOpenXR repair applied
 to RTSP's standalone `wineopenxr` source. Upstream names the exact input
-`wineopenxr_decouple.patch`; its behavior on this RTSP base is not considered
-validated until the Alpha 3 game matrix passes.
+`wineopenxr_decouple.patch`. On the tested VRChat OpenVR → XRizer 0.5.0 →
+WiVRn 26.6.2 native-Wayland route, `auto` still initialized both XRizer and
+WineOpenXR before DXVK device creation failed with
+`VK_ERROR_EXTENSION_NOT_PRESENT`. This result is specific to that route.
 
 The GE patch is retained byte-for-byte. A separate one-line RTSP integration
 patch removes its redundant `UNIX_LIBS=-lopenxr_loader` assignment because
@@ -49,8 +51,8 @@ DXVK normally initializes both OpenVR and OpenXR extension providers. In the
 prior Alpha 1 OpenVR-to-XRizer test, Proton's `wineopenxr` provider attempted
 to use the same native runtime in parallel and graphics-device creation failed.
 `PROTON_XR_MODE=xrizer` adds `wineopenxr=d` to the final Wine DLL overrides for
-that process. It remains an explicit fallback while Alpha 3's repaired `auto`
-route is tested; earlier results do not establish Alpha 3 behavior.
+that process. The packaged Alpha 3 release candidate passed the tested route
+with this scoped mode; other XR routes remain untested.
 
 This mode does not install XRizer, choose a native OpenXR runtime, or modify the default mode. A direct Windows OpenXR application should not use it.
 

@@ -5,8 +5,9 @@
 Proton-RTSP-Wayland-GE Alpha 3 is an unofficial assembly based on the projects
 listed below. It is not affiliated with or endorsed by Valve, CodeWeavers,
 GloriousEggroll, SpookySkeletons, Khronos, XRizer, WiVRn, Monado, or VRChat.
-Alpha 3 is currently a local development candidate. It must not be presented
-as a tested release until its build, artifact, and game-test gates pass.
+Alpha 3 is currently a local release candidate. Its build, artifact, and
+focused VRChat smoke gates passed on 2026-07-24; broader compatibility testing
+remains incomplete.
 
 ## Pinned source revisions
 
