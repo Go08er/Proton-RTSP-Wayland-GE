@@ -45,18 +45,16 @@ YouTube VOD with audio, one seek, one pause/resume, and one short RTSP control.
 
 Direct Windows OpenXR, SteamVR, OpenComposite, broader media, and the default
 X11/XWayland path remain untested. Overlapping launches and forced termination
-also remain untested. Published Alpha 3 remains the current download.
+also remain untested. Beta 1 is ready for publication as the next download.
 
-## Install the published Alpha 3
+## Install Beta 1
 
-Download `v11.1.0-alpha.3` from
+Download `v11.1.0-beta.1` from
 [GitHub Releases](https://github.com/Go08er/Proton-RTSP-Wayland-GE/releases).
 It includes:
 
-- `Proton-RTSP-Wayland-GE-Alpha3.tar.gz`
-- `Proton-RTSP-Wayland-GE-Alpha3-source.tar.gz`
-
-There is no Beta 1 release asset yet.
+- `Proton-RTSP-Wayland-GE-Beta1.tar.gz`
+- `Proton-RTSP-Wayland-GE-Beta1-source.tar.gz`
 
 1. Exit Steam completely.
 2. Extract the release directory into:
@@ -74,25 +72,24 @@ There is no Beta 1 release asset yet.
    ~/.var/app/com.valvesoftware.Steam/data/Steam/compatibilitytools.d/
    ```
 3. Start Steam again.
-4. Open a game's **Properties → Compatibility**, enable the option to force a compatibility tool, and select **Proton RTSP Wayland GE Alpha 3**.
+4. Open a game's **Properties → Compatibility**, enable the option to force a compatibility tool, and select **Proton RTSP Wayland GE Beta 1**.
 
 Verify both archives before extraction:
 
 ```sh
-sha512sum -c Proton-RTSP-Wayland-GE-Alpha3.tar.gz.sha512sum
-sha512sum -c Proton-RTSP-Wayland-GE-Alpha3-source.tar.gz.sha512sum
+sha512sum -c Proton-RTSP-Wayland-GE-Beta1.tar.gz.sha512sum
+sha512sum -c Proton-RTSP-Wayland-GE-Beta1-source.tar.gz.sha512sum
 ```
 
 Keep the matching source archive with the binary.
 
-### NixOS: published Alpha 3 only
+### NixOS
 
-The repository's Nix package intentionally remains pinned to the published
-Alpha 3 archive until a verified Beta 1 asset and hash exist:
+The repository's Nix package is pinned to the verified Beta 1 archive:
 
 ```nix
 inputs.proton-rtsp-wayland-ge.url =
-  "github:Go08er/Proton-RTSP-Wayland-GE/291e4562189f337a258ccad2e0abced1df0e76fe";
+  "github:Go08er/Proton-RTSP-Wayland-GE/v11.1.0-beta.1";
 inputs.proton-rtsp-wayland-ge.inputs.nixpkgs.follows = "nixpkgs";
 
 programs.steam = {
@@ -104,7 +101,7 @@ programs.steam = {
 ```
 
 Rebuild NixOS and restart Steam. Nix rejects an archive whose bytes differ
-from the pinned Alpha 3 hash.
+from the pinned Beta 1 hash.
 
 ## Launch options
 
