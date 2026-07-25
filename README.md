@@ -9,9 +9,7 @@ released GE-Proton11-3 Wayland work.
 
 - Avoid XWayland scaling blur.
 - Use correct fractional scaling and per-monitor refresh rates.
-- Use native Wayland clipboard integration, which may improve copy and paste in VRChat.
 - Work better with Wayland-first compositors that have limited X11 support.
-- Remove an extra display-system hop, which may lower VR latency.
 
 ## Current status
 
