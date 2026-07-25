@@ -153,6 +153,7 @@ can be the only Windows-to-host XR bridge. It does not install XRizer or select
 the host OpenXR runtime. Remove it after troubleshooting and for direct Windows
 OpenXR applications; do not treat it as the default for SteamVR or
 OpenComposite. Those routes may fail while WineOpenXR is disabled.
+If the tested VRChat → XRizer → WiVRn route needs it, report that as a bug.
 
 If launch options already set `WINEDLLOVERRIDES`, add `;wineopenxr=d` inside
 the same quoted value instead of defining the variable twice.
