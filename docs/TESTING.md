@@ -146,3 +146,17 @@ texture-handle warnings should be investigated only against a reproducible
 video, capture, or Spout failure; they did not disrupt that Alpha 1 XR session.
 
 Before sharing a log, remove personal paths, account and session identifiers, network information, command lines, environment values, hardware UUIDs, and unrelated registry content. Never publish an entire compatibility prefix.
+
+## Current status
+
+| Area | Alpha 2 status | Scope |
+| --- | --- | --- |
+| Source composition | Pinned and replay-audited | RTSP base, 105 byte-matched GE Wayland patches, byte-matched WineOpenXR repair, and hash-locked one-line RTSP adapter |
+| Build and artifact checks | Passed locally | The staged tool passed source locks, licensing, media routing, metadata, link/permission safety, and a binary-safe privacy scan of 6,181 files |
+| Default X11/XWayland path | Runtime test pending | Basic process and non-XR game startup |
+| Native Wayland startup | Passed locally | 64-bit and 32-bit command execution used a disposable prefix |
+| Native Wayland D3D11 | 64-bit smoke passed | DXVK created a device and presented one frame; a separate new 32-bit probe also aborts on the Alpha 1 control and is not counted as a pass |
+| RTSP media playback | Runtime test pending | Artifact and registry checks do not prove playback compatibility; a dead world URL exercised only failure cleanup |
+| OpenVR → XRizer → WiVRn in `auto` | Failed locally | Both XRizer and WineOpenXR reached the active runtime; DXVK then failed device creation with `VK_ERROR_EXTENSION_NOT_PRESENT` |
+| OpenVR → XRizer → WiVRn with `PROTON_XR_MODE=xrizer` | Passed locally | Reached `FOCUSED`, ran for 5 minutes 19 seconds without reconnecting, and exited cleanly with no Vulkan, DXGI, OpenXR, device-loss, or OOM error |
+| Direct Windows OpenXR, SteamVR, and OpenComposite | Runtime test pending | Must remain in `auto` unless a route specifically requires the fallback |
