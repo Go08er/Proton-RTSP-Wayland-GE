@@ -22,6 +22,13 @@ and pause/resume, clean exit, and WiVRn stability. Minimize/restore,
 livestreams, and broader XR routes remain untested. Back up important saves and
 compatdata prefixes before changing compatibility tools.
 
+## Repository layout
+
+The additive `alpha3` branch preserves RTSP history and is the integration
+branch. Reproducible builds and release artifacts come from
+`release-engineering/alpha3-a5c30efa`. Future RTSP contributions use separate
+topic branches; see [`docs/UPSTREAM-MRS.md`](docs/UPSTREAM-MRS.md).
+
 ## Installation
 
 1. Exit Steam completely.
