@@ -9,6 +9,8 @@ This compatibility tool lets Linux players run their Steam library on native Way
 - Avoid XWayland scaling blur.
 - Use correct fractional scaling.
 - Let each monitor use its own refresh rate.
+- Use native Wayland clipboard integration, which may improve copy and paste in VRChat.
+- Avoid relying on limited XWayland integration in some Wayland-first compositors.
 - Remove an extra display-system hop, which may lower VR latency.
 
 ## Alpha status
