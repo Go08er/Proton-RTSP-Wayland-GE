@@ -26,7 +26,7 @@
   `WINEOPENXR_LDFLAGS`. Without this one-line adapter, the later assignment
   overwrites `ntdll.so` and the Unix bridge fails to link.
 - `ge11-wayland-series.txt` and `ge11-wayland/` retain the prior Alpha 1 patch
-  selection for historical review. Alpha 2 does not apply them.
+  selection for historical review. They are not applied.
 
 `scripts/apply-patches.sh` compares every bundled GE-derived patch byte-for-byte
 with the pinned Proton-GE checkout before applying the active Wayland set with
