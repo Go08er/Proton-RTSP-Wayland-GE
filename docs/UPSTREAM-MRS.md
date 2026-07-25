@@ -47,27 +47,32 @@ makedep wrapper already supplies the loader together with its required
 ## Draft topic — Native Wayland build and launcher wiring
 
 - **Branch:** `feat/wayland-build-wiring`
-- **Commit:** `ea52278033597395f07dde2a1f8171d1cf259397`
+- **Commit:** `a4c87c8b1a57a85876775f6b06bb941a187e9b77`
 - **Subject:** `proton: Enable native Wayland sessions`
-- **Diff:** `Makefile.in` and `proton`, 172 additions and one deletion
+- **Diff:** `.gitmodules`, `Makefile.in`, and `proton`, 182 additions and one
+  deletion
 - **Status:** local draft; do not open a pull request yet
 
-The draft contains the Wayland build rules and launcher behavior without
-adding incomplete submodule declarations. It expects the distribution layer
-to provide pinned libxml2, libxkbcommon, Wayland Protocols, X11 locale, xrandr,
-and Wine Wayland sources.
+The draft contains the Wayland build rules, launcher behavior, and repository
+declarations for libxml2, libxkbcommon, and Wayland Protocols. Those
+dependencies are inherent to the feature and must not be hidden from the
+upstream diff.
 
-Before proposing this topic upstream, agree with the RTSP maintainer on how
-those sources should be supplied. Then rebuild the topic from the same RTSP
-base using that integration method and verify a recursive clone plus build.
-The prior full version is retained locally as
-`local/wayland-build-wiring-full`; it adds three `.gitmodules` entries without
-their gitlinks and must not be pushed as a review-ready branch.
+The current commit declares those submodules but does not add their pinned
+gitlinks. It also expects X11 locale data and Wine-side Wayland work that are
+not present in the topic. The copied `libxkbcommon-1.7.0` branch hint is stale
+relative to the pinned GE 1.9.2 source and must be removed or corrected.
+
+Before proposing native Wayland upstream, agree with the RTSP maintainer on
+the source layout. The clean series is a source-prerequisite commit with
+matching gitlinks and locale data (or an accepted pinned-fetch alternative),
+a separate RTSP-Wine Wayland change with its Wine gitlink update, and finally
+the Makefile and launcher wiring. Verify the complete series from a recursive
+clone. Its cover note should call out the new dependencies and offer to adapt
+their source layout to the maintainer's preference.
 
 ## Local-only branches
 
-- `local/wayland-build-wiring-full` retains the complete distribution-oriented
-  Wayland source declarations.
 - `local/piper-phonemize-pin` retains the immutable Piper dependency pin. Its
   referenced Piper commit is unavailable from the upstream object inventory,
   so it is not a viable RTSP pull request.
