@@ -10,6 +10,8 @@ released GE-Proton11-3 Wayland work.
 - Avoid XWayland scaling blur.
 - Use correct fractional scaling and per-monitor refresh rates.
 - Work better with Wayland-first compositors that have limited X11 support.
+- Run the tested VRChat → XRizer → WiVRn route on native Wayland with
+  Proton's normal XR routing and no XR DLL override.
 
 ## Current status
 
