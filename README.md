@@ -47,6 +47,29 @@ sha512sum -c Proton-RTSP-Wayland-GE-Alpha3-source.tar.gz.sha512sum
 
 Keep the matching source archive with the binary.
 
+### NixOS
+
+Add this repository as a flake input:
+
+```nix
+inputs.proton-rtsp-wayland-ge.url =
+  "github:Go08er/Proton-RTSP-Wayland-GE";
+```
+
+Then declare its `steamcompattool` output in your NixOS configuration:
+
+```nix
+programs.steam = {
+  enable = true;
+  extraCompatPackages = [
+    inputs.proton-rtsp-wayland-ge.packages.x86_64-linux.default
+  ];
+};
+```
+
+Rebuild NixOS and restart Steam. The package is pinned to the exact Alpha 3
+release archive by SHA-512; Nix will reject mismatched bytes.
+
 ## Launch options
 
 | What you want | What to paste |
