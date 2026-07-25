@@ -37,11 +37,23 @@ components or external software; none implicated the project-authored
 WineWayland repair.
 
 Beta 1 removes the no-longer-needed project-specific XR selector and gives the
-generated Proton log an unambiguous build identity. Those changes do not alter
-the normal route that passed in Alpha 4, but the exact Beta 1 artifact still
-requires verification and a short game smoke before release. Direct Windows
-OpenXR, SteamVR, OpenComposite, broader media, and the default X11/XWayland
-path remain untested. Published Alpha 3 remains the current download.
+generated Proton log an unambiguous build identity. The exact 1,465,922,347-byte
+artifact passed its build-integrated and standalone verifiers, followed by the
+same verifier on the installed copy. Those checks covered all 6,181 regular
+files, 238 license and notice files, and 12 media schemes per registry view.
+
+During one VRChat game smoke on 2026-07-25, the log confirmed the Beta 1 build
+identity, WineWayland with Winex11 disabled, no `PROTON_XR_MODE`, WineOpenXR
+not disabled, XRizer reaching `FOCUSED`, and an orderly
+`STOPPING` → `IDLE` → `EXITING` shutdown. It contained no Vulkan-extension
+rejection or other `VK_ERROR`, device-loss, or crash signature, and its
+warning families matched the Alpha 4 run. Separately, the maintainer confirmed
+the expected controller mapping, game and world audio, a world transition, one
+YouTube VOD with audio, one seek, one pause/resume, and one short RTSP control.
+
+Direct Windows OpenXR, SteamVR, OpenComposite, broader media, and the default
+X11/XWayland path remain untested. Overlapping launches and forced termination
+also remain untested. Published Alpha 3 remains the current download.
 
 ## Install the published Alpha 3
 

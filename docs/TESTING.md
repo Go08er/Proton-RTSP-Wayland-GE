@@ -73,15 +73,15 @@ the i686 executables to exercise the 32-bit path.
 | Source base | Exact Alpha 4 source commit `5b2a7e3a`; Alpha 4 branch, artifact, log, and report remain unchanged |
 | Pinned GE source and Wine replay | Unchanged: annotated `GE-Proton11-3`, 140 Wine commits, final Wine tree `f795acc107bfff20ee6c9442beb151ed9be4ae84` |
 | Launcher policy | Prepared: custom `PROTON_XR_MODE` parser and automatic DLL override removed; normal Proton XR routing remains |
-| Prepared Proton lock | Recomputed after a clean top-level patch replay; Wine and WineOpenXR locks remain unchanged |
-| Diagnostic identity | Prepared: the build wrapper will record the Beta 1, RTSP, and GE identities without changing prefix semantics |
-| Build and artifact verification | Pending for the exact Beta 1 candidate |
-| Game smoke | Pending for the exact Beta 1 candidate; Alpha 4 precursor evidence is recorded below |
+| Prepared Proton lock | Passed after the full replay: `b26992637ebd60c3f67eb8bd8126df4a360d2c9f0774cb659270f38ecf82885a`; the final Wine tree and independent WineOpenXR lock remain unchanged |
+| Diagnostic identity | Passed: the wrapper recorded `Proton-RTSP-Wayland-GE-Beta1+proton-rtsp-11.0-20260609-1+GE-Proton11-3` without changing prefix semantics |
+| Build and artifact verification | Passed: build-integrated, standalone, and installed-copy verification covered the 1,465,922,347-byte artifact, all 6,181 regular files, 238 license/notice files, and 12 media schemes per registry view; repository `dist/` remained empty |
+| Game smoke | Passed 2026-07-25. Log-verifiable: exact Beta 1 identity; WineWayland loaded with Winex11 disabled; no `PROTON_XR_MODE`; WineOpenXR was not disabled; XRizer reached `FOCUSED` and shut down through `STOPPING` → `IDLE` → `EXITING`; no `VK_ERROR`, extension-rejection, device-loss, or crash signature; warning families matched Alpha 4. Maintainer attestation: expected controller mapping, game/world audio, one world transition, one YouTube VOD with audio, one seek, one pause/resume, and one short RTSP control passed. Evidence: log `9b5afbec032999bd6211cff0795b320c47553172dc3502d8b45423eb9b763774`; annotated checklist `af0460593fa9bb0ec7dce63ab34483b03f567789c676d67604f1deb0f68bf73d` |
 
 Promotion does not change the normal XR route that passed in Alpha 4: the
 retired selector injected a DLL override only when explicitly set to
-`xrizer`. A fresh build, verifier pass, and short no-custom-flag game smoke are
-still required before Beta 1 is published.
+`xrizer`. The fresh build, verifier passes, and short no-custom-flag game smoke
+have now passed. Beta 1 remains unpublished.
 
 ## Alpha 4 precursor evidence
 
@@ -117,8 +117,8 @@ binding warnings and Steam Runtime, launcher, and Discord-bridge messages are
 external to this distribution's patch set.
 
 The generated Alpha 4 Proton log header reports the RTSP base version while
-the tool path reports Alpha 4. This does not affect execution. Beta 1 prepares
-an unambiguous diagnostic label in the distribution build wrapper without
+the tool path reports Alpha 4. This does not affect execution. Beta 1 records
+an unambiguous diagnostic label from the distribution build wrapper without
 changing compatibility-prefix semantics.
 
 ## Published Alpha 3 historical status
