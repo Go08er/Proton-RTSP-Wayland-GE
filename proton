@@ -1665,6 +1665,19 @@ class Session:
                 log("%s" % sys.exc_info()[1])
                 log("************************************************")
 
+        self.xr_mode = self.env.get("PROTON_XR_MODE", "auto").strip().lower()
+        if self.xr_mode not in ("auto", "xrizer"):
+            log("Unsupported PROTON_XR_MODE '%s'; falling back to auto." % self.xr_mode)
+            self.xr_mode = "auto"
+
+        # XRizer implements the Windows OpenVR API on top of the native OpenXR
+        # runtime.  Do not also initialize Proton's Windows OpenXR bridge in
+        # this explicit mode: DXVK otherwise loads wineopenxr.dll while XRizer
+        # is using the same native runtime.  Keep the default unchanged for
+        # SteamVR, OpenComposite, and native Windows OpenXR applications.
+        if self.xr_mode == "xrizer":
+            self.dlloverrides["wineopenxr"] = "d"
+
         if "PROTON_LOG" in self.env and nonzero(self.env["PROTON_LOG"]):
             self.env.setdefault("WINEDEBUG", "+timestamp,+pid,+tid,+seh,+unwind,+threadname,+debugstr,+loaddll,+mscoree")
             self.env.setdefault("DXVK_LOG_LEVEL", "info")
@@ -1912,6 +1925,7 @@ class Session:
                     self.log_file.write("SteamGameId: " + self.env["SteamGameId"] + "\n")
                 self.log_file.write("Command: " + str(sys.argv[2:] + self.cmdlineappend) + "\n")
                 self.log_file.write("Options: " + str(self.compat_config) + "\n")
+                self.log_file.write("XR mode: " + self.xr_mode + "\n")
 
                 self.try_log_slr_versions()
 
