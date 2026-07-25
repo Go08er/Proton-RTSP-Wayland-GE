@@ -18,8 +18,9 @@ released GE-Proton11-3 Wayland work.
 Beta 1 is an unpublished release candidate pinned to the exact
 `GE-Proton11-3` release. It replays 138 selected GE Wine patches byte-for-byte,
 adapts GE's WineWayland controller and WineOpenXR session fixes to the older
-RTSP layout, and adds a two-line WineWayland XR capability repair intended to
-fix `VK_ERROR_EXTENSION_NOT_PRESENT` on native Wayland.
+RTSP layout, and adds a two-line WineWayland XR capability repair that fixes
+`VK_ERROR_EXTENSION_NOT_PRESENT` on the tested native-Wayland VRChat →
+XRizer → WiVRn route.
 Its intended release tag is `v11.1.0-beta.1`.
 
 The repair was first validated in the Alpha 4 precursor: its source, build,
