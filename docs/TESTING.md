@@ -25,6 +25,7 @@ never a live game prefix. For example:
 
 ```sh
 TOOL_DIR=/path/to/Proton-RTSP-Wayland-GE-Alpha4
+mkdir -p /tmp/proton-rtsp-wayland-ge-d3d11-smoke
 STEAM_COMPAT_DATA_PATH=/tmp/proton-rtsp-wayland-ge-d3d11-smoke \
   PROTON_USE_WAYLAND=1 \
   "$TOOL_DIR/proton" run "$PWD/tests/d3d11-smoke-x86_64.exe"
@@ -72,15 +73,18 @@ the i686 executables to exercise the 32-bit path.
 | Pinned GE source | Exact annotated `GE-Proton11-3` tag object `1a65daf2708a7c8196f651ef4706a75deb56d7b5`, peeled commit `8c8003f7f5473d883fbe1bc7ac070c79955754e8` |
 | Active GE Wayland bundle | Source audit passed: 138 selected files copied byte-for-byte from the release tree |
 | Wine replay | Source audit passed: 140 linear commits above the RTSP Wine base, final tree `f795acc107bfff20ee6c9442beb151ed9be4ae84` |
-| Build and artifact verification | Pending |
+| Build and artifact verification | Passed: fresh non-release build, 238 license/notice files, 12 media schemes per registry view, and 6,181-file filesystem/privacy verification |
 | Default X11/XWayland control | Pending |
-| Native Wayland desktop and D3D11 | Pending |
+| 64-bit native Wayland D3D11 | Passed locally: WineWayland loaded with X11 disabled, NVIDIA device creation reached feature level 11.1, and a one-frame mailbox swapchain presented without a Vulkan, DXGI, or device-loss error |
+| 32-bit standalone D3D11 diagnostic | Not accepted: both programs returned 3; device creation reached feature level 11.1, while the swapchain log ended with `VK_ERROR_OUT_OF_DEVICE_MEMORY`. The device result matches the historical Alpha 1/2 harness limitation and is not attributed to Alpha 4 without a controlled regression |
 | OpenVR → XRizer → WiVRn in `auto` | Pending; this is the primary test for the new WineWayland XR capability repair |
 | Scoped `PROTON_XR_MODE=xrizer` fallback | Pending; Alpha 3 remains the known-good comparison |
 | Controller and WineOpenXR lifecycle fixes | Pending |
 | RTSP/media playback | Pending |
 
-Compilation and static verification do not count as playback or XR acceptance.
+The local D3D11 smokes ran in `auto`, but no active OpenXR runtime was available.
+WineOpenXR and XRizer handled that condition without blocking the successful
+64-bit graphics path. This is not playback or XR acceptance.
 
 ## Published Alpha 3 historical status
 

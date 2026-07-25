@@ -20,9 +20,15 @@ adapts GE's WineWayland controller and WineOpenXR session fixes to the older
 RTSP layout, and adds a two-line WineWayland XR capability repair intended to
 fix `VK_ERROR_EXTENSION_NOT_PRESENT` in automatic XR mode.
 
-The source replay is deterministic and statically audited. Build, artifact,
-and game-test results are recorded only after their respective gates pass.
-The published Alpha 3 remains the current download and known-good fallback.
+The deterministic source replay, fresh non-release build, and artifact gate
+pass. The verifier checked all 6,181 files, the media registry, licenses,
+launcher policy, filesystem safety, and private-path leakage. A local 64-bit
+D3D11 device and one-frame swapchain smoke also passed under native Wayland in
+automatic XR mode.
+
+That desktop smoke had no active OpenXR runtime. VRChat through XRizer and
+WiVRn in automatic mode remains the acceptance test for the XR repair. The
+published Alpha 3 remains the current download and known-good fallback.
 
 ## Install the published Alpha 3
 
