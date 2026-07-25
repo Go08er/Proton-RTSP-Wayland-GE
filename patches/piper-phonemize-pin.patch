@@ -1,0 +1,14 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 6e41c83..3ef3631 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -65,7 +65,8 @@ if(NOT DEFINED PIPER_PHONEMIZE_DIR)
+   ExternalProject_Add(
+     piper_phonemize_external
+     PREFIX "${CMAKE_CURRENT_BINARY_DIR}/p"
+-    URL "https://github.com/shaunren/piper-phonemize/archive/refs/heads/pic.zip"
++    URL "https://github.com/shaunren/piper-phonemize/archive/5ecbb9b59abcffe03a9775ae82491c9ac5037f4d.zip"
++    URL_HASH SHA256=cd89aff6c3728776ffbf382bd6574876cc67d13402140fc5e3ec8c2bc813335f
+     CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:PATH=${PIPER_PHONEMIZE_DIR}
+   )
+   add_dependencies(piper piper_phonemize_external)
