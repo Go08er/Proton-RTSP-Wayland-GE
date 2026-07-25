@@ -58,7 +58,19 @@ stdenvNoCC.mkDerivation (finalAttrs: {
   meta = {
     description = "RTSP Proton compatibility tool with selected Proton-GE native-Wayland patches";
     homepage = "https://github.com/Go08er/Proton-RTSP-Wayland-GE";
-    license = lib.licenses.bsd3;
+    # lsteamclient's Steamworks SDK terms are not represented here; the packaged licenses/ tree is authoritative.
+    license = with lib.licenses; [
+      asl20
+      bsd2
+      bsd3
+      gpl3Plus
+      lgpl21Plus
+      mit
+      ofl
+      unicode-30
+      x11
+      zlib
+    ];
     platforms = [ "x86_64-linux" ];
     sourceProvenance = [ lib.sourceTypes.binaryNativeCode ];
   };
