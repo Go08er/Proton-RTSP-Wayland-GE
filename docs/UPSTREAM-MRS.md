@@ -7,6 +7,11 @@ should be opened from the smallest applicable topic branch against RTSP commit
 `3b4a5f407a5e0cabeef6d3757f29a23f277b429a`
 (`rtsp-11.0-20260609-1`).
 
+GitHub's fork banner compares the repositories' default branches, so its
+ahead/behind counts are not the size of this project's delta. At the current
+Beta 1 commit, this line is 37 commits ahead of the RTSP base tag above and
+zero behind it.
+
 Beta 1 is also an integration branch, not a pull request branch. Its new work
 has not been proposed upstream:
 
@@ -44,6 +49,7 @@ project-specific Proton interface.
 - **Branch:** `feat/wineopenxr-decouple`
 - **Commit:** `52b017cc7a2791bee38bc99b1e3e45f697cf1a1b`
 - **Subject:** `wineopenxr: Decouple XR and VR registry state`
+- **Compare:** [RTSP base → WineOpenXR state decoupling](https://github.com/SpookySkeletons/proton-ge-rtsp/compare/rtsp-11.0-20260609-1...Go08er:Proton-RTSP-Wayland-GE:feat/wineopenxr-decouple)
 - **Diff:** four files, 351 additions and 20 deletions
 - **Depends on:** nothing
 - **Attribution:** Proton-GE commit
@@ -63,6 +69,7 @@ makedep wrapper already supplies the loader together with its required
 - **Branch:** `feat/wayland-build-wiring`
 - **Commit:** `a4c87c8b1a57a85876775f6b06bb941a187e9b77`
 - **Subject:** `proton: Enable native Wayland sessions`
+- **Compare:** [RTSP base → native Wayland wiring](https://github.com/SpookySkeletons/proton-ge-rtsp/compare/rtsp-11.0-20260609-1...Go08er:Proton-RTSP-Wayland-GE:feat/wayland-build-wiring)
 - **Diff:** `.gitmodules`, `Makefile.in`, and `proton`, 182 additions and one
   deletion
 - **Status:** local draft; do not open a pull request yet
