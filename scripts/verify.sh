@@ -28,6 +28,7 @@ require_executable() {
 [[ -n "$BUILD_NAME" ]] || fail "BUILD_NAME must not be empty"
 [[ -n "$DISPLAY_NAME" ]] || fail "DISPLAY_NAME must not be empty"
 [[ -n "$SOURCE_ARCHIVE_NAME" ]] || fail "SOURCE_ARCHIVE_NAME must not be empty"
+command -v rg > /dev/null || fail "ripgrep (rg) is required"
 
 require_file proton
 require_file compatibilitytool.vdf
