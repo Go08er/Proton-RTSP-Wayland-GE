@@ -1,37 +1,39 @@
 <!-- SPDX-License-Identifier: BSD-3-Clause -->
 
-# Proton-RTSP-Wayland-GE Alpha 3
+# Proton-RTSP-Wayland-GE Alpha 4 development candidate
 
-This compatibility tool lets Linux players run their Steam library on native Wayland from an RTSP Proton base, avoiding XWayland scaling blur and including a tested `PROTON_XR_MODE=xrizer` OpenVR-to-XRizer path.
+Run Steam games on native Wayland from the RTSP Proton 11 base, with an explicit OpenVR-to-XRizer fallback and the released GE-Proton11-3 Wayland work.
 
 ## Why you'd want it
 
 - Avoid XWayland scaling blur.
-- Use correct fractional scaling.
-- Let each monitor use its own refresh rate.
+- Use correct fractional scaling and per-monitor refresh rates.
 - Use native Wayland clipboard integration, which may improve copy and paste in VRChat.
-- Avoid relying on limited XWayland integration in some Wayland-first compositors.
+- Work better with Wayland-first compositors that have limited X11 support.
 - Remove an extra display-system hop, which may lower VR latency.
 
-## Alpha status
+## Current status
 
-Alpha 3's 110-patch GE master source replay has been audited, built, and
-artifact-verified. A quick comparison test on July 24 found it performed
-comparably to Alpha 2 with no observed regression. The exact packaged release
-candidate also passed a focused VRChat smoke test covering native-Wayland
-XRizer startup, one world transition, ordinary YouTube playback with one seek
-and pause/resume, clean exit, and WiVRn stability. Minimize/restore,
-livestreams, and broader XR routes remain untested. Back up important saves and
-compatdata prefixes before changing compatibility tools.
+Alpha 4 is an unpublished development candidate pinned to the exact
+`GE-Proton11-3` release. It replays 138 selected GE Wine patches byte-for-byte,
+adapts GE's WineWayland controller and WineOpenXR session fixes to the older
+RTSP layout, and adds a two-line WineWayland XR capability repair intended to
+fix `VK_ERROR_EXTENSION_NOT_PRESENT` in automatic XR mode.
 
-## Installation
+The source replay is deterministic and statically audited. Build, artifact,
+and game-test results are recorded only after their respective gates pass.
+The published Alpha 3 remains the current download and known-good fallback.
 
-Download the latest release from
+## Install the published Alpha 3
+
+Download `v11.1.0-alpha.3` from
 [GitHub Releases](https://github.com/Go08er/Proton-RTSP-Wayland-GE/releases).
-Each release includes the binary archive
-`Proton-RTSP-Wayland-GE-Alpha3.tar.gz` and the corresponding-source archive
-`Proton-RTSP-Wayland-GE-Alpha3-source.tar.gz`. The source archive is provided
-to satisfy the LGPL obligations of the bundled Wine components.
+It includes:
+
+- `Proton-RTSP-Wayland-GE-Alpha3.tar.gz`
+- `Proton-RTSP-Wayland-GE-Alpha3-source.tar.gz`
+
+There is no Alpha 4 release asset yet.
 
 1. Exit Steam completely.
 2. Extract the release directory into:
@@ -40,7 +42,8 @@ to satisfy the LGPL obligations of the bundled Wine components.
    ~/.local/share/Steam/compatibilitytools.d/
    ```
 
-   Create `compatibilitytools.d` if it does not exist. The extracted tool directory should contain `compatibilitytool.vdf` at its top level.
+   Create `compatibilitytools.d` if it does not exist. The extracted tool
+   directory should contain `compatibilitytool.vdf` at its top level.
 
    A common Steam Flatpak location is:
 
@@ -50,7 +53,7 @@ to satisfy the LGPL obligations of the bundled Wine components.
 3. Start Steam again.
 4. Open a game's **Properties → Compatibility**, enable the option to force a compatibility tool, and select **Proton RTSP Wayland GE Alpha 3**.
 
-Verify the provided checksums before extraction:
+Verify both archives before extraction:
 
 ```sh
 sha512sum -c Proton-RTSP-Wayland-GE-Alpha3.tar.gz.sha512sum
@@ -59,22 +62,16 @@ sha512sum -c Proton-RTSP-Wayland-GE-Alpha3-source.tar.gz.sha512sum
 
 Keep the matching source archive with the binary.
 
-### NixOS
+### NixOS: published Alpha 3 only
 
-Add the Alpha 3 package-definition commit as a flake input:
+The repository's Nix package intentionally remains pinned to the published
+Alpha 3 archive until an Alpha 4 asset and hash exist:
 
 ```nix
 inputs.proton-rtsp-wayland-ge.url =
   "github:Go08er/Proton-RTSP-Wayland-GE/291e4562189f337a258ccad2e0abced1df0e76fe";
 inputs.proton-rtsp-wayland-ge.inputs.nixpkgs.follows = "nixpkgs";
-```
 
-The commit-pinned URL stays on the verified Alpha 3 package definition. The
-bare `github:Go08er/Proton-RTSP-Wayland-GE` URL follows the default branch.
-
-Then add its default package to `programs.steam.extraCompatPackages`:
-
-```nix
 programs.steam = {
   enable = true;
   extraCompatPackages = [
@@ -83,35 +80,42 @@ programs.steam = {
 };
 ```
 
-Rebuild NixOS and restart Steam. The package is pinned to the exact Alpha 3
-release archive by SHA-512; Nix will reject mismatched bytes.
+Rebuild NixOS and restart Steam. Nix rejects an archive whose bytes differ
+from the pinned Alpha 3 hash.
 
 ## Launch options
 
 | What you want | What to paste |
 | --- | --- |
 | Default Proton/XWayland | `%command%` |
-| Native Wayland, including direct OpenXR, SteamVR, and OpenComposite | `PROTON_USE_WAYLAND=1 %command%` |
+| Native Wayland; test this first | `PROTON_USE_WAYLAND=1 %command%` |
 | OpenVR through XRizer and a native OpenXR runtime | `PROTON_XR_MODE=xrizer PROTON_USE_WAYLAND=1 %command%` |
 | Select a compositor output | `PROTON_WAYLAND_MONITOR=<output-name> PROTON_USE_WAYLAND=1 %command%` |
 | Compact native-Wayland log | `PROTON_LOG=1 WINEDEBUG=-all,+timestamp,+pid,+tid,+loaddll PROTON_USE_WAYLAND=1 %command%` |
 | Compact XRizer log | `PROTON_LOG=1 WINEDEBUG=-all,+timestamp,+pid,+tid,+loaddll PROTON_XR_MODE=xrizer PROTON_USE_WAYLAND=1 %command%` |
-| Full Wine exception trace | `PROTON_LOG=1 PROTON_USE_WAYLAND=1 %command%` |
 
-`PROTON_ENABLE_WAYLAND=1` remains an alias for `PROTON_USE_WAYLAND=1`. Disable `PROTON_LOG` after testing because detailed Wine logs can become large and reduce performance. This Wine build selects NTSync automatically when the kernel interface is available, so you do not need `PROTON_USE_NTSYNC=1`.
+`PROTON_ENABLE_WAYLAND=1` remains an alias for
+`PROTON_USE_WAYLAND=1`. NTSync is selected automatically when the kernel
+interface is available. Disable logging after testing because detailed Wine
+logs can become large and reduce performance.
 
-## Known issues
+## Known issues and test focus
 
-- On the tested VRChat OpenVR → XRizer 0.5.0 → WiVRn 26.6.2 native-Wayland route, Alpha 3 `auto` initialized both XRizer and WineOpenXR before DXVK device creation failed with `VK_ERROR_EXTENSION_NOT_PRESENT`; use `PROTON_XR_MODE=xrizer` for that route.
-- Do not use `PROTON_XR_MODE=xrizer` for a direct Windows OpenXR application. Keep SteamVR, OpenComposite, and other XR routes on `auto` unless you have tested that exact setup.
-- Native Wayland depends on compositor protocol support. Overlays, input methods, window management, and desktop integration can behave differently from XWayland.
-- Native Wayland disables Xalia and defaults Steam Input off for that process. You can try `PROTON_NO_STEAMINPUT=0` as a controlled compatibility test.
-- Hybrid-GPU and multi-GPU systems need the correct Vulkan adapter selected throughout the game, XRizer, and native runtime.
-- The RTSP media stack does not guarantee that every codec, site, stream, or in-game player will work.
+- Alpha 3 automatic mode failed on the tested VRChat → XRizer 0.5.0 → WiVRn
+  26.6.2 route when DXVK requested Wine's XR Vulkan device extension through
+  WineWayland. Alpha 4 directly advertises that capability, but the repair
+  still needs an in-game automatic-mode test.
+- Keep `PROTON_XR_MODE=xrizer` as the fallback for an OpenVR application using
+  XRizer. Do not use it for a direct Windows OpenXR application.
+- GE-Proton11-3 forces Steam Input off under WineWayland and temporarily
+  selects the running game's AppID in the host Steam client. Controller
+  behavior and clean reset on exit need runtime coverage.
+- Native Wayland depends on compositor protocol support. Overlays, input
+  methods, and window management can differ from XWayland.
+- The RTSP media stack does not guarantee every codec, site, stream, or
+  in-game player.
 
 ## Troubleshooting
-
-Start with the smallest launch option that reproduces the issue:
 
 1. Test `%command%` to establish the default-path baseline.
 2. Add `PROTON_USE_WAYLAND=1` to isolate the native Wayland path.
@@ -120,35 +124,33 @@ Start with the smallest launch option that reproduces the issue:
 
 Sanitize logs before posting them — see [`docs/REPORTING.md`](docs/REPORTING.md).
 
-## Repository layout
+## Repository layout and provenance
 
-The additive `alpha3` branch preserves RTSP history and is the integration
-branch. Reproducible builds and release artifacts come from
-`release-engineering/alpha3-a5c30efa`. Future RTSP contributions use separate
-topic branches; see [`docs/UPSTREAM-MRS.md`](docs/UPSTREAM-MRS.md).
+The public `alpha3` branch and release remain immutable comparison points.
+Local `alpha4` carries the GE-Proton11-3 integration without changing Alpha 3.
+Small upstream contributions remain separate from release assembly; see
+[`docs/UPSTREAM-MRS.md`](docs/UPSTREAM-MRS.md).
 
-## Provenance
+- RTSP Proton: `3b4a5f407a5e0cabeef6d3757f29a23f277b429a`
+- RTSP Wine base: `fd920bd63abb7bf8b52b0f8e40da922ab9e784a4`
+- GE-Proton11-3 peeled commit: `8c8003f7f5473d883fbe1bc7ac070c79955754e8`
+- GE-Proton11-3 Wine: `9578fa3613f3379179b576968bc77c8161ab6ea8`
+- Final Alpha 4 Wine tree: `f795acc107bfff20ee6c9442beb151ed9be4ae84`
 
-- RTSP Proton commit: `3b4a5f407a5e0cabeef6d3757f29a23f277b429a`
-- RTSP Wine base commit: `fd920bd63abb7bf8b52b0f8e40da922ab9e784a4`
-- Proton-GE snapshot commit: `a5c30efa111c6a834395e70da88c801536c68f6d`
-- Proton-GE Wine commit: `fc39a66977983a16a31318f98386386ec2dd6b55`
-- DXVK commit: `2cae043bdf767c8a7a2e0ee8d41537acfe773e8e`
-
-See [`SOURCE.md`](SOURCE.md) for the complete source and build record.
+See [`SOURCE.md`](SOURCE.md) for the complete source record.
 
 ## Licensing
 
-- Original project material is BSD-3-Clause.
-- Upstream Proton and RTSP material keeps its existing BSD-3-Clause terms.
-- Wine, the selected GE Wine patches, and other third-party components keep their own licenses.
-
-See [`NOTICE.md`](NOTICE.md) and the [component license map](licenses/COMPONENTS.md).
+Original project material is BSD-3-Clause. Upstream Proton, Wine, GE patches,
+and other components keep their existing licenses. See [`NOTICE.md`](NOTICE.md)
+and the [component license map](licenses/COMPONENTS.md).
 
 ## Acknowledgements
 
-This work builds on Proton, Wine, DXVK, VKD3D-Proton, GStreamer, the RTSP Proton project, and the Wayland work maintained in Proton-GE. XR testing also relies on XRizer, WiVRn, Monado, OpenXR, and OpenVR.
+This work builds on Proton, Wine, DXVK, VKD3D-Proton, GStreamer,
+SpookySkeletons' RTSP Proton, and Proton-GE's Wayland work. XR testing relies
+on XRizer, WiVRn, Monado, OpenXR, and OpenVR.
 
-Thank you to the maintainers and contributors of those projects.
-
-All project names and trademarks belong to their respective owners; this repository is independently assembled and is not affiliated with or endorsed by Valve, CodeWeavers, GloriousEggroll, SpookySkeletons, Khronos, or the XR projects named above.
+All project names and trademarks belong to their respective owners; this
+repository is independently assembled and is not affiliated with or endorsed
+by those projects.

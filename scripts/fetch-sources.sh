@@ -3,7 +3,7 @@
 set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-WORK_ROOT="${WORK_ROOT:-/tmp/proton-rtsp-wayland-ge-work}"
+WORK_ROOT="${WORK_ROOT:-/tmp/proton-rtsp-wayland-ge-alpha4-11-3}"
 SOURCES_DIR="${SOURCES_DIR:-$WORK_ROOT/sources}"
 source "$ROOT_DIR/config/upstream-pins.sh"
 
@@ -45,6 +45,22 @@ rm -f -- "$WORK_ROOT/.prepared"
 clone_at_commit proton-ge-rtsp "$RTSP_REPO" "$RTSP_COMMIT"
 clone_at_commit proton-ge-custom "$GE_REPO" "$GE_COMMIT"
 clone_at_commit xalia "$XALIA_REPO" "$XALIA_COMMIT"
+
+git_safe -C "$SOURCES_DIR/proton-ge-custom" fetch --filter=blob:none --depth=1 \
+  origin "refs/tags/$GE_SOURCE_LABEL:refs/tags/$GE_SOURCE_LABEL"
+actual_ge_tag_object="$(
+  git -C "$SOURCES_DIR/proton-ge-custom" rev-parse "refs/tags/$GE_SOURCE_LABEL"
+)"
+actual_ge_tag_type="$(
+  git -C "$SOURCES_DIR/proton-ge-custom" cat-file -t "$actual_ge_tag_object"
+)"
+actual_ge_tag_commit="$(
+  git -C "$SOURCES_DIR/proton-ge-custom" rev-parse "refs/tags/$GE_SOURCE_LABEL^{}"
+)"
+[[ "$actual_ge_tag_type" == "tag" && "$actual_ge_tag_object" == "$GE_TAG_OBJECT" ]] \
+  || fail "$GE_SOURCE_LABEL is not the expected annotated tag object $GE_TAG_OBJECT"
+[[ "$actual_ge_tag_commit" == "$GE_COMMIT" ]] \
+  || fail "$GE_SOURCE_LABEL peels to $actual_ge_tag_commit, expected $GE_COMMIT"
 
 git_safe -C "$SOURCES_DIR/proton-ge-rtsp" submodule update --init --recursive
 git_safe -C "$SOURCES_DIR/xalia" submodule update --init --recursive

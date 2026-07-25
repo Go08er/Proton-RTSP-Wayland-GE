@@ -44,8 +44,8 @@ repository-level MIT license; no separate model-specific notice was present in
 the exact downloaded snapshot. This fact is recorded rather than inventing a
 different license.
 
-The X11 locale tree was copied by pinned Proton-GE development snapshot
-`a5c30efa111c6a834395e70da88c801536c68f6d` without a local COPYING file. Its
+The X11 locale tree was copied from the pinned `GE-Proton11-3` release at
+`8c8003f7f5473d883fbe1bc7ac070c79955754e8` without a local COPYING file. Its
 layout and generated `locale.dir` were compared with
 the official X.Org libX11 1.8.13 source; `locale.dir` is byte-identical while
 the intentionally reduced Compose mapping differs. The full libX11 COPYING

@@ -1,28 +1,45 @@
 #!/usr/bin/env bash
 # SPDX-License-Identifier: BSD-3-Clause
 
-# Alpha 3 development snapshot.  This is deliberately an immutable commit,
-# even though it was selected from the moving Proton-GE master branch.
+# Alpha 4 release input.  The annotated GE-Proton11-3 tag is recorded along
+# with its peeled commit and independently verified Git trees/blobs.
 RTSP_COMMIT="3b4a5f407a5e0cabeef6d3757f29a23f277b429a"
 RTSP_WINE_BASE="fd920bd63abb7bf8b52b0f8e40da922ab9e784a4"
 RTSP_PIPER_COMMIT="9d06b74959570772e8bcbe7a3f696664d2421167"
-FINAL_WINE_TREE="9be5057739e8c749bd3b438e402bd53cae12a0ce"
-FINAL_RTSP_TRACKED_DIFF_SHA256="e3ca54f373fc0c2dc26df4653962745612263754ade4b138f2734dd7a08bdd0d"
-FINAL_WINEOPENXR_DIFF_SHA256="ab1b76f8e53adb7fba2a9546ac57a0b88fe90824fdf98318677e2b6425757457"
-GE_COMMIT="a5c30efa111c6a834395e70da88c801536c68f6d"
-GE_ROOT_TREE="5a6e2b5a712d9f36363d100990a760e347d2a2d9"
+FINAL_WINE_TREE="f795acc107bfff20ee6c9442beb151ed9be4ae84"
+FINAL_WINE_PATCH_COUNT="140"
+FINAL_RTSP_TRACKED_DIFF_SHA256="60d05800799acce05b9a219bb3595fcfec404c24fa476a0a8cb6a30ff8f83153"
+FINAL_WINEOPENXR_DIFF_SHA256="7e9b9fabd2eabea87c2ea02975281026904c683e10a5a9d65451265597e46b84"
+GE_TAG_OBJECT="1a65daf2708a7c8196f651ef4706a75deb56d7b5"
+GE_COMMIT="8c8003f7f5473d883fbe1bc7ac070c79955754e8"
+GE_ROOT_TREE="1e55008bb5995b5cfaf2643e6ce1c44f4e11e208"
 GE_LOCALE_TREE="7c8f3ed92d04fc80a139e3204d86650870e21d8f"
-GE_WINE_COMMIT="fc39a66977983a16a31318f98386386ec2dd6b55"
-GE_SOURCE_KIND="development-snapshot"
-GE_SOURCE_LABEL="master-2026-07-24"
-GE_WAYLAND_PATCH_DIR="ge-dev-a5c30efa-wayland"
-GE_WAYLAND_PATCH_COUNT="110"
-GE_WAYLAND_PATCH_TREE="8f67ec3ac8adb488c6169d549ca11f87216ef87c"
-GE_WINEOPENXR_PATCH="wineopenxr-decouple-a5c30efa.patch"
-GE_WINEOPENXR_BLOB="6921c98c5d0c14b3d541b67575867025ba842cfd"
-GE_WINEOPENXR_SHA256="34234cca36c1a38c52e316ded723c6165ae1e76c7554ded013c560003efd21d2"
+GE_WINE_COMMIT="9578fa3613f3379179b576968bc77c8161ab6ea8"
+GE_SOURCE_KIND="release"
+GE_SOURCE_LABEL="GE-Proton11-3"
+GE_WAYLAND_PATCH_DIR="ge-proton11-3-wayland"
+GE_WAYLAND_PATCH_COUNT="138"
+GE_WAYLAND_PATCH_TREE="af201a408193ae0c964c06a02a745b68985f45c0"
+GE_WINEOPENXR_PATCH="wineopenxr-decouple-ge-proton11-3.patch"
+GE_WINEOPENXR_BLOB="2a666c2aeda9f7448d1ae939cb0b2055bb3f247b"
+GE_WINEOPENXR_SHA256="4de0a6330619bb577c16282680170cd740013fafc9574665bc5e93e5b28cb467"
 RTSP_WINEOPENXR_INTEGRATION_PATCH="wineopenxr-rtsp-makedep-integration.patch"
 RTSP_WINEOPENXR_INTEGRATION_SHA256="ca0984589e2ed63425105ff2cdcf1a2d59a4e42e828144c44c316924f6d2508c"
+GE_WINEOPENXR_LOADER_BLOB="673023b35a42286948a5821a9f52ad360cefaa31"
+GE_WINEOPENXR_LOADER_SHA256="c2d697428d4b45b3b2ec8ab240c5a64d75b421327d8105e29a94d1aedcdcba49"
+RTSP_WINEOPENXR_SESSION_PATCH="wineopenxr-session-lifetime-ge-proton11-3.patch"
+RTSP_WINEOPENXR_SESSION_SHA256="c9a7729988bc5a12b0285fdb49e9dc431497fc040b2570480334a60d0052d014"
+GE_STEAM_INPUT_PATCH_PATH="patches/proton/winewayland-ignore-steam-desktop-virtual-controller.patch"
+GE_STEAM_INPUT_PATCH_BLOB="09a960d40982342c25f3be63726043f48d0316b1"
+GE_STEAM_INPUT_PATCH_SHA256="9d5c8b72abae299570b7a26ebc80ee47b250e0d9efc0e6e93bef787f43d58472"
+GE_PROTON_BLOB="187cdd9e6911956242ad9f7ea09a01d7a83bff37"
+GE_PROTON_SHA256="a2c3ed42c6e62a8ca210432fcb2e486db6dd3a70ddbd11cbee6e29664ad9c2a9"
+RTSP_STEAM_INPUT_ADAPTER_PATCH="winewayland-steam-input-ge-proton11-3-rtsp-adapter.patch"
+RTSP_STEAM_INPUT_ADAPTER_SHA256="1a0bf54c6c9af9b0da26bed30f04ef9dd1352c58dd6ddc4b190dec1c427c4dd2"
+RTSP_WINEWAYLAND_XR_PATCH="winewayland-advertise-wine-vr-device-extensions.patch"
+RTSP_WINEWAYLAND_XR_SHA256="aa16c39363cee1ac14cce28ba8db23d657e7e4f67d59ffff8875afa9ecb1a0b1"
+PROTON_ALPHA4_PATCH="proton-alpha4.patch"
+PROTON_ALPHA4_SHA256="20f3204c0eaf2f2e6f6e8abf1a0a3d5182c39d9b0067e591790c9ced50493a6a"
 
 # Dependency gitlinks from the exact GE root tree above.  Preparation verifies
 # that each value still matches that tree before cloning or reusing it.
@@ -49,9 +66,3 @@ XRANDR_SHA256="2cafccb2aaf2491a4068676117a0d4f90ab307724b96fffc54cd1da953779400"
 PIPER_PHONEMIZE_COMMIT="5ecbb9b59abcffe03a9775ae82491c9ac5037f4d"
 PIPER_PHONEMIZE_ZIP_SHA256="cd89aff6c3728776ffbf382bd6574876cc67d13402140fc5e3ec8c2bc813335f"
 PIPER_PATCH_SHA256="70b47942674bbd6b4fb2cc6722b8f640fc643cb419b89da8cf8f3f9e558f8645"
-
-# GE-Proton11-2 swap procedure:
-# 1. replace GE_COMMIT with the exact commit peeled from the release tag;
-# 2. set GE_SOURCE_KIND=release and GE_SOURCE_LABEL=GE-Proton11-2;
-# 3. regenerate the two GE patch bundles and every tree/blob/hash lock;
-# 4. recompute the selection count and rerun every source/build audit.

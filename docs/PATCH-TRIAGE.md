@@ -1,6 +1,9 @@
-# Wayland patch triage
+# Historical Alpha 3 Wayland patch triage
 
-This table classifies the Proton-GE `a5c30efa` Wayland patch selection by its primary code path and plausible VRChat relevance.
+This table preserves the published Alpha 3 classification for Proton-GE
+snapshot `a5c30efa`. It is not the Alpha 4 patch list. See
+[`../patches/ge-proton11-3-selection.md`](../patches/ge-proton11-3-selection.md)
+for the current 138-file GE-Proton11-3 selection.
 
 | # | subject | area | class | vrchat | note |
 | --- | --- | --- | --- | --- | --- |

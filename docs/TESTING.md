@@ -20,11 +20,11 @@ i686-w64-mingw32-gcc -O2 -Wall -Wextra \
   -o tests/d3d11-swapchain-smoke-i686.exe tests/d3d11-swapchain-smoke.c -ld3d11 -ldxgi
 ```
 
-Run them with the built Alpha 3 game-test directory and a disposable prefix,
+Run them with the built Alpha 4 game-test directory and a disposable prefix,
 never a live game prefix. For example:
 
 ```sh
-TOOL_DIR=/path/to/Proton-RTSP-Wayland-GE-Alpha3
+TOOL_DIR=/path/to/Proton-RTSP-Wayland-GE-Alpha4
 STEAM_COMPAT_DATA_PATH=/tmp/proton-rtsp-wayland-ge-d3d11-smoke \
   PROTON_USE_WAYLAND=1 \
   "$TOOL_DIR/proton" run "$PWD/tests/d3d11-smoke-x86_64.exe"
@@ -37,7 +37,7 @@ The device test exits after creating D3D11 successfully. The swapchain test
 opens a small window, presents one frame, and exits. Repeat the commands with
 the i686 executables to exercise the 32-bit path.
 
-## Alpha 3 game-test checklist
+## Alpha 4 game-test checklist
 
 1. Run `scripts/verify.sh` on the built tool.
 2. Confirm the default launch path starts without an injected `wineopenxr=d`
@@ -47,9 +47,9 @@ the i686 executables to exercise the 32-bit path.
 5. Exercise 64-bit and 32-bit Wine startup.
 6. Exercise D3D11 device creation and a window/swapchain under native Wayland.
 7. Verify a desktop/non-XR title or mode before adding XR.
-8. For an OpenVR title using XRizer, test the default `auto` mode first. Record
-   whether the patched WineOpenXR component loads and whether graphics-device
-   initialization and XR session creation succeed.
+8. For an OpenVR title using XRizer, test the default `auto` mode first. Confirm
+   whether Alpha 4's WineWayland VR capability repair allows graphics-device
+   initialization and XR session creation to succeed.
 9. If the `auto` route fails in a way consistent with the prior WineOpenXR
    conflict, add `PROTON_XR_MODE=xrizer` and confirm the final DLL overrides
    include `wineopenxr=d`.
@@ -59,8 +59,30 @@ the i686 executables to exercise the 32-bit path.
     the route's design explicitly requires the fallback.
 12. Re-test RTSP and other media playback used by the title; artifact and
     registry checks alone do not validate playback.
+13. Create and destroy more than one XR session or restart the XR application;
+    look for stale-session or teardown failures.
+14. Under native Wayland, verify the controller uses the game's layout rather
+    than Steam's desktop layout and that ordinary exit restores Steam's global
+    input selection. Also run one XWayland/non-XR control.
 
-## Alpha 3 current status
+## Alpha 4 current status
+
+| Path | Status |
+| --- | --- |
+| Pinned GE source | Exact annotated `GE-Proton11-3` tag object `1a65daf2708a7c8196f651ef4706a75deb56d7b5`, peeled commit `8c8003f7f5473d883fbe1bc7ac070c79955754e8` |
+| Active GE Wayland bundle | Source audit passed: 138 selected files copied byte-for-byte from the release tree |
+| Wine replay | Source audit passed: 140 linear commits above the RTSP Wine base, final tree `f795acc107bfff20ee6c9442beb151ed9be4ae84` |
+| Build and artifact verification | Pending |
+| Default X11/XWayland control | Pending |
+| Native Wayland desktop and D3D11 | Pending |
+| OpenVR → XRizer → WiVRn in `auto` | Pending; this is the primary test for the new WineWayland XR capability repair |
+| Scoped `PROTON_XR_MODE=xrizer` fallback | Pending; Alpha 3 remains the known-good comparison |
+| Controller and WineOpenXR lifecycle fixes | Pending |
+| RTSP/media playback | Pending |
+
+Compilation and static verification do not count as playback or XR acceptance.
+
+## Published Alpha 3 historical status
 
 | Path | Status |
 | --- | --- |

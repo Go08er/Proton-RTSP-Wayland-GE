@@ -1,10 +1,24 @@
 # Upstream contribution map
 
-The additive `alpha3` branch is an integration and release branch, not a pull
-request branch. Future contributions to `SpookySkeletons/proton-ge-rtsp`
+The published additive `alpha3` branch is an integration and release branch,
+not a pull request branch. The entries below preserve its existing topic refs.
+Future contributions to `SpookySkeletons/proton-ge-rtsp`
 should be opened from the smallest applicable topic branch against RTSP commit
 `3b4a5f407a5e0cabeef6d3757f29a23f277b429a`
 (`rtsp-11.0-20260609-1`).
+
+Alpha 4 is also an integration branch, not a pull request branch. Its new work
+has not been proposed upstream:
+
+- the two-line WineWayland OpenVR/OpenXR capability mapping is already a
+  standalone format patch and is the cleanest candidate for a focused Wine or
+  RTSP review after runtime proof;
+- the SetupAPI controller filter adapts GE-Proton11-3 to RTSP's older cfgmgr32
+  forwarding layout and should retain GE attribution;
+- the WineOpenXR destroyed-session cleanup is a source-equivalent GE backport.
+
+Do not bundle those three changes with the 138-patch GE release replay in a
+single upstream request.
 
 ## Ready topic 1 — Explicit XRizer launcher mode
 
@@ -81,7 +95,8 @@ their source layout to the maintainer's preference.
 
 The following also remain integration-only:
 
-- the selected 110-patch GE Wine bundle;
+- the published Alpha 3 110-patch GE bundle and Alpha 4 138-patch GE release
+  replay;
 - Alpha release naming and metadata;
 - archive verification, privacy scanning, and corresponding-source packaging;
 - Nix packaging;

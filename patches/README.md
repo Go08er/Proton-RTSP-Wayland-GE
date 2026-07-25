@@ -2,38 +2,52 @@
 
 # Patch layout
 
-- `proton-rtsp-wayland.patch` changes the RTSP Proton build wiring and launcher.
-  It enables the native Wine Wayland build, packages xrandr and X11 locale
-  data, preserves RTSP media wiring, and adds the scoped XRizer launch mode.
-- `proton-alpha2.patch` contains the Alpha 2 launcher follow-up, including the
-  prefix-version bump and corrected Steam Input override handling.
-- `proton-alpha3.patch` advances the prefix version for the latest-GE candidate
-  so an existing Alpha 2 compatdata prefix cannot be mistaken for current state.
-- `piper-phonemize-pin.patch` replaces Piper's mutable piper-phonemize branch
-  URL with the exact commit and SHA-256 used by this build. Piper and this
-  modification retain Piper's MIT terms.
-- `ge-dev-a5c30efa-wayland/` contains the 110 Wayland-focused Wine patches used
-  by Alpha 3. They are copied verbatim from Proton-GE commit
-  `a5c30efa111c6a834395e70da88c801536c68f6d`.
-- `ge-dev-a5c30efa-selection.md` records the selected ranges, omission
-  categories, and the inclusion decisions most relevant to XR and media.
-- `wineopenxr-decouple-a5c30efa.patch` is the exact
-  `patches/wineopenxr/wineopenxr_decouple.patch` from that same Proton-GE
-  snapshot. It is applied to RTSP's standalone `wineopenxr` tree.
-- `wineopenxr-rtsp-makedep-integration.patch` removes the GE patch's redundant
-  `UNIX_LIBS` assignment on this RTSP build system. RTSP's makedep wrapper must
-  inject `ntdll.so`; the OpenXR loader remains supplied by the top-level
-  `WINEOPENXR_LDFLAGS`. Without this one-line adapter, the later assignment
-  overwrites `ntdll.so` and the Unix bridge fails to link.
-`scripts/apply-patches.sh` compares every bundled GE-derived patch byte-for-byte
-with the pinned Proton-GE checkout before applying the active Wayland set with
-`git am`.
-It verifies that the resulting Wine history is exactly 110 commits above the
-pinned RTSP Wine base and compares the WineOpenXR repair byte-for-byte before
-applying it, then applies and hash-checks the RTSP-specific one-line adapter.
+## Project launcher and build wiring
 
-The active snapshot name, immutable commit, bundle directory, patch count, and
-WineOpenXR filename are defined in `config/upstream-pins.sh`. The snapshot was
-selected from Proton-GE `master` on 2026-07-24; it is development state, not
-GE-Proton11-2. The release-pin swap must regenerate and re-audit both active GE
-bundles rather than simply relabeling these files.
+- `proton-rtsp-wayland.patch` adds the native WineWayland build, xrandr and
+  locale packaging, launcher selection, and scoped `PROTON_XR_MODE=xrizer`
+  behavior while retaining RTSP's media stack.
+- `proton-alpha2.patch` and `proton-alpha3.patch` preserve the earlier prefix
+  transitions.
+- `proton-alpha4.patch` advances the prefix to `11.0-103` and adapts
+  GE-Proton11-3's WineWayland Steam Input AppID selection/reset behavior.
+- `piper-phonemize-pin.patch` replaces Piper's mutable dependency URL with the
+  exact commit and archive hash used by the build.
+
+## Exact GE-Proton11-3 material
+
+- `ge-proton11-3-wayland/` contains 138 selected format patches copied
+  byte-for-byte from the exact `GE-Proton11-3` release.
+- `ge-proton11-3-selection.md` records the selected ranges and exclusions.
+- `wineopenxr-decouple-ge-proton11-3.patch` is the exact
+  `patches/wineopenxr/wineopenxr_decouple.patch` from that release.
+
+Preparation verifies the annotated GE tag, the release commit, relevant Git
+trees and blobs, and every bundled GE patch before replay.
+
+## Layout adapters and local repair
+
+- `wineopenxr-rtsp-makedep-integration.patch` removes one redundant
+  `UNIX_LIBS` assignment. RTSP's makedep wrapper must retain its `ntdll.so`
+  input while the top-level build supplies OpenXR loader flags.
+- `wineopenxr-session-lifetime-ge-proton11-3.patch` is a source-equivalent
+  backport of GE-Proton11-3's four-line destroyed-session list cleanup.
+- `winewayland-steam-input-ge-proton11-3-rtsp-adapter.patch` carries the
+  SetupAPI half of GE's stale Steam desktop virtual-controller filter. RTSP's
+  older cfgmgr32 implementation forwards the affected enumeration calls into
+  SetupAPI, so importing GE's newer standalone cfgmgr32 hunk would duplicate
+  the policy.
+- `winewayland-advertise-wine-vr-device-extensions.patch` is the
+  project-authored Alpha 4 repair. It makes WineWayland advertise the same
+  synthetic `VK_WINE_openvr_device_extensions` and
+  `VK_WINE_openxr_device_extensions` capabilities already exposed by Wine's
+  X11 path.
+
+The active Wine replay is 138 exact GE patches followed by the Steam Input
+adapter and the two-line XR capability repair: 140 commits total, final tree
+`f795acc107bfff20ee6c9442beb151ed9be4ae84`.
+
+The GE video-rework directory is intentionally not imported because this
+distribution keeps RTSP's media architecture. Generic selected fixes that
+also touch media remain part of the audited Wayland series where they apply
+cleanly without replacing that stack.

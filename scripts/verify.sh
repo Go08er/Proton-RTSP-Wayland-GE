@@ -4,8 +4,8 @@ set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 TOOL_DIR="${1:-}"
-BUILD_NAME="${BUILD_NAME:-Proton-RTSP-Wayland-GE-Alpha3}"
-DISPLAY_NAME="${DISPLAY_NAME:-Proton RTSP Wayland GE Alpha 3}"
+BUILD_NAME="${BUILD_NAME:-Proton-RTSP-Wayland-GE-Alpha4}"
+DISPLAY_NAME="${DISPLAY_NAME:-Proton RTSP Wayland GE Alpha 4}"
 SOURCE_ARCHIVE_NAME="${SOURCE_ARCHIVE_NAME:-${BUILD_NAME}-source.tar.gz}"
 
 fail() {
@@ -233,6 +233,26 @@ grep -Fq 'self.env.get("PROTON_XR_MODE", "auto")' "$TOOL_DIR/proton" \
   || fail "XR mode selector is missing"
 grep -Fq 'self.dlloverrides["wineopenxr"] = "d"' "$TOOL_DIR/proton" \
   || fail "scoped XRizer override is missing"
+grep -Fqx 'CURRENT_PREFIX_VERSION="11.0-103"' "$TOOL_DIR/proton" \
+  || fail "Alpha 4 prefix identity is missing"
+grep -Fq 'self.env["PROTON_NO_STEAMINPUT"] = "1"' "$TOOL_DIR/proton" \
+  || fail "GE-Proton11-3 WineWayland Steam Input policy is missing"
+grep -Fq 'self.force_steam_input_appid = True' "$TOOL_DIR/proton" \
+  || fail "GE-Proton11-3 Steam Input AppID policy is not enabled for WineWayland"
+grep -Fq '[steam_bin, "steam://forceinputappid/" + str(appid)]' "$TOOL_DIR/proton" \
+  || fail "GE-Proton11-3 Steam Input AppID selection is missing"
+grep -Fq 'steam_bin = shutil.which("steam")' "$TOOL_DIR/proton" \
+  || fail "Steam Input AppID selection does not resolve the host Steam client"
+grep -Fqx '        env = dict(os.environ)' "$TOOL_DIR/proton" \
+  || fail "Steam Input AppID selection does not start from the host environment"
+grep -Fq 'for name in ("SteamAppId", "SteamGameId", "STEAM_COMPAT_APP_ID"):' "$TOOL_DIR/proton" \
+  || fail "Steam Input AppID selection does not sanitize game identity variables"
+grep -Fq 'env.pop(name, None)' "$TOOL_DIR/proton" \
+  || fail "Steam Input AppID selection does not remove game identity variables"
+grep -Fq 'env=env,' "$TOOL_DIR/proton" \
+  || fail "Steam Input AppID selection does not pass the sanitized environment"
+grep -Fq 'self.set_steam_input_appid(0)' "$TOOL_DIR/proton" \
+  || fail "GE-Proton11-3 Steam Input AppID reset is missing"
 grep -Fq 'sys.dont_write_bytecode = True' "$TOOL_DIR/proton" \
   || fail "bundled-helper bytecode-cache suppression is missing"
 grep -Fq "\"$BUILD_NAME\"" "$TOOL_DIR/compatibilitytool.vdf" \
