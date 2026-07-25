@@ -56,7 +56,11 @@ compatibility tool.
   the principal payload, and binary packaging copies the exact license files
   from the prepared source tree into `licenses/upstream/`.
 
-The project BSD license does not relicense Proton, Wine, GE patches, SDK
-material, models, fonts, or another third-party component. A binary release
-must be accompanied by the corresponding-source archive described in
-`SOURCE.md`, particularly because the payload contains GPL and LGPL software.
+The project BSD license applies only to original project material. It does not
+relicense Proton, Wine, the GE Wine patches, an SDK-derived file, model, font,
+or another third-party component.
+
+Binary archives are paired with a complete prepared-source archive and
+checksum as described in [`SOURCE.md`](SOURCE.md). Pinned revisions support
+source reconstruction and review; the current toolchain is not sufficiently
+pinned to promise bit-identical binary reproduction.
