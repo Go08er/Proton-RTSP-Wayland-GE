@@ -20,11 +20,11 @@ i686-w64-mingw32-gcc -O2 -Wall -Wextra \
   -o tests/d3d11-swapchain-smoke-i686.exe tests/d3d11-swapchain-smoke.c -ld3d11 -ldxgi
 ```
 
-Run them with the built Alpha 2 game-test directory and a disposable prefix,
+Run them with the built Alpha 3 game-test directory and a disposable prefix,
 never a live game prefix. For example:
 
 ```sh
-TOOL_DIR=/path/to/Proton-RTSP-Wayland-GE-Alpha2
+TOOL_DIR=/path/to/Proton-RTSP-Wayland-GE-Alpha3
 STEAM_COMPAT_DATA_PATH=/tmp/proton-rtsp-wayland-ge-d3d11-smoke \
   PROTON_USE_WAYLAND=1 \
   "$TOOL_DIR/proton" run "$PWD/tests/d3d11-smoke-x86_64.exe"
@@ -37,7 +37,7 @@ The device test exits after creating D3D11 successfully. The swapchain test
 opens a small window, presents one frame, and exits. Repeat the commands with
 the i686 executables to exercise the 32-bit path.
 
-## Alpha 2 game-test checklist
+## Alpha 3 game-test checklist
 
 1. Run `scripts/verify.sh` on the built tool.
 2. Confirm the default launch path starts without an injected `wineopenxr=d`
@@ -158,7 +158,7 @@ video, capture, or Spout failure; they did not disrupt that Alpha 1 XR session.
 
 Before sharing a log, remove personal paths, account and session identifiers, network information, command lines, environment values, hardware UUIDs, and unrelated registry content. Never publish an entire compatibility prefix.
 
-## Current status
+## Alpha 2 accepted runtime baseline
 
 | Area | Alpha 2 status | Scope |
 | --- | --- | --- |

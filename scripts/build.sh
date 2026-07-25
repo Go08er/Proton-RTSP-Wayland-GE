@@ -9,8 +9,8 @@ RTSP_TREE="${RTSP_TREE:-$SOURCES_DIR/proton-ge-rtsp}"
 GE_TREE="${GE_TREE:-$SOURCES_DIR/proton-ge-custom}"
 source "$ROOT_DIR/config/upstream-pins.sh"
 source "$ROOT_DIR/scripts/lib/prepared-state.sh"
-BUILD_NAME="${BUILD_NAME:-Proton-RTSP-Wayland-GE-Alpha2}"
-DISPLAY_NAME="${DISPLAY_NAME:-Proton RTSP Wayland GE Alpha 2}"
+BUILD_NAME="${BUILD_NAME:-Proton-RTSP-Wayland-GE-Alpha3}"
+DISPLAY_NAME="${DISPLAY_NAME:-Proton RTSP Wayland GE Alpha 3}"
 JOBS="${JOBS:-1}"
 ORCHESTRATOR_JOBS="${ORCHESTRATOR_JOBS:-}"
 COMPONENT_JOBS="${COMPONENT_JOBS:-}"
@@ -144,13 +144,13 @@ require_head "$GE_TREE" "$GE_COMMIT"
 [[ "$(git -C "$GE_TREE" rev-parse 'HEAD:locale')" == "$GE_LOCALE_TREE" ]] \
   || fail "GE locale tree no longer matches the recorded state"
 [[ "$(tracked_diff_sha256 root)" == "$FINAL_RTSP_TRACKED_DIFF_SHA256" ]] \
-  || fail "Proton tracked diff no longer matches the prepared Alpha 2 state"
+  || fail "Proton tracked diff no longer matches the prepared Alpha 3 state"
 [[ "$(tracked_diff_sha256 wineopenxr)" == "$FINAL_WINEOPENXR_DIFF_SHA256" ]] \
-  || fail "WineOpenXR diff no longer matches the prepared Alpha 2 state"
+  || fail "WineOpenXR diff no longer matches the prepared Alpha 3 state"
 diff -qr --no-dereference "$GE_TREE/locale" "$RTSP_TREE/locale" > /dev/null \
   || fail "copied locale tree no longer matches the pinned GE source"
 [[ "$(git -C "$WINE_TREE" rev-parse 'HEAD^{tree}')" == "$FINAL_WINE_TREE" ]] \
-  || fail "Wine source tree no longer matches the deterministic Alpha 2 lock"
+  || fail "Wine source tree no longer matches the deterministic Alpha 3 lock"
 require_pristine "$WINE_TREE"
 require_head "$PIPER_TREE" "$RTSP_PIPER_COMMIT"
 [[ "$(git -C "$PIPER_TREE" status --porcelain --untracked-files=all)" == " M CMakeLists.txt" ]] \

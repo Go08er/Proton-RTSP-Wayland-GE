@@ -4,8 +4,8 @@ set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 TOOL_DIR="${1:-}"
-BUILD_NAME="${BUILD_NAME:-Proton-RTSP-Wayland-GE-Alpha2}"
-DISPLAY_NAME="${DISPLAY_NAME:-Proton RTSP Wayland GE Alpha 2}"
+BUILD_NAME="${BUILD_NAME:-Proton-RTSP-Wayland-GE-Alpha3}"
+DISPLAY_NAME="${DISPLAY_NAME:-Proton RTSP Wayland GE Alpha 3}"
 SOURCE_ARCHIVE_NAME="${SOURCE_ARCHIVE_NAME:-${BUILD_NAME}-source.tar.gz}"
 
 fail() {

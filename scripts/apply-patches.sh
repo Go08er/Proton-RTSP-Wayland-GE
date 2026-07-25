@@ -183,6 +183,8 @@ git -C "$RTSP_TREE" apply --check "$ROOT_DIR/patches/proton-rtsp-wayland.patch"
 git -C "$RTSP_TREE" apply "$ROOT_DIR/patches/proton-rtsp-wayland.patch"
 git -C "$RTSP_TREE" apply --check "$ROOT_DIR/patches/proton-alpha2.patch"
 git -C "$RTSP_TREE" apply "$ROOT_DIR/patches/proton-alpha2.patch"
+git -C "$RTSP_TREE" apply --check "$ROOT_DIR/patches/proton-alpha3.patch"
+git -C "$RTSP_TREE" apply "$ROOT_DIR/patches/proton-alpha3.patch"
 grep -Fqx "XALIA_ZIP_SHA256 := $XALIA_ZIP_SHA256" "$RTSP_TREE/Makefile.in" \
   || fail "prepared Makefile does not contain the pinned Xalia archive hash"
 
@@ -203,7 +205,7 @@ done
 [[ "$(git -C "$WINE_TREE" rev-list --count "$RTSP_WINE_BASE..HEAD")" == "$GE_WAYLAND_PATCH_COUNT" ]] \
   || fail "Wine patch count does not match the audited series"
 [[ "$(git -C "$WINE_TREE" rev-parse 'HEAD^{tree}')" == "$FINAL_WINE_TREE" ]] \
-  || fail "prepared Wine tree does not match the deterministic Alpha 2 lock"
+  || fail "prepared Wine tree does not match the deterministic Alpha 3 lock"
 require_pristine "$WINE_TREE"
 
 cmp "$OPENXR_PATCH" "$GE_TREE/patches/wineopenxr/wineopenxr_decouple.patch" \
@@ -228,9 +230,9 @@ require_expected_untracked_roots
 diff -qr --no-dereference "$GE_TREE/locale" "$RTSP_TREE/locale" > /dev/null \
   || fail "copied locale tree differs from the pinned GE source"
 [[ "$(tracked_diff_sha256 root)" == "$FINAL_RTSP_TRACKED_DIFF_SHA256" ]] \
-  || fail "prepared Proton tracked diff does not match the Alpha 2 lock"
+  || fail "prepared Proton tracked diff does not match the Alpha 3 lock"
 [[ "$(tracked_diff_sha256 wineopenxr)" == "$FINAL_WINEOPENXR_DIFF_SHA256" ]] \
-  || fail "prepared WineOpenXR diff does not match the Alpha 2 lock"
+  || fail "prepared WineOpenXR diff does not match the Alpha 3 lock"
 
 piper_status="$(git -C "$PIPER_TREE" status --porcelain --untracked-files=all)"
 [[ "$piper_status" == " M CMakeLists.txt" ]] \

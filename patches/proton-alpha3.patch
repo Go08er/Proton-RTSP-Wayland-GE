@@ -1,0 +1,12 @@
+diff --git a/proton b/proton
+--- a/proton
++++ b/proton
+@@ -45,7 +45,7 @@ from random import randrange
+ #To enable debug logging, copy "user_settings.sample.py" to "user_settings.py"
+ #and edit it if needed.
+ 
+-CURRENT_PREFIX_VERSION="11.0-101"
++CURRENT_PREFIX_VERSION="11.0-102"
+ 
+ PFX="Proton: "
+ ld_path_var = "LD_LIBRARY_PATH"

@@ -7,6 +7,8 @@
   data, preserves RTSP media wiring, and adds the scoped XRizer launch mode.
 - `proton-alpha2.patch` contains the Alpha 2 launcher follow-up, including the
   prefix-version bump and corrected Steam Input override handling.
+- `proton-alpha3.patch` advances the prefix version for the latest-GE candidate
+  so an existing Alpha 2 compatdata prefix cannot be mistaken for current state.
 - `piper-phonemize-pin.patch` replaces Piper's mutable piper-phonemize branch
   URL with the exact commit and SHA-256 used by this build. Piper and this
   modification retain Piper's MIT terms.
