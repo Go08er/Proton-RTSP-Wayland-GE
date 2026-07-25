@@ -22,19 +22,10 @@ RTSP layout, and adds a two-line WineWayland XR capability repair intended to
 fix `VK_ERROR_EXTENSION_NOT_PRESENT` on native Wayland.
 Its intended release tag is `v11.1.0-beta.1`.
 
-For the Alpha 4 precursor, the deterministic source replay, fresh non-release
-build, and artifact gate passed. Its verifier checked all 6,181 files, the
-media registry, licenses, launcher policy, filesystem safety, and private-path
-leakage. A local 64-bit D3D11 device and one-frame swapchain smoke also passed
-under native Wayland.
-
-On 2026-07-25, the Alpha 4 precursor passed VRChat through XRizer 0.5.0 and
-WiVRn using Proton's normal XR routing, without the former Vulkan extension
-failure. Rendering, tracking, controller mapping, audio, a world transition,
-ordinary YouTube playback with seek and pause/resume, a short RTSP check, and
-normal shutdown all worked. Its warnings were inherited from unchanged RTSP
-components or external software; none implicated the project-authored
-WineWayland repair.
+The repair was first validated in the Alpha 4 precursor: its source, build,
+artifact, native-Wayland D3D11, and VRChat → XRizer → WiVRn gates passed.
+The full precursor results remain in
+[`docs/TESTING.md`](docs/TESTING.md#alpha-4-precursor-evidence).
 
 Beta 1 removes the no-longer-needed project-specific XR selector and gives the
 generated Proton log an unambiguous build identity. The exact 1,465,922,347-byte
@@ -136,12 +127,9 @@ XRizer → WiVRn route works without it.
 
 - Alpha 3's normal route failed on the tested VRChat → XRizer 0.5.0 → WiVRn
   26.6.2 route when DXVK requested Wine's XR Vulkan device extension through
-  WineWayland. The Alpha 4 precursor directly advertises that capability and
-  passed the same route in game. Other XR routes remain untested.
+  WineWayland.
 - GE-Proton11-3 forces Steam Input off under WineWayland and temporarily
-  selects the running game's AppID in the host Steam client. The expected
-  controller mapping and ordinary exit passed once; overlapping launches and
-  forced termination remain untested.
+  selects the running game's AppID in the host Steam client.
 - Native Wayland depends on compositor protocol support. Overlays, input
   methods, and window management can differ from XWayland.
 - The RTSP media stack does not guarantee every codec, site, stream, or
