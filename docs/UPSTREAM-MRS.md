@@ -8,9 +8,9 @@ should be opened from the smallest applicable topic branch against RTSP commit
 (`rtsp-11.0-20260609-1`).
 
 GitHub's fork banner compares the repositories' default branches, so its
-ahead/behind counts are not the size of this project's delta. At the current
-Beta 1 commit, this line is 37 commits ahead of the RTSP base tag above and
-zero behind it.
+ahead/behind counts are not the size of this project's delta. At prepared
+Beta 1 anchor `8ccfff9e`, this line is 37 commits ahead of the RTSP base tag
+above and zero behind it.
 
 Beta 1 is also an integration branch, not a pull request branch. Its new work
 has not been proposed upstream:
