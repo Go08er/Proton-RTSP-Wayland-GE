@@ -1,6 +1,6 @@
 <!-- SPDX-License-Identifier: BSD-3-Clause -->
 
-# Proton-RTSP-Wayland-GE Alpha 3 release candidate
+# Proton-RTSP-Wayland-GE Alpha 3
 
 This compatibility tool lets Linux players run their Steam library on native Wayland from an RTSP Proton base, avoiding XWayland scaling blur and including a tested `PROTON_XR_MODE=xrizer` OpenVR-to-XRizer path.
 
@@ -9,7 +9,7 @@ This compatibility tool lets Linux players run their Steam library on native Way
 - Avoid XWayland scaling blur.
 - Use correct fractional scaling.
 - Let each monitor use its own refresh rate.
-- Remove an extra display-system hop that can lower VR latency.
+- Remove an extra display-system hop, which may lower VR latency.
 
 ## Alpha status
 
@@ -22,14 +22,14 @@ and pause/resume, clean exit, and WiVRn stability. Minimize/restore,
 livestreams, and broader XR routes remain untested. Back up important saves and
 compatdata prefixes before changing compatibility tools.
 
-## Repository layout
-
-The additive `alpha3` branch preserves RTSP history and is the integration
-branch. Reproducible builds and release artifacts come from
-`release-engineering/alpha3-a5c30efa`. Future RTSP contributions use separate
-topic branches; see [`docs/UPSTREAM-MRS.md`](docs/UPSTREAM-MRS.md).
-
 ## Installation
+
+Download the latest release from
+[GitHub Releases](https://github.com/Go08er/Proton-RTSP-Wayland-GE/releases).
+Each release includes the binary archive
+`Proton-RTSP-Wayland-GE-Alpha3.tar.gz` and the corresponding-source archive
+`Proton-RTSP-Wayland-GE-Alpha3-source.tar.gz`. The source archive is provided
+to satisfy the LGPL obligations of the bundled Wine components.
 
 1. Exit Steam completely.
 2. Extract the release directory into:
@@ -48,7 +48,7 @@ topic branches; see [`docs/UPSTREAM-MRS.md`](docs/UPSTREAM-MRS.md).
 3. Start Steam again.
 4. Open a game's **Properties → Compatibility**, enable the option to force a compatibility tool, and select **Proton RTSP Wayland GE Alpha 3**.
 
-When an archive and adjacent checksum are provided, verify them before extraction:
+Verify the provided checksums before extraction:
 
 ```sh
 sha512sum -c Proton-RTSP-Wayland-GE-Alpha3.tar.gz.sha512sum
@@ -59,14 +59,18 @@ Keep the matching source archive with the binary.
 
 ### NixOS
 
-Add this repository as a flake input:
+Add the tag-pinned repository as a flake input:
 
 ```nix
 inputs.proton-rtsp-wayland-ge.url =
-  "github:Go08er/Proton-RTSP-Wayland-GE";
+  "github:Go08er/Proton-RTSP-Wayland-GE/v11.1.0-alpha.3";
+inputs.proton-rtsp-wayland-ge.inputs.nixpkgs.follows = "nixpkgs";
 ```
 
-Then declare its `steamcompattool` output in your NixOS configuration:
+The tagged URL stays on Alpha 3. Omit `/v11.1.0-alpha.3` to follow the default
+branch instead.
+
+Then add its default package to `programs.steam.extraCompatPackages`:
 
 ```nix
 programs.steam = {
@@ -113,6 +117,13 @@ Start with the smallest launch option that reproduces the issue:
 4. Add `PROTON_LOG=1` for a single diagnostic run.
 
 Sanitize logs before posting them — see [`docs/REPORTING.md`](docs/REPORTING.md).
+
+## Repository layout
+
+The additive `alpha3` branch preserves RTSP history and is the integration
+branch. Reproducible builds and release artifacts come from
+`release-engineering/alpha3-a5c30efa`. Future RTSP contributions use separate
+topic branches; see [`docs/UPSTREAM-MRS.md`](docs/UPSTREAM-MRS.md).
 
 ## Provenance
 
