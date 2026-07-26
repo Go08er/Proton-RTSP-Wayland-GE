@@ -165,7 +165,19 @@ The public `alpha3` branch and release remain immutable comparison points.
 The tested local `alpha4` branch remains immutable evidence. The `beta1` branch
 promotes that GE-Proton11-3 integration and retires the custom XR selector
 without changing either earlier branch.
-Small upstream contributions remain separate from release assembly; see
+Small upstream contributions remain separate from release assembly.
+
+### Live feature comparisons
+
+All comparisons use RTSP release `rtsp-11.0-20260609-1` as their base.
+
+| Ref | Scope | Compare |
+| --- | --- | --- |
+| `beta1` | Complete distribution integration: GE Wine replay, dependencies, packaging, and launcher | [RTSP base → Beta 1](https://github.com/SpookySkeletons/proton-ge-rtsp/compare/rtsp-11.0-20260609-1...Go08er:Proton-RTSP-Wayland-GE:beta1) |
+| `feat/wineopenxr-decouple` | Focused WineOpenXR registry and callback-state decoupling with the RTSP build adapter | [RTSP base → WineOpenXR decoupling](https://github.com/SpookySkeletons/proton-ge-rtsp/compare/rtsp-11.0-20260609-1...Go08er:Proton-RTSP-Wayland-GE:feat/wineopenxr-decouple) |
+| `feat/wayland-build-wiring` | Proton-side build and launcher wiring only | [RTSP base → Wayland wiring](https://github.com/SpookySkeletons/proton-ge-rtsp/compare/rtsp-11.0-20260609-1...Go08er:Proton-RTSP-Wayland-GE:feat/wayland-build-wiring) |
+
+For full scope, status, attribution, and contribution details, see
 [`docs/UPSTREAM-MRS.md`](docs/UPSTREAM-MRS.md).
 
 - RTSP Proton: `3b4a5f407a5e0cabeef6d3757f29a23f277b429a`
