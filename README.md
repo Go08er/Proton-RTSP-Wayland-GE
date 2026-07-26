@@ -56,6 +56,14 @@ It includes:
 - `Proton-RTSP-Wayland-GE-Beta1.tar.gz`
 - `Proton-RTSP-Wayland-GE-Beta1-source.tar.gz`
 
+### Upgrading from Alpha 2 or Alpha 3
+
+Remove `PROTON_XR_MODE=xrizer` from the game's Steam launch options. Beta 1
+does not define or read this retired selector, so leaving it set is inert and
+does nothing. This is separate from the still-supported advanced
+`WINEDLLOVERRIDES="wineopenxr=d"` diagnostic fallback documented in
+[Troubleshooting](#troubleshooting).
+
 1. Exit Steam completely.
 2. Extract the release directory into:
 
@@ -117,9 +125,9 @@ from the pinned Beta 1 hash.
 interface is available. Disable logging after testing because detailed Wine
 logs can become large and reduce performance.
 
-Beta 1 uses Proton's normal XR routing. Do not set `PROTON_XR_MODE`; this
-project no longer defines or consumes that variable. The tested VRChat →
-XRizer → WiVRn route works without it.
+Beta 1 uses Proton's normal XR routing. See the
+[upgrade note](#upgrading-from-alpha-2-or-alpha-3) if old launch options still
+contain the retired selector.
 
 ## Known issues and test focus
 
