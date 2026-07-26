@@ -1,6 +1,6 @@
 <!-- SPDX-License-Identifier: BSD-3-Clause -->
 
-# Proton-RTSP-Wayland-GE Beta 1 candidate
+# Proton-RTSP-Wayland-GE Beta 1
 
 Run Steam games on native Wayland from the RTSP Proton 11 base with the
 released GE-Proton11-3 Wayland work.
@@ -15,7 +15,7 @@ released GE-Proton11-3 Wayland work.
 
 ## Current status
 
-Beta 1 is an unpublished release candidate pinned to the exact
+Beta 1 is a published release pinned to the exact
 `GE-Proton11-3` release. It replays 138 selected GE Wine patches byte-for-byte,
 adapts GE's WineWayland controller and WineOpenXR session fixes to the older
 RTSP layout, and adds a two-line WineWayland XR capability repair that fixes
@@ -45,7 +45,7 @@ YouTube VOD with audio, one seek, one pause/resume, and one short RTSP control.
 
 Direct Windows OpenXR, SteamVR, OpenComposite, broader media, and the default
 X11/XWayland path remain untested. Overlapping launches and forced termination
-also remain untested. Beta 1 is ready for publication as the next download.
+also remain untested. Beta 1 is the current download.
 
 ## Install Beta 1
 
@@ -162,7 +162,7 @@ Sanitize logs before posting them — see [`docs/REPORTING.md`](docs/REPORTING.m
 ## Repository layout and provenance
 
 The public `alpha3` branch and release remain immutable comparison points.
-The tested local `alpha4` branch remains immutable evidence. Local `beta1`
+The tested local `alpha4` branch remains immutable evidence. The `beta1` branch
 promotes that GE-Proton11-3 integration and retires the custom XR selector
 without changing either earlier branch.
 Small upstream contributions remain separate from release assembly; see
