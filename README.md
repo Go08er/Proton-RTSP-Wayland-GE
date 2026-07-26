@@ -21,7 +21,7 @@ adapts GE's WineWayland controller and WineOpenXR session fixes to the older
 RTSP layout, and adds a two-line WineWayland XR capability repair that fixes
 `VK_ERROR_EXTENSION_NOT_PRESENT` on the tested native-Wayland VRChat →
 XRizer → WiVRn route.
-Its intended release tag is `v11.1.0-beta.1`.
+Its release tag is `v11.1.0-beta.1`.
 
 The repair was first validated in the Alpha 4 precursor: its source, build,
 artifact, native-Wayland D3D11, and VRChat → XRizer → WiVRn gates passed.

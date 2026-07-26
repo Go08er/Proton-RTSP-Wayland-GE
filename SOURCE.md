@@ -4,8 +4,7 @@
 
 ## Beta 1 development record
 
-Beta 1 is not published. The intended tag is `v11.1.0-beta.1`. If this
-candidate is accepted and packaged, its files will be named:
+Beta 1 is published as `v11.1.0-beta.1`. Its release files are:
 
 - `Proton-RTSP-Wayland-GE-Beta1.tar.gz`
 - `Proton-RTSP-Wayland-GE-Beta1.tar.gz.sha512sum`
