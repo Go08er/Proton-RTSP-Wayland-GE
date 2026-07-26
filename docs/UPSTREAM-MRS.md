@@ -12,6 +12,20 @@ ahead/behind counts are not the size of this project's delta. At prepared
 Beta 1 anchor `8ccfff9e`, this line is 37 commits ahead of the RTSP base tag
 above and zero behind it.
 
+## Cross-fork feature comparisons
+
+All comparisons below use `rtsp-11.0-20260609-1`, the RTSP release this
+project descends from, as their base.
+
+| Ref | Native Wayland scope | XR scope | Upstream posture | Compare |
+| --- | --- | --- | --- | --- |
+| `beta1` | Complete distribution integration: GE Wine replay, dependencies, packaging, and launcher | GE WineOpenXR state decoupling and the tested WineWayland VR-capability repair | Release/integration branch; not an upstream pull-request branch | [RTSP base → Beta 1](https://github.com/SpookySkeletons/proton-ge-rtsp/compare/rtsp-11.0-20260609-1...Go08er:Proton-RTSP-Wayland-GE:beta1) |
+| `feat/wineopenxr-decouple` | None; independent of Wayland | Focused WineOpenXR registry and callback-state decoupling with the RTSP build adapter | Ready topic | [RTSP base → WineOpenXR state decoupling](https://github.com/SpookySkeletons/proton-ge-rtsp/compare/rtsp-11.0-20260609-1...Go08er:Proton-RTSP-Wayland-GE:feat/wineopenxr-decouple) |
+| `feat/wayland-build-wiring` | Proton-side build and launcher wiring only; incomplete without Wine driver sources, gitlinks, and locale data | None | Draft topic | [RTSP base → native Wayland wiring](https://github.com/SpookySkeletons/proton-ge-rtsp/compare/rtsp-11.0-20260609-1...Go08er:Proton-RTSP-Wayland-GE:feat/wayland-build-wiring) |
+
+The retired `feat/xr-mode-launcher` topic is intentionally excluded from this
+live comparison table.
+
 Beta 1 is also an integration branch, not a pull request branch. Its new work
 has not been proposed upstream:
 
