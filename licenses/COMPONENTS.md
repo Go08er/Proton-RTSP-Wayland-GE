@@ -10,7 +10,7 @@ It is not a substitute for the original license files copied into
 | --- | --- | --- |
 | Original project scripts, documentation, tests, selection manifest, and project-authored Proton additions | BSD-3-Clause | `../LICENSE` |
 | Proton and RTSP top-level code | BSD-3-Clause | `../LICENSE.proton`, `../LICENSE.upstream-proton` |
-| Wine, the 110 selected GE Wine patches, and the WineOpenXR integration modification | LGPL-2.1-or-later | `../LICENSE.wine`, `../COPYING.LIB.wine`, `../patches/wineopenxr-rtsp-makedep-integration.patch` |
+| Wine, the 138 selected GE Wine patches from pinned `GE-Proton11-3` (`8c8003f7f5473d883fbe1bc7ac070c79955754e8`), and the WineOpenXR integration modification | LGPL-2.1-or-later | `../LICENSE.wine`, `../COPYING.LIB.wine`, `../config/upstream-pins.sh`, `../patches/ge-proton11-3-selection.md`, `../patches/wineopenxr-rtsp-makedep-integration.patch` |
 | DXVK | Zlib | `upstream/dxvk/LICENSE` |
 | DXVK-NVAPI | MIT | `upstream/dxvk-nvapi/LICENSE` |
 | vkd3d and vkd3d-proton | LGPL-2.1-or-later, with separately licensed subprojects | `upstream/vkd3d/`, `upstream/vkd3d-proton/` |
