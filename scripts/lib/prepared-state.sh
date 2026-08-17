@@ -21,6 +21,8 @@ prepared_state_emit() {
   printf 'ge_tree=%q\n' "$ge_tree"
   printf 'rtsp_commit=%q\n' "$RTSP_COMMIT"
   printf 'rtsp_wine_base=%q\n' "$RTSP_WINE_BASE"
+  printf 'rtsp_source_label=%q\n' "$RTSP_SOURCE_LABEL"
+  printf 'rtsp_tag_object=%q\n' "$RTSP_TAG_OBJECT"
   printf 'rtsp_piper_commit=%q\n' "$RTSP_PIPER_COMMIT"
   printf 'final_wine_tree=%q\n' "$FINAL_WINE_TREE"
   printf 'final_wine_patch_count=%q\n' "$FINAL_WINE_PATCH_COUNT"

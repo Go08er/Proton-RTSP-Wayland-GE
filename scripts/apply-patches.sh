@@ -179,6 +179,7 @@ PIPER_TREE="$RTSP_TREE/piper"
 XALIA_TREE="$SOURCES_DIR/xalia"
 
 require_head "$RTSP_TREE" "$RTSP_COMMIT"
+require_annotated_tag "$RTSP_TREE" "$RTSP_SOURCE_LABEL" "$RTSP_TAG_OBJECT" "$RTSP_COMMIT"
 require_head "$GE_TREE" "$GE_COMMIT"
 require_annotated_tag "$GE_TREE" "$GE_SOURCE_LABEL" "$GE_TAG_OBJECT" "$GE_COMMIT"
 require_head "$WINE_TREE" "$RTSP_WINE_BASE"
