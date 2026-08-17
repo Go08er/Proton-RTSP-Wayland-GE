@@ -4,9 +4,10 @@
 
 The scripts build from pinned upstream revisions in a neutral temporary path.
 This avoids embedding a maintainer's home-directory path in binaries and
-generated Wine registry data. Beta 1 uses the exact annotated
-`GE-Proton11-3` release at peeled commit
-`8c8003f7f5473d883fbe1bc7ac070c79955754e8`.
+generated Wine registry data. Beta 2 uses the exact annotated
+`proton-rtsp-11.0-20260609-2` and `GE-Proton11-5` releases, peeled to
+`c3ca33a4ebaf66cdebbac5e5fe432e342e395942` and
+`a2b6daedb7273267359ece9d938d6de8dec596b6` respectively.
 
 ## Requirements
 
@@ -72,7 +73,7 @@ are never excluded from scanning.
 The default work directory is:
 
 ```text
-/tmp/proton-rtsp-wayland-ge-beta1-11-3
+/tmp/proton-rtsp-wayland-ge-beta2-20260609-2
 ```
 
 Keep custom work paths similarly short. The pinned eSpeak NG phoneme compiler
@@ -92,7 +93,7 @@ The default is `PACKAGE_RELEASE=0`. It builds and verifies the compatibility
 tool at:
 
 ```text
-/tmp/proton-rtsp-wayland-ge-beta1-11-3/sources/proton-ge-rtsp/build/Proton-RTSP-Wayland-GE-Beta1
+/tmp/proton-rtsp-wayland-ge-beta2-20260609-2/sources/proton-ge-rtsp/build/Proton-RTSP-Wayland-GE-Beta2
 ```
 
 It does not create release archives, push commits, publish a GitHub release, or

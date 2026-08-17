@@ -1,9 +1,11 @@
 # Historical Alpha 3 Wayland patch triage
 
 This table preserves the published Alpha 3 classification for Proton-GE
-snapshot `a5c30efa`. It is not the Beta 1 patch list. See
-[`../patches/ge-proton11-3-selection.md`](../patches/ge-proton11-3-selection.md)
-for the current 138-file GE-Proton11-3 selection.
+snapshot `a5c30efa`. It is not the active Beta 2 patch list. The published
+Beta 1 record remains in
+[`../patches/ge-proton11-3-selection.md`](../patches/ge-proton11-3-selection.md);
+see [`../patches/ge-proton11-5-selection.md`](../patches/ge-proton11-5-selection.md)
+for Beta 2's 152-file selection.
 
 | # | subject | area | class | vrchat | note |
 | --- | --- | --- | --- | --- | --- |

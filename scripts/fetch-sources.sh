@@ -3,7 +3,7 @@
 set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-WORK_ROOT="${WORK_ROOT:-/tmp/proton-rtsp-wayland-ge-beta1-11-3}"
+WORK_ROOT="${WORK_ROOT:-/tmp/proton-rtsp-wayland-ge-beta2-20260609-2}"
 SOURCES_DIR="${SOURCES_DIR:-$WORK_ROOT/sources}"
 source "$ROOT_DIR/config/upstream-pins.sh"
 

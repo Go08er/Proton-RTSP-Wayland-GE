@@ -2,6 +2,59 @@
 
 # Corresponding source
 
+## Beta 2 development record
+
+Beta 2 is an **unpublished candidate**. No tag, release, or asset exists for
+it. If it is accepted and packaged, its files will be named:
+
+- `Proton-RTSP-Wayland-GE-Beta2.tar.gz`
+- `Proton-RTSP-Wayland-GE-Beta2.tar.gz.sha512sum`
+- `Proton-RTSP-Wayland-GE-Beta2-source.tar.gz`
+- `Proton-RTSP-Wayland-GE-Beta2-source.tar.gz.sha512sum`
+
+The build workflow invokes `scripts/package-corresponding-source.sh` only when
+`PACKAGE_RELEASE=1` is explicitly selected. The default build does not create
+release archives.
+
+Beta 2 retains Proton-RTSP's Wine lineage. GE's Wine is never checked out or
+built by this project: selected GE patches are replayed onto the pinned RTSP
+Wine base, while `GE_WINE_COMMIT` records the GE release's own gitlink only as
+provenance.
+
+The prepared Beta 2 source consists of:
+
+- RTSP release `proton-rtsp-11.0-20260609-2`, annotated tag object
+  `315720bb897873e2f4a158c0b06d88d6198a8703`, peeled to Proton commit
+  `c3ca33a4ebaf66cdebbac5e5fe432e342e395942`;
+- RTSP Wine base
+  `4a5f2736c5baf3d20ea7227b9da511e897ff9a2a`;
+- the exact annotated `GE-Proton11-5` tag object
+  `fc27a5029c7b90def3222b8fbaf33b69af973940`, peeled to commit
+  `a2b6daedb7273267359ece9d938d6de8dec596b6`;
+- 152 selected format-patch files copied byte-for-byte from that GE release,
+  re-derived by patch subject because GE renumbered the series;
+- a context-only Winebus adapter carrying GE's `PROTON_NO_STEAMINPUT` change,
+  with the seven inserted lines unchanged from upstream;
+- GE's exact WineOpenXR decoupling patch and the RTSP one-line makedep adapter;
+- a source-equivalent backport of GE's WineOpenXR session-list cleanup;
+- the unchanged RTSP-layout SetupAPI Steam Input adapter;
+- the project-authored two-line WineWayland OpenVR/OpenXR capability repair;
+- the Beta 2 launcher patch, dependency sources, X11 locale data, and license
+  files.
+
+The resulting RTSP Wine history is locked to 155 commits above its base and
+tree `d6271f4e2c2f50a2a9bd113807de645ad608e3f8`. The corresponding GE release's
+Wine gitlink is `36078f5f947532885a596dabbc7893c048133660`; it is not a build
+input.
+
+Three follow-up patches retain `ge-proton11-3` in their filenames. Their bytes
+remain valid on the pinned GE-Proton11-5 composition, and their names record
+the release from which they were originally derived.
+
+The published Beta 1 GE patch bundle, selection record, and launcher patch
+remain tracked as historical corresponding source. Beta 2's active pins do
+not replay them.
+
 ## Beta 1 development record
 
 Beta 1 is published as `v11.1.0-beta.1`. Its release files are:

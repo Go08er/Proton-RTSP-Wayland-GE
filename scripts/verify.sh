@@ -4,10 +4,10 @@ set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 TOOL_DIR="${1:-}"
-BUILD_NAME="${BUILD_NAME:-Proton-RTSP-Wayland-GE-Beta1}"
-DISPLAY_NAME="${DISPLAY_NAME:-Proton RTSP Wayland GE Beta 1}"
+BUILD_NAME="${BUILD_NAME:-Proton-RTSP-Wayland-GE-Beta2}"
+DISPLAY_NAME="${DISPLAY_NAME:-Proton RTSP Wayland GE Beta 2}"
 SOURCE_ARCHIVE_NAME="${SOURCE_ARCHIVE_NAME:-${BUILD_NAME}-source.tar.gz}"
-GE_SOURCE_LABEL="${GE_SOURCE_LABEL:-GE-Proton11-3}"
+GE_SOURCE_LABEL="${GE_SOURCE_LABEL:-GE-Proton11-5}"
 
 fail() {
   printf 'FAIL: %s\n' "$*" >&2
@@ -240,13 +240,13 @@ grep -Fq 'self.check_environment("PROTON_USE_WAYLAND", "wayland")' "$TOOL_DIR/pr
 ! grep -Fq 'self.dlloverrides["wineopenxr"] = "d"' "$TOOL_DIR/proton" \
   || fail "project-injected WineOpenXR disable remains in the launcher"
 grep -Fqx 'CURRENT_PREFIX_VERSION="11.0-103"' "$TOOL_DIR/proton" \
-  || fail "Beta 1 prefix identity is missing"
+  || fail "expected 11.0-103 prefix identity is missing"
 grep -Fq 'self.env["PROTON_NO_STEAMINPUT"] = "1"' "$TOOL_DIR/proton" \
-  || fail "GE-Proton11-3 WineWayland Steam Input policy is missing"
+  || fail "$GE_SOURCE_LABEL WineWayland Steam Input policy is missing"
 grep -Fq 'self.force_steam_input_appid = True' "$TOOL_DIR/proton" \
-  || fail "GE-Proton11-3 Steam Input AppID policy is not enabled for WineWayland"
+  || fail "$GE_SOURCE_LABEL Steam Input AppID policy is not enabled for WineWayland"
 grep -Fq '[steam_bin, "steam://forceinputappid/" + str(appid)]' "$TOOL_DIR/proton" \
-  || fail "GE-Proton11-3 Steam Input AppID selection is missing"
+  || fail "$GE_SOURCE_LABEL Steam Input AppID selection is missing"
 grep -Fq 'steam_bin = shutil.which("steam")' "$TOOL_DIR/proton" \
   || fail "Steam Input AppID selection does not resolve the host Steam client"
 grep -Fqx '        env = dict(os.environ)' "$TOOL_DIR/proton" \
@@ -258,7 +258,7 @@ grep -Fq 'env.pop(name, None)' "$TOOL_DIR/proton" \
 grep -Fq 'env=env,' "$TOOL_DIR/proton" \
   || fail "Steam Input AppID selection does not pass the sanitized environment"
 grep -Fq 'self.set_steam_input_appid(0)' "$TOOL_DIR/proton" \
-  || fail "GE-Proton11-3 Steam Input AppID reset is missing"
+  || fail "$GE_SOURCE_LABEL Steam Input AppID reset is missing"
 grep -Fq 'sys.dont_write_bytecode = True' "$TOOL_DIR/proton" \
   || fail "bundled-helper bytecode-cache suppression is missing"
 grep -Fq "\"$BUILD_NAME\"" "$TOOL_DIR/compatibilitytool.vdf" \

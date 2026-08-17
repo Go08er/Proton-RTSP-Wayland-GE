@@ -3,7 +3,7 @@
 set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-WORK_ROOT="${WORK_ROOT:-/tmp/proton-rtsp-wayland-ge-beta1-11-3}"
+WORK_ROOT="${WORK_ROOT:-/tmp/proton-rtsp-wayland-ge-beta2-20260609-2}"
 SOURCES_DIR="${SOURCES_DIR:-$WORK_ROOT/sources}"
 RTSP_TREE="${RTSP_TREE:-$SOURCES_DIR/proton-ge-rtsp}"
 GE_TREE="${GE_TREE:-$SOURCES_DIR/proton-ge-custom}"
@@ -13,9 +13,10 @@ PATCH_BUNDLE="$ROOT_DIR/patches/$GE_WAYLAND_PATCH_DIR"
 OPENXR_PATCH="$ROOT_DIR/patches/$GE_WINEOPENXR_PATCH"
 OPENXR_INTEGRATION_PATCH="$ROOT_DIR/patches/$RTSP_WINEOPENXR_INTEGRATION_PATCH"
 OPENXR_SESSION_PATCH="$ROOT_DIR/patches/$RTSP_WINEOPENXR_SESSION_PATCH"
+WINEBUS_NO_STEAMINPUT_ADAPTER_PATCH="$ROOT_DIR/patches/$GE_WINEBUS_NO_STEAMINPUT_ADAPTER_PATCH"
 STEAM_INPUT_ADAPTER_PATCH="$ROOT_DIR/patches/$RTSP_STEAM_INPUT_ADAPTER_PATCH"
 WINEWAYLAND_XR_PATCH="$ROOT_DIR/patches/$RTSP_WINEWAYLAND_XR_PATCH"
-BETA1_PATCH="$ROOT_DIR/patches/$PROTON_BETA1_PATCH"
+BETA2_PATCH="$ROOT_DIR/patches/$PROTON_BETA2_PATCH"
 PIPER_PATCH="$ROOT_DIR/patches/piper-phonemize-pin.patch"
 PREPARED_STATE="$WORK_ROOT/.prepared"
 
@@ -216,9 +217,10 @@ require_gitlink "$GE_TREE" wayland-protocols "$WAYLAND_PROTOCOLS_COMMIT"
   || fail "bundled GE WineOpenXR patch hash does not match the source lock"
 require_sha256 "$OPENXR_INTEGRATION_PATCH" "$RTSP_WINEOPENXR_INTEGRATION_SHA256"
 require_sha256 "$OPENXR_SESSION_PATCH" "$RTSP_WINEOPENXR_SESSION_SHA256"
+require_sha256 "$WINEBUS_NO_STEAMINPUT_ADAPTER_PATCH" "$GE_WINEBUS_NO_STEAMINPUT_ADAPTER_SHA256"
 require_sha256 "$STEAM_INPUT_ADAPTER_PATCH" "$RTSP_STEAM_INPUT_ADAPTER_SHA256"
 require_sha256 "$WINEWAYLAND_XR_PATCH" "$RTSP_WINEWAYLAND_XR_SHA256"
-require_sha256 "$BETA1_PATCH" "$PROTON_BETA1_SHA256"
+require_sha256 "$BETA2_PATCH" "$PROTON_BETA2_SHA256"
 mapfile -t WAYLAND_PATCHES < <(
   find "$PATCH_BUNDLE" -maxdepth 1 -type f -name '*.patch' -print | LC_ALL=C sort
 )
@@ -232,8 +234,8 @@ git -C "$RTSP_TREE" apply --check "$ROOT_DIR/patches/proton-alpha2.patch"
 git -C "$RTSP_TREE" apply "$ROOT_DIR/patches/proton-alpha2.patch"
 git -C "$RTSP_TREE" apply --check "$ROOT_DIR/patches/proton-alpha3.patch"
 git -C "$RTSP_TREE" apply "$ROOT_DIR/patches/proton-alpha3.patch"
-git -C "$RTSP_TREE" apply --check "$BETA1_PATCH"
-git -C "$RTSP_TREE" apply "$BETA1_PATCH"
+git -C "$RTSP_TREE" apply --check "$BETA2_PATCH"
+git -C "$RTSP_TREE" apply "$BETA2_PATCH"
 grep -Fqx "XALIA_ZIP_SHA256 := $XALIA_ZIP_SHA256" "$RTSP_TREE/Makefile.in" \
   || fail "prepared Makefile does not contain the pinned Xalia archive hash"
 
@@ -253,21 +255,27 @@ done
 
 git -c user.name='Proton RTSP Wayland Build' \
     -c user.email='build@localhost' \
+    -C "$WINE_TREE" am --3way --keep-cr "$WINEBUS_NO_STEAMINPUT_ADAPTER_PATCH"
+git -c user.name='Proton RTSP Wayland Build' \
+    -c user.email='build@localhost' \
     -C "$WINE_TREE" am --3way --keep-cr "$STEAM_INPUT_ADAPTER_PATCH"
 git -c user.name='Proton RTSP Wayland Build' \
     -c user.email='build@localhost' \
     -C "$WINE_TREE" am --3way --keep-cr "$WINEWAYLAND_XR_PATCH"
 
 [[ "$(git -C "$WINE_TREE" rev-list --count "$RTSP_WINE_BASE..HEAD")" == "$FINAL_WINE_PATCH_COUNT" ]] \
-  || fail "Wine patch count does not match the audited Beta 1 series"
+  || fail "Wine patch count does not match the audited Beta 2 series"
 [[ "$(git -C "$WINE_TREE" rev-parse 'HEAD^{tree}')" == "$FINAL_WINE_TREE" ]] \
-  || fail "prepared Wine tree does not match the deterministic Beta 1 lock"
+  || fail "prepared Wine tree does not match the deterministic Beta 2 lock"
 [[ "$(git -C "$WINE_TREE" diff-tree --no-commit-id --name-only -r HEAD)" == \
     "dlls/winewayland.drv/vulkan.c" ]] \
   || fail "WineWayland XR repair changed an unexpected path"
 [[ "$(git -C "$WINE_TREE" diff-tree --no-commit-id --name-only -r HEAD^)" == \
     "dlls/setupapi/devinst.c" ]] \
   || fail "Steam Input adapter changed an unexpected path"
+[[ "$(git -C "$WINE_TREE" diff-tree --no-commit-id --name-only -r HEAD^^)" == \
+    "dlls/winebus.sys/bus_udev.c" ]] \
+  || fail "Winebus Steam Input adapter changed an unexpected path"
 [[ "$(grep -Fxc '    extensions->has_VK_WINE_openvr_device_extensions = 1;' \
     "$WINE_TREE/dlls/winewayland.drv/vulkan.c")" == "1" ]] \
   || fail "WineWayland OpenVR capability mapping is missing or duplicated"
@@ -276,6 +284,8 @@ git -c user.name='Proton RTSP Wayland Build' \
   || fail "WineWayland OpenXR capability mapping is missing or duplicated"
 grep -Fq 'VID_28DE&PID_11FF' "$WINE_TREE/dlls/setupapi/devinst.c" \
   || fail "Steam Input virtual-controller filter is missing"
+grep -Fq 'getenv("PROTON_NO_STEAMINPUT")' "$WINE_TREE/dlls/winebus.sys/bus_udev.c" \
+  || fail "Winebus Steam Input virtual-controller filter is missing"
 require_pristine "$WINE_TREE"
 
 cmp "$OPENXR_PATCH" "$GE_TREE/patches/wineopenxr/wineopenxr_decouple.patch" \
@@ -305,9 +315,9 @@ require_expected_untracked_roots
 diff -qr --no-dereference "$GE_TREE/locale" "$RTSP_TREE/locale" > /dev/null \
   || fail "copied locale tree differs from the pinned GE source"
 [[ "$(tracked_diff_sha256 root)" == "$FINAL_RTSP_TRACKED_DIFF_SHA256" ]] \
-  || fail "prepared Proton tracked diff does not match the Beta 1 lock"
+  || fail "prepared Proton tracked diff does not match the Beta 2 lock"
 [[ "$(tracked_diff_sha256 wineopenxr)" == "$FINAL_WINEOPENXR_DIFF_SHA256" ]] \
-  || fail "prepared WineOpenXR diff does not match the Beta 1 lock"
+  || fail "prepared WineOpenXR diff does not match the Beta 2 lock"
 
 piper_status="$(git -C "$PIPER_TREE" status --porcelain --untracked-files=all)"
 [[ "$piper_status" == " M CMakeLists.txt" ]] \
@@ -322,6 +332,7 @@ printf 'RTSP source prepared at %s\n' "$RTSP_TREE"
 printf 'GE source: %s (%s, %s)\n' "$GE_COMMIT" "$GE_SOURCE_KIND" "$GE_SOURCE_LABEL"
 printf 'GE Wayland patches: %s\n' "$GE_WAYLAND_PATCH_COUNT"
 printf 'Final Wine patches: %s\n' "$FINAL_WINE_PATCH_COUNT"
+printf 'GE winebus Steam Input adapter: %s\n' "$GE_WINEBUS_NO_STEAMINPUT_ADAPTER_PATCH"
 printf 'GE Steam Input adapter: %s\n' "$RTSP_STEAM_INPUT_ADAPTER_PATCH"
 printf 'WineWayland XR repair: %s\n' "$RTSP_WINEWAYLAND_XR_PATCH"
 printf 'GE WineOpenXR repair: %s\n' "$GE_WINEOPENXR_PATCH"
