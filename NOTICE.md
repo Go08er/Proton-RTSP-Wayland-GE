@@ -10,7 +10,7 @@ XRizer, WiVRn, Monado, or VRChat.
 
 ## Beta 1 pinned revisions
 
-- RTSP Proton: `SpookySkeletons/proton-ge-rtsp` at
+- RTSP Proton: `SpookySkeletons/Proton-RTSP` (formerly `proton-ge-rtsp`) at
   `3b4a5f407a5e0cabeef6d3757f29a23f277b429a`
 - RTSP Wine base: `fd920bd63abb7bf8b52b0f8e40da922ab9e784a4`
 - Proton-GE release: annotated tag `GE-Proton11-3`, tag object

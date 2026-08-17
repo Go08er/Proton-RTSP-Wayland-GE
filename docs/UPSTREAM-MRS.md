@@ -2,7 +2,7 @@
 
 The published additive `alpha3` branch is an integration and release branch,
 not a pull request branch. The entries below preserve its existing topic refs.
-Future contributions to `SpookySkeletons/proton-ge-rtsp`
+Future contributions to `SpookySkeletons/Proton-RTSP`
 should be opened from the smallest applicable topic branch against RTSP commit
 `3b4a5f407a5e0cabeef6d3757f29a23f277b429a`
 (`rtsp-11.0-20260609-1`).
@@ -19,9 +19,9 @@ project descends from, as their base.
 
 | Ref | Native Wayland scope | XR scope | Upstream posture | Compare |
 | --- | --- | --- | --- | --- |
-| `beta1` | Complete distribution integration: GE Wine replay, dependencies, packaging, and launcher | GE WineOpenXR state decoupling and the tested WineWayland VR-capability repair | Release/integration branch; not an upstream pull-request branch | [RTSP base → Beta 1](https://github.com/SpookySkeletons/proton-ge-rtsp/compare/rtsp-11.0-20260609-1...Go08er:Proton-RTSP-Wayland-GE:beta1) |
-| `feat/wineopenxr-decouple` | None; independent of Wayland | Focused WineOpenXR registry and callback-state decoupling with the RTSP build adapter | Ready topic | [RTSP base → WineOpenXR state decoupling](https://github.com/SpookySkeletons/proton-ge-rtsp/compare/rtsp-11.0-20260609-1...Go08er:Proton-RTSP-Wayland-GE:feat/wineopenxr-decouple) |
-| `feat/wayland-build-wiring` | Proton-side build and launcher wiring only; incomplete without Wine driver sources, gitlinks, and locale data | None | Draft topic | [RTSP base → native Wayland wiring](https://github.com/SpookySkeletons/proton-ge-rtsp/compare/rtsp-11.0-20260609-1...Go08er:Proton-RTSP-Wayland-GE:feat/wayland-build-wiring) |
+| `beta1` | Complete distribution integration: GE Wine replay, dependencies, packaging, and launcher | GE WineOpenXR state decoupling and the tested WineWayland VR-capability repair | Release/integration branch; not an upstream pull-request branch | [RTSP base → Beta 1](https://github.com/SpookySkeletons/Proton-RTSP/compare/rtsp-11.0-20260609-1...Go08er:Proton-RTSP-Wayland-GE:beta1) |
+| `feat/wineopenxr-decouple` | None; independent of Wayland | Focused WineOpenXR registry and callback-state decoupling with the RTSP build adapter | Ready topic | [RTSP base → WineOpenXR state decoupling](https://github.com/SpookySkeletons/Proton-RTSP/compare/rtsp-11.0-20260609-1...Go08er:Proton-RTSP-Wayland-GE:feat/wineopenxr-decouple) |
+| `feat/wayland-build-wiring` | Proton-side build and launcher wiring only; incomplete without Wine driver sources, gitlinks, and locale data | None | Draft topic | [RTSP base → native Wayland wiring](https://github.com/SpookySkeletons/Proton-RTSP/compare/rtsp-11.0-20260609-1...Go08er:Proton-RTSP-Wayland-GE:feat/wayland-build-wiring) |
 
 The retired `feat/xr-mode-launcher` topic is intentionally excluded from this
 live comparison table.
@@ -63,7 +63,7 @@ project-specific Proton interface.
 - **Branch:** `feat/wineopenxr-decouple`
 - **Commit:** `52b017cc7a2791bee38bc99b1e3e45f697cf1a1b`
 - **Subject:** `wineopenxr: Decouple XR and VR registry state`
-- **Compare:** [RTSP base → WineOpenXR state decoupling](https://github.com/SpookySkeletons/proton-ge-rtsp/compare/rtsp-11.0-20260609-1...Go08er:Proton-RTSP-Wayland-GE:feat/wineopenxr-decouple)
+- **Compare:** [RTSP base → WineOpenXR state decoupling](https://github.com/SpookySkeletons/Proton-RTSP/compare/rtsp-11.0-20260609-1...Go08er:Proton-RTSP-Wayland-GE:feat/wineopenxr-decouple)
 - **Diff:** four files, 351 additions and 20 deletions
 - **Depends on:** nothing
 - **Attribution:** Proton-GE commit
@@ -83,7 +83,7 @@ makedep wrapper already supplies the loader together with its required
 - **Branch:** `feat/wayland-build-wiring`
 - **Commit:** `a4c87c8b1a57a85876775f6b06bb941a187e9b77`
 - **Subject:** `proton: Enable native Wayland sessions`
-- **Compare:** [RTSP base → native Wayland wiring](https://github.com/SpookySkeletons/proton-ge-rtsp/compare/rtsp-11.0-20260609-1...Go08er:Proton-RTSP-Wayland-GE:feat/wayland-build-wiring)
+- **Compare:** [RTSP base → native Wayland wiring](https://github.com/SpookySkeletons/Proton-RTSP/compare/rtsp-11.0-20260609-1...Go08er:Proton-RTSP-Wayland-GE:feat/wayland-build-wiring)
 - **Diff:** `.gitmodules`, `Makefile.in`, and `proton`, 182 additions and one
   deletion
 - **Status:** local draft; do not open a pull request yet

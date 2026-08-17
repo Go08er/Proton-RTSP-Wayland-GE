@@ -181,9 +181,9 @@ All comparisons use RTSP release `rtsp-11.0-20260609-1` as their base.
 
 | Ref | Scope | Compare |
 | --- | --- | --- |
-| `beta1` | Complete distribution integration: GE Wine replay, dependencies, packaging, and launcher | [RTSP base → Beta 1](https://github.com/SpookySkeletons/proton-ge-rtsp/compare/rtsp-11.0-20260609-1...Go08er:Proton-RTSP-Wayland-GE:beta1) |
-| `feat/wineopenxr-decouple` | Focused WineOpenXR registry and callback-state decoupling with the RTSP build adapter | [RTSP base → WineOpenXR decoupling](https://github.com/SpookySkeletons/proton-ge-rtsp/compare/rtsp-11.0-20260609-1...Go08er:Proton-RTSP-Wayland-GE:feat/wineopenxr-decouple) |
-| `feat/wayland-build-wiring` | Proton-side build and launcher wiring only | [RTSP base → Wayland wiring](https://github.com/SpookySkeletons/proton-ge-rtsp/compare/rtsp-11.0-20260609-1...Go08er:Proton-RTSP-Wayland-GE:feat/wayland-build-wiring) |
+| `beta1` | Complete distribution integration: GE Wine replay, dependencies, packaging, and launcher | [RTSP base → Beta 1](https://github.com/SpookySkeletons/Proton-RTSP/compare/rtsp-11.0-20260609-1...Go08er:Proton-RTSP-Wayland-GE:beta1) |
+| `feat/wineopenxr-decouple` | Focused WineOpenXR registry and callback-state decoupling with the RTSP build adapter | [RTSP base → WineOpenXR decoupling](https://github.com/SpookySkeletons/Proton-RTSP/compare/rtsp-11.0-20260609-1...Go08er:Proton-RTSP-Wayland-GE:feat/wineopenxr-decouple) |
+| `feat/wayland-build-wiring` | Proton-side build and launcher wiring only | [RTSP base → Wayland wiring](https://github.com/SpookySkeletons/Proton-RTSP/compare/rtsp-11.0-20260609-1...Go08er:Proton-RTSP-Wayland-GE:feat/wayland-build-wiring) |
 
 For full scope, status, attribution, and contribution details, see
 [`docs/UPSTREAM-MRS.md`](docs/UPSTREAM-MRS.md).
