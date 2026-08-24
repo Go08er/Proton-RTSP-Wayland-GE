@@ -1,0 +1,25 @@
+From 6d9c2b6d774a923534001420478b08c2989d959b Mon Sep 17 00:00:00 2001
+From: GloriousEggroll <gloriouseggroll@gmail.com>
+Date: Sat, 25 Jul 2026 11:04:41 -0500
+Subject: [PATCH] wineopenxr: Remove destroyed sessions from the session list
+
+Source-equivalent backport of the WineOpenXR update imported by GE-Proton11-3 commit 7e5c9ecd. Keep the runtime session list from retaining a freed entry after xrDestroySession succeeds.
+---
+ openxr_loader.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/openxr_loader.c b/openxr_loader.c
+index a0efbc1..3fecff9 100644
+--- a/openxr_loader.c
++++ b/openxr_loader.c
+@@ -901,6 +901,10 @@ XrResult WINAPI xrDestroySession(XrSession session) {
+     return params.result;
+   }
+ 
++  EnterCriticalSection(&session_list_lock);
++  list_remove(&wine_session->entry);
++  LeaveCriticalSection(&session_list_lock);
++
+   free(wine_session);
+   return XR_SUCCESS;
+ }

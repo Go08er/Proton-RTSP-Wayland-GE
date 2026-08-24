@@ -3,14 +3,14 @@
 set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-WORK_ROOT="${WORK_ROOT:-/tmp/proton-rtsp-wayland-ge-work}"
+WORK_ROOT="${WORK_ROOT:-/tmp/proton-rtsp-wayland-ge-beta2-20260609-2}"
 SOURCES_DIR="${SOURCES_DIR:-$WORK_ROOT/sources}"
 RTSP_TREE="${RTSP_TREE:-$SOURCES_DIR/proton-ge-rtsp}"
 GE_TREE="${GE_TREE:-$SOURCES_DIR/proton-ge-custom}"
 source "$ROOT_DIR/config/upstream-pins.sh"
 source "$ROOT_DIR/scripts/lib/prepared-state.sh"
-BUILD_NAME="${BUILD_NAME:-Proton-RTSP-Wayland-GE-Alpha2}"
-DISPLAY_NAME="${DISPLAY_NAME:-Proton RTSP Wayland GE Alpha 2}"
+BUILD_NAME="${BUILD_NAME:-Proton-RTSP-Wayland-GE-Beta2}"
+DISPLAY_NAME="${DISPLAY_NAME:-Proton RTSP Wayland GE Beta 2}"
 JOBS="${JOBS:-1}"
 ORCHESTRATOR_JOBS="${ORCHESTRATOR_JOBS:-}"
 COMPONENT_JOBS="${COMPONENT_JOBS:-}"
@@ -20,6 +20,11 @@ PIPER_PHONEME_PATH_LIMIT=274
 PREPARED_STATE="$WORK_ROOT/.prepared"
 PIPER_PATCH="$ROOT_DIR/patches/piper-phonemize-pin.patch"
 OPENXR_INTEGRATION_PATCH="$ROOT_DIR/patches/$RTSP_WINEOPENXR_INTEGRATION_PATCH"
+OPENXR_SESSION_PATCH="$ROOT_DIR/patches/$RTSP_WINEOPENXR_SESSION_PATCH"
+WINEBUS_NO_STEAMINPUT_ADAPTER_PATCH="$ROOT_DIR/patches/$GE_WINEBUS_NO_STEAMINPUT_ADAPTER_PATCH"
+STEAM_INPUT_ADAPTER_PATCH="$ROOT_DIR/patches/$RTSP_STEAM_INPUT_ADAPTER_PATCH"
+WINEWAYLAND_XR_PATCH="$ROOT_DIR/patches/$RTSP_WINEWAYLAND_XR_PATCH"
+BETA2_PATCH="$ROOT_DIR/patches/$PROTON_BETA2_PATCH"
 
 if [[ "${LOW_IMPACT_REEXEC:-0}" != "1" ]]; then
   export LOW_IMPACT_REEXEC=1
@@ -52,7 +57,7 @@ fi
 (( ORCHESTRATOR_JOBS * COMPONENT_JOBS <= JOBS )) \
   || fail "nested worker budget exceeds JOBS ($ORCHESTRATOR_JOBS x $COMPONENT_JOBS > $JOBS)"
 
-BUILD_LOCK="${PROTON_BUILD_LOCK:-$ROOT_DIR/../../../.proton-build.lock}"
+BUILD_LOCK="${PROTON_BUILD_LOCK:-${HOME:?HOME must be set}/Documents/.proton-build.lock}"
 mkdir -p "$(dirname "$BUILD_LOCK")"
 exec 9>"$BUILD_LOCK"
 flock -n 9 || fail "another cooperating Proton build holds $BUILD_LOCK"
@@ -144,13 +149,16 @@ require_head "$GE_TREE" "$GE_COMMIT"
 [[ "$(git -C "$GE_TREE" rev-parse 'HEAD:locale')" == "$GE_LOCALE_TREE" ]] \
   || fail "GE locale tree no longer matches the recorded state"
 [[ "$(tracked_diff_sha256 root)" == "$FINAL_RTSP_TRACKED_DIFF_SHA256" ]] \
-  || fail "Proton tracked diff no longer matches the prepared Alpha 2 state"
+  || fail "Proton tracked diff no longer matches the prepared Beta 2 state"
 [[ "$(tracked_diff_sha256 wineopenxr)" == "$FINAL_WINEOPENXR_DIFF_SHA256" ]] \
-  || fail "WineOpenXR diff no longer matches the prepared Alpha 2 state"
+  || fail "WineOpenXR diff no longer matches the prepared Beta 2 state"
 diff -qr --no-dereference "$GE_TREE/locale" "$RTSP_TREE/locale" > /dev/null \
   || fail "copied locale tree no longer matches the pinned GE source"
 [[ "$(git -C "$WINE_TREE" rev-parse 'HEAD^{tree}')" == "$FINAL_WINE_TREE" ]] \
-  || fail "Wine source tree no longer matches the deterministic Alpha 2 lock"
+  || fail "Wine source tree no longer matches the deterministic Beta 2 lock"
+[[ "$(git -C "$WINE_TREE" rev-list --count "$RTSP_WINE_BASE..HEAD")" == \
+    "$FINAL_WINE_PATCH_COUNT" ]] \
+  || fail "Wine source history no longer matches the Beta 2 patch count"
 require_pristine "$WINE_TREE"
 require_head "$PIPER_TREE" "$RTSP_PIPER_COMMIT"
 [[ "$(git -C "$PIPER_TREE" status --porcelain --untracked-files=all)" == " M CMakeLists.txt" ]] \
@@ -163,6 +171,22 @@ cmp "$PIPER_PATCH" <(git -C "$PIPER_TREE" diff --no-ext-diff --binary -- CMakeLi
   || fail "WineOpenXR integration patch is missing"
 [[ "$(sha256sum "$OPENXR_INTEGRATION_PATCH" | awk '{print $1}')" == "$RTSP_WINEOPENXR_INTEGRATION_SHA256" ]] \
   || fail "WineOpenXR integration patch no longer matches its source lock"
+[[ "$(sha256sum "$OPENXR_SESSION_PATCH" | awk '{print $1}')" == "$RTSP_WINEOPENXR_SESSION_SHA256" ]] \
+  || fail "WineOpenXR session patch no longer matches its source lock"
+[[ "$(sha256sum "$WINEBUS_NO_STEAMINPUT_ADAPTER_PATCH" | awk '{print $1}')" == "$GE_WINEBUS_NO_STEAMINPUT_ADAPTER_SHA256" ]] \
+  || fail "Winebus Steam Input adapter no longer matches its source lock"
+[[ "$(sha256sum "$STEAM_INPUT_ADAPTER_PATCH" | awk '{print $1}')" == "$RTSP_STEAM_INPUT_ADAPTER_SHA256" ]] \
+  || fail "Steam Input adapter no longer matches its source lock"
+[[ "$(sha256sum "$WINEWAYLAND_XR_PATCH" | awk '{print $1}')" == "$RTSP_WINEWAYLAND_XR_SHA256" ]] \
+  || fail "WineWayland XR patch no longer matches its source lock"
+[[ "$(sha256sum "$BETA2_PATCH" | awk '{print $1}')" == "$PROTON_BETA2_SHA256" ]] \
+  || fail "Beta 2 launcher patch no longer matches its source lock"
+grep -Fqx 'CURRENT_PREFIX_VERSION="11.0-103"' "$RTSP_TREE/proton" \
+  || fail "expected 11.0-103 prefix identity is missing"
+grep -Fq 'self.env["PROTON_NO_STEAMINPUT"] = "1"' "$RTSP_TREE/proton" \
+  || fail "$GE_SOURCE_LABEL WineWayland Steam Input policy is missing"
+grep -Fq 'list_remove(&wine_session->entry);' "$RTSP_TREE/wineopenxr/openxr_loader.c" \
+  || fail "WineOpenXR session-list cleanup is missing"
 require_head "$RTSP_TREE/libxml2" "$LIBXML2_COMMIT"
 require_pristine "$RTSP_TREE/libxml2"
 require_head "$RTSP_TREE/libxkbcommon" "$LIBXKBCOMMON_COMMIT"
@@ -180,7 +204,7 @@ grep -Fqx "XALIA_ZIP_SHA256 := $XALIA_ZIP_SHA256" "$RTSP_TREE/Makefile.in" \
 
 [[ -x "$RTSP_TREE/configure.sh" ]] || fail "prepared RTSP source is missing"
 if (( ${#PIPER_PHONEME_PATH} > PIPER_PHONEME_PATH_LIMIT )); then
-  fail "build path is too long for eSpeak NG's phoneme compiler (${#PIPER_PHONEME_PATH} > $PIPER_PHONEME_PATH_LIMIT characters); use a shorter neutral WORK_ROOT such as /tmp/proton-rtsp-wayland-ge-work"
+  fail "build path is too long for eSpeak NG's phoneme compiler (${#PIPER_PHONEME_PATH} > $PIPER_PHONEME_PATH_LIMIT characters); use a shorter neutral WORK_ROOT such as /tmp/proton-rtsp-wayland-ge-beta2-20260609-2"
 fi
 
 if [[ ! -f "$RTSP_TREE/build/build-$BUILD_NAME/Makefile" ]]; then
@@ -206,6 +230,14 @@ fi
       NIX_BUILD_CORES="$COMPONENT_JOBS" \
       "build_name=$BUILD_NAME" redist
 )
+
+read -r build_epoch rtsp_version < "$TOOL_DIR/version"
+[[ "$build_epoch" =~ ^[0-9]+$ && "$rtsp_version" == proton-rtsp-* \
+    && "$rtsp_version" != *[[:space:]]* ]] \
+  || fail "generated version does not contain the expected RTSP identity"
+printf '%s %s+%s+%s\n' \
+  "$build_epoch" "$BUILD_NAME" "$rtsp_version" "$GE_SOURCE_LABEL" \
+  > "$TOOL_DIR/version"
 
 find "$TOOL_DIR" -type d -name __pycache__ -prune -exec rm -rf {} +
 
@@ -233,7 +265,10 @@ XALIA_SOURCE_DIR="$SOURCES_DIR/xalia" \
 BUILD_NAME="$BUILD_NAME" \
   "$ROOT_DIR/scripts/collect-licenses.sh" "$TOOL_DIR"
 
-"$ROOT_DIR/scripts/verify.sh" "$TOOL_DIR"
+BUILD_NAME="$BUILD_NAME" \
+DISPLAY_NAME="$DISPLAY_NAME" \
+GE_SOURCE_LABEL="$GE_SOURCE_LABEL" \
+  "$ROOT_DIR/scripts/verify.sh" "$TOOL_DIR"
 
 if [[ "$PACKAGE_RELEASE" != "1" ]]; then
   printf 'Game-test directory: %s\n' "$TOOL_DIR"

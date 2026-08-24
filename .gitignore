@@ -1,7 +1,13 @@
 # SPDX-License-Identifier: BSD-3-Clause
 
+/dist
+/dist-*
+/obj-*
+/syn-*
+
+/.vagrant/
+/vagrant_share/
 /build/
-/dist/
 /downloads/
 /logs/
 /sources/

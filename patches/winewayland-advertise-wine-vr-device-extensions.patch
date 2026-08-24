@@ -1,0 +1,23 @@
+From a77b3cba47fcc2ce6ff1e1a2dca117b984badaef Mon Sep 17 00:00:00 2001
+From: Go08er <149829787+Go08er@users.noreply.github.com>
+Date: Sat, 25 Jul 2026 11:00:05 -0500
+Subject: [PATCH] winewayland: Advertise Wine VR device extensions
+
+WineVulkan handles VK_WINE_openvr_device_extensions and VK_WINE_openxr_device_extensions as driver capabilities before translating them to the host runtime requirements. Match the X11 driver and advertise those capabilities from WineWayland so DXVK and VKD3D-Proton can request the Wine VR bridge extensions without failing device creation with VK_ERROR_EXTENSION_NOT_PRESENT.
+---
+ dlls/winewayland.drv/vulkan.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/dlls/winewayland.drv/vulkan.c b/dlls/winewayland.drv/vulkan.c
+index 4d84f33ae6..41ce6d4738 100644
+--- a/dlls/winewayland.drv/vulkan.c
++++ b/dlls/winewayland.drv/vulkan.c
+@@ -138,6 +138,8 @@ static void wayland_map_device_extensions(struct vulkan_device_extensions *exten
+     if (extensions->has_VK_KHR_external_semaphore_fd) extensions->has_VK_KHR_external_semaphore_win32 = 1;
+     if (extensions->has_VK_KHR_external_fence_win32) extensions->has_VK_KHR_external_fence_fd = 1;
+     if (extensions->has_VK_KHR_external_fence_fd) extensions->has_VK_KHR_external_fence_win32 = 1;
++    extensions->has_VK_WINE_openvr_device_extensions = 1;
++    extensions->has_VK_WINE_openxr_device_extensions = 1;
+ }
+ 
+ static VkColorSpaceKHR wayland_vulkan_map_colorspace(VkColorSpaceKHR colorspace, struct client_surface *client)

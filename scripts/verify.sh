@@ -4,9 +4,10 @@ set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 TOOL_DIR="${1:-}"
-BUILD_NAME="${BUILD_NAME:-Proton-RTSP-Wayland-GE-Alpha2}"
-DISPLAY_NAME="${DISPLAY_NAME:-Proton RTSP Wayland GE Alpha 2}"
+BUILD_NAME="${BUILD_NAME:-Proton-RTSP-Wayland-GE-Beta2}"
+DISPLAY_NAME="${DISPLAY_NAME:-Proton RTSP Wayland GE Beta 2}"
 SOURCE_ARCHIVE_NAME="${SOURCE_ARCHIVE_NAME:-${BUILD_NAME}-source.tar.gz}"
+GE_SOURCE_LABEL="${GE_SOURCE_LABEL:-GE-Proton11-5}"
 
 fail() {
   printf 'FAIL: %s\n' "$*" >&2
@@ -27,6 +28,7 @@ require_executable() {
 [[ -n "$BUILD_NAME" ]] || fail "BUILD_NAME must not be empty"
 [[ -n "$DISPLAY_NAME" ]] || fail "DISPLAY_NAME must not be empty"
 [[ -n "$SOURCE_ARCHIVE_NAME" ]] || fail "SOURCE_ARCHIVE_NAME must not be empty"
+command -v rg > /dev/null || fail "ripgrep (rg) is required"
 
 require_file proton
 require_file compatibilitytool.vdf
@@ -106,8 +108,12 @@ require_executable files/bin/wine
 require_executable files/bin/wineserver
 require_executable files/bin/xrandr
 
-grep -Eq '^[0-9]+[[:space:]]+proton-rtsp-' "$TOOL_DIR/version" \
-  || fail "version does not identify the RTSP Proton base"
+read -r version_epoch version_identity version_extra < "$TOOL_DIR/version"
+version_prefix="${BUILD_NAME}+proton-rtsp-"
+version_suffix="+${GE_SOURCE_LABEL}"
+[[ "$version_epoch" =~ ^[0-9]+$ && -z "${version_extra:-}" \
+    && "$version_identity" == "$version_prefix"*"$version_suffix" ]] \
+  || fail "version does not identify this build, the RTSP base, and the GE source"
 grep -Fq '"version" "2"' "$TOOL_DIR/toolmanifest.vdf" \
   || fail "tool manifest version is incorrect"
 grep -Fq '"commandline" "/proton %verb%"' "$TOOL_DIR/toolmanifest.vdf" \
@@ -229,10 +235,30 @@ PY
 
 grep -Fq 'self.check_environment("PROTON_USE_WAYLAND", "wayland")' "$TOOL_DIR/proton" \
   || fail "native Wayland flag handling is missing"
-grep -Fq 'self.env.get("PROTON_XR_MODE", "auto")' "$TOOL_DIR/proton" \
-  || fail "XR mode selector is missing"
-grep -Fq 'self.dlloverrides["wineopenxr"] = "d"' "$TOOL_DIR/proton" \
-  || fail "scoped XRizer override is missing"
+! rg -n 'PROTON_XR_MODE|self\.xr_mode' "$TOOL_DIR/proton" > /dev/null \
+  || fail "retired project-specific XR mode handling remains in the launcher"
+! grep -Fq 'self.dlloverrides["wineopenxr"] = "d"' "$TOOL_DIR/proton" \
+  || fail "project-injected WineOpenXR disable remains in the launcher"
+grep -Fqx 'CURRENT_PREFIX_VERSION="11.0-103"' "$TOOL_DIR/proton" \
+  || fail "expected 11.0-103 prefix identity is missing"
+grep -Fq 'self.env["PROTON_NO_STEAMINPUT"] = "1"' "$TOOL_DIR/proton" \
+  || fail "$GE_SOURCE_LABEL WineWayland Steam Input policy is missing"
+grep -Fq 'self.force_steam_input_appid = True' "$TOOL_DIR/proton" \
+  || fail "$GE_SOURCE_LABEL Steam Input AppID policy is not enabled for WineWayland"
+grep -Fq '[steam_bin, "steam://forceinputappid/" + str(appid)]' "$TOOL_DIR/proton" \
+  || fail "$GE_SOURCE_LABEL Steam Input AppID selection is missing"
+grep -Fq 'steam_bin = shutil.which("steam")' "$TOOL_DIR/proton" \
+  || fail "Steam Input AppID selection does not resolve the host Steam client"
+grep -Fqx '        env = dict(os.environ)' "$TOOL_DIR/proton" \
+  || fail "Steam Input AppID selection does not start from the host environment"
+grep -Fq 'for name in ("SteamAppId", "SteamGameId", "STEAM_COMPAT_APP_ID"):' "$TOOL_DIR/proton" \
+  || fail "Steam Input AppID selection does not sanitize game identity variables"
+grep -Fq 'env.pop(name, None)' "$TOOL_DIR/proton" \
+  || fail "Steam Input AppID selection does not remove game identity variables"
+grep -Fq 'env=env,' "$TOOL_DIR/proton" \
+  || fail "Steam Input AppID selection does not pass the sanitized environment"
+grep -Fq 'self.set_steam_input_appid(0)' "$TOOL_DIR/proton" \
+  || fail "$GE_SOURCE_LABEL Steam Input AppID reset is missing"
 grep -Fq 'sys.dont_write_bytecode = True' "$TOOL_DIR/proton" \
   || fail "bundled-helper bytecode-cache suppression is missing"
 grep -Fq "\"$BUILD_NAME\"" "$TOOL_DIR/compatibilitytool.vdf" \

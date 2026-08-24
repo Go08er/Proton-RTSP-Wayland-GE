@@ -2,61 +2,61 @@
 
 # Source and redistribution notice
 
-Proton-RTSP-Wayland-GE Alpha 2 is an unofficial assembly based on the projects
-listed below. It is not affiliated with or endorsed by Valve, CodeWeavers,
-GloriousEggroll, SpookySkeletons, Khronos, XRizer, WiVRn, Monado, or VRChat.
-Alpha 2 is distributed as an experimental public prerelease with its matching
-corresponding-source archive.
+Proton-RTSP-Wayland-GE Beta 2 is an unpublished, unofficial assembly based on
+the projects listed below. Published Beta 1 and Alpha 3 remain available
+separately and retain their own immutable source records. This project is not
+affiliated with or endorsed by Valve, CodeWeavers, GloriousEggroll,
+SpookySkeletons, Khronos, XRizer, WiVRn, Monado, or VRChat.
 
-## Pinned source revisions
+## Beta 2 pinned revisions
 
-- RTSP Proton: `SpookySkeletons/proton-ge-rtsp` at `3b4a5f407a5e0cabeef6d3757f29a23f277b429a`
-- RTSP Wine base: `fd920bd63abb7bf8b52b0f8e40da922ab9e784a4`
-- GE patch reference: `GloriousEggroll/proton-ge-custom`, development snapshot
-  `master-2026-07-13`, commit
-  `9fad3bbe270409e67a8d2f4d123afc73d848306a` (not GE-Proton11-2)
-- Proton-GE Wine commit: `c37dd7179b4c7716331d1f7ed401c469038fbe44`
-- DXVK: `2cae043bdf767c8a7a2e0ee8d41537acfe773e8e`
+- RTSP Proton: `SpookySkeletons/Proton-RTSP` (formerly `proton-ge-rtsp`) annotated tag
+  `proton-rtsp-11.0-20260609-2`, tag object
+  `315720bb897873e2f4a158c0b06d88d6198a8703`, peeled commit
+  `c3ca33a4ebaf66cdebbac5e5fe432e342e395942`
+- RTSP Wine base: `4a5f2736c5baf3d20ea7227b9da511e897ff9a2a`
+- Proton-GE release: annotated tag `GE-Proton11-5`, tag object
+  `fc27a5029c7b90def3222b8fbaf33b69af973940`, peeled commit
+  `a2b6daedb7273267359ece9d938d6de8dec596b6`
+- Proton-GE Wine provenance: `36078f5f947532885a596dabbc7893c048133660`
+- DXVK: `2cae043bdf767c8a7a2e0ee8d41537acfe773e8`
 - libxml2: `b7fa62cbe8ef0df5869e000d5b690bdedd07f33e`
 - libxkbcommon: `dd642359f8d43c09968e34ca7f1eb1121b2dfd70`
-- wayland-protocols: `810f1adaf33521cc55fc510566efba2a1418174f`
-- xrandr source archive: version `1.5.4`, SHA-256 `2cafccb2aaf2491a4068676117a0d4f90ab307724b96fffc54cd1da953779400`
-- piper-phonemize snapshot: `5ecbb9b59abcffe03a9775ae82491c9ac5037f4d`; Alpha 2 immutable archive SHA-256 `cd89aff6c3728776ffbf382bd6574876cc67d13402140fc5e3ec8c2bc813335f` (the earlier mutable branch archive is historical and is not an Alpha 2 input)
-- eSpeak NG source: `0f65aa301e0d6bae5e172cc74197d32a6182200f`
-- Xalia 0.4.9: `6d946216c29052c29c660ad4cac950a6bd08a2b4`
-- SDL3-CS used by Xalia: `e26a111c1b90301e37475a4dfb6f5ce47447d677`
-- Xalia 0.4.9 binary input archive SHA-256: `e2c94a40f68f63660cc06405a641bc4e5a2e9b9320b9608e01a21feb6f6709c5`
-- Wine Gecko 2.47.4 x86 archive SHA-256: `2cfc8d5c948602e21eff8a78613e1826f2d033df9672cace87fed56e8310afb6`
-- Wine Gecko 2.47.4 x86_64 archive SHA-256: `fd88fc7e537d058d7a8abf0c1ebc90c574892a466de86706a26d254710a82814`
-- Wine Mono 11.0.0 x86 archive SHA-256: `0cd723aa28897f7d7d2702eed6c72e4262255980e212bc2b3c94bfa234abe5fd`
+- Wayland Protocols: `810f1adaf33521cc55fc510566efba2a1418174f`
+- xrandr 1.5.4 archive SHA-256:
+  `2cafccb2aaf2491a4068676117a0d4f90ab307724b96fffc54cd1da953779400`
+- piper-phonemize:
+  `5ecbb9b59abcffe03a9775ae82491c9ac5037f4d`, archive SHA-256
+  `cd89aff6c3728776ffbf382bd6574876cc67d13402140fc5e3ec8c2bc813335f`
+- Xalia 0.4.9:
+  `6d946216c29052c29c660ad4cac950a6bd08a2b4`
+- Xalia SDL3-CS:
+  `e26a111c1b90301e37475a4dfb6f5ce47447d677`
 
-The Alpha 2 Wine patch list contains 105 Wayland-focused patches copied from
-the pinned Proton-GE snapshot. The build also applies that snapshot's exact
-`patches/wineopenxr/wineopenxr_decouple.patch` to RTSP's standalone WineOpenXR
-source, followed by a hash-locked one-line RTSP build-system adapter that keeps
-the makedep wrapper's required `ntdll.so` input. Unrelated GE patch groups are
-intentionally excluded. The X11 locale data used by the build is copied from
-the same pinned GE source tree.
+Beta 2 carries 152 selected Wine patches byte-for-byte from the pinned GE
+release. A context-only Winebus adapter preserves upstream's seven-line
+`PROTON_NO_STEAMINPUT` change on the RTSP Wine layout; the unchanged SetupAPI
+adapter, two-line WineWayland VR capability repair, and launcher integration
+complete a 155-commit replay above the RTSP Wine base. The exact WineOpenXR
+decoupling patch remains byte-identical in GE-Proton11-5, while the separate
+session-lifetime patch is a source-equivalent backport from the release where
+it originated. Exact attribution is retained in each format patch.
 
 ## Licensing
 
-This is a multi-license distribution. No single license applies to the complete
+This is a multi-license distribution; no single license applies to the entire
 compatibility tool.
 
-- Original project scripts, documentation, tests, the patch-selection
-  manifest, and project-authored Proton additions are BSD-3-Clause under
-  `LICENSE`.
-- Upstream Proton and RTSP top-level material retains BSD-3-Clause terms and
-  original notices under `LICENSE.proton` and `LICENSE.upstream-proton`.
-- Wine, the selected GE Wine patches, and the project WineOpenXR integration
-  modification remain LGPL-2.1-or-later under `LICENSE.wine` and
-  `COPYING.LIB.wine`. Patch authorship is retained in the bundled format-patch
-  files.
+- Original project scripts, documentation, tests, selection records, and
+  project-authored additions are BSD-3-Clause under `LICENSE`.
+- Upstream Proton and RTSP material retains BSD-3-Clause terms and original
+  notices under `LICENSE.proton` and `LICENSE.upstream-proton`.
+- Wine, the selected GE Wine patches, and WineOpenXR modifications remain
+  LGPL-2.1-or-later under `LICENSE.wine` and `COPYING.LIB.wine`.
 - All other components retain their own terms. `licenses/COMPONENTS.md` maps
-  the principal payload, and binary packaging copies the exact license files
-  from the prepared source tree into `licenses/upstream/`.
+  the principal payload, and packaging copies notices from the prepared source
+  tree into `licenses/upstream/`.
 
-The project BSD license does not relicense Proton, Wine, GE patches, SDK
-material, models, fonts, or another third-party component. A binary release
-must be accompanied by the corresponding-source archive described in
-`SOURCE.md`, particularly because the payload contains GPL and LGPL software.
+The project BSD license does not relicense third-party components. Any binary
+archive must remain paired with the corresponding prepared-source archive and
+checksums described in [`SOURCE.md`](SOURCE.md).

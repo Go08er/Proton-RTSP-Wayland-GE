@@ -4,66 +4,84 @@
 
 ## Source composition
 
-The build starts from the pinned `SpookySkeletons/proton-ge-rtsp` Proton 11
-tree. Alpha 2 applies an audited 105-patch Wine Wayland subset plus the current
-WineOpenXR decoupling repair from Proton-GE development snapshot
-`9fad3bbe270409e67a8d2f4d123afc73d848306a`. It adds the matching Wayland build
-dependencies and X11 locale data while retaining the RTSP media/GStreamer
-configuration. The GE snapshot was selected from `master` on 2026-07-13; it is
-not GE-Proton11-2.
+Beta 1 starts from RTSP Proton commit
+`3b4a5f407a5e0cabeef6d3757f29a23f277b429a` and its Wine base
+`fd920bd63abb7bf8b52b0f8e40da922ab9e784a4`. It imports 138 selected Wine
+patches and the exact WineOpenXR decoupling patch from the annotated
+`GE-Proton11-3` release at
+`8c8003f7f5473d883fbe1bc7ac070c79955754e8`.
 
-Native Wayland remains opt-in. Without `PROTON_USE_WAYLAND=1` or `PROTON_ENABLE_WAYLAND=1`, the launcher preserves the normal Proton path.
+Two GE changes need small layout adapters:
 
-## XR mode
+- destroyed WineOpenXR sessions are removed from RTSP's standalone session
+  list;
+- the stale Steam desktop controller is filtered in SetupAPI, which also
+  covers RTSP's older cfgmgr32 forwarding path.
 
-Default mode keeps Proton's ordinary XR behavior:
+The build keeps RTSP's GStreamer media configuration. It does not import GE's
+separate video-rework stack.
+
+Native Wayland remains opt-in. Without `PROTON_USE_WAYLAND=1` or its
+`PROTON_ENABLE_WAYLAND=1` alias, Proton follows its normal X11/XWayland path.
+
+## XR routing
+
+Beta 1 leaves Proton's normal WineOpenXR routing intact. It does not define or
+consume `PROTON_XR_MODE`. Alpha 3 failed on the tested VRChat OpenVR → XRizer
+0.5.0 → WiVRn 26.6.2 native-Wayland route: WineOpenXR and XRizer both
+initialized, then DXVK device creation returned
+`VK_ERROR_EXTENSION_NOT_PRESENT`.
+
+The repair introduced for Alpha 4 addresses the device-creation failure at its
+capability boundary:
 
 ```text
-PROTON_XR_MODE=auto
+DXVK / VKD3D-Proton requests VK_WINE_openvr/openxr_device_extensions
+                              ↓
+WineVulkan asks the active display driver for supported capabilities
+                              ↓
+WineWayland now advertises both synthetic Wine VR device capabilities
+                              ↓
+WineVulkan translates them to the native runtime's real requirements
 ```
 
-In Alpha 2, the default path includes the pinned GE WineOpenXR repair applied
-to RTSP's standalone `wineopenxr` source. Upstream names the exact input
-`wineopenxr_decouple.patch`; its behavior on this RTSP base is not considered
-validated until the Alpha 2 game matrix passes.
+Wine's X11 and null drivers already advertise these two Wine-managed
+capabilities. The project adds the same two assignments to WineWayland. A
+2026-07-25 Alpha 4 VRChat OpenVR → XRizer 0.5.0 → WiVRn test passed with
+normal Proton routing and no WineOpenXR override. That validates this route,
+not every direct OpenXR, SteamVR, or OpenComposite route.
 
-The GE patch is retained byte-for-byte. A separate one-line RTSP integration
-patch removes its redundant `UNIX_LIBS=-lopenxr_loader` assignment because
-RTSP's makedep wrapper injects the required `ntdll.so` there. The RTSP root
-Makefile already passes `-lopenxr_loader`; retaining both assignments would
-replace the injected Wine library and leave Wine debug/NT symbols unresolved.
-
-The explicit XRizer mode is designed for:
+For an OpenVR application using XRizer only, the low-level diagnostic fallback
+is:
 
 ```text
-Windows OpenVR application
-        ↓
-Proton OpenVR/vrclient path
-        ↓
-XRizer
-        ↓
-native OpenXR runtime such as WiVRn or Monado
+WINEDLLOVERRIDES="wineopenxr=d" PROTON_USE_WAYLAND=1 %command%
 ```
 
-DXVK normally initializes both OpenVR and OpenXR extension providers. In the
-prior Alpha 1 OpenVR-to-XRizer test, Proton's `wineopenxr` provider attempted
-to use the same native runtime in parallel and graphics-device creation failed.
-`PROTON_XR_MODE=xrizer` adds `wineopenxr=d` to the final Wine DLL overrides for
-that process. It remains an explicit fallback while Alpha 2's repaired `auto`
-route is tested; the Alpha 1 result does not establish Alpha 2 behavior.
-
-This mode does not install XRizer, choose a native OpenXR runtime, or modify the default mode. A direct Windows OpenXR application should not use it.
+`wineopenxr=d` disables Wine's Windows OpenXR bridge for that process so
+XRizer can be the sole Windows-to-host XR bridge. It does not install XRizer
+or select a native runtime. It is not an automatic project policy: remove it
+after diagnosis and for direct Windows OpenXR applications. SteamVR and
+OpenComposite should use their normal route unless a route-specific test
+demonstrates otherwise.
 
 ## Wayland launcher behavior
 
-When native Wayland is requested and `WAYLAND_DISPLAY` is available, the launcher:
+When native Wayland is requested and `WAYLAND_DISPLAY` is available, the
+launcher:
 
 - selects `winewayland.drv` and disables `winex11.drv`;
-- enables Wine's EGL path;
-- disables the Proton fullscreen hack for that launch;
-- uses bundled xrandr output to select a primary monitor when possible;
-- accepts `PROTON_WAYLAND_MONITOR=<output-name>` as a manual primary-output override;
-- points X locale handling at the bundled Compose data;
-- disables Xalia and defaults Steam Input off for the native-Wayland process,
-  while allowing a deliberate `PROTON_NO_STEAMINPUT=0` test;
+- enables Wine's EGL path and disables Proton's fullscreen hack;
+- selects a primary output through bundled xrandr, with
+  `PROTON_WAYLAND_MONITOR=<output>` as an override;
+- points X locale handling at bundled Compose data;
+- disables Xalia;
+- forces `PROTON_NO_STEAMINPUT=1`;
+- asks the host Steam client to use the running game's AppID while it runs,
+  then resets that global selection to zero on ordinary exit;
 - removes `DISPLAY` from the game environment.
+
+The Steam Input behavior follows GE-Proton11-3. It prevents native-Wayland
+windows from falling back to Steam's desktop controller layout. Controller
+behavior, overlapping game launches, and forced termination remain runtime
+test areas.

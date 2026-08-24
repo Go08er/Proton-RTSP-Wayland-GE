@@ -1,5 +1,5 @@
 diff --git a/.gitmodules b/.gitmodules
-index 09fc039..d9f3467 100644
+index 09fc03927a9d72e8f63ec9d51be1c1e88d5e87a0..d9f3467db078052ec4bd6ce1a11548cba2068835 100644
 --- a/.gitmodules
 +++ b/.gitmodules
 @@ -75,3 +75,13 @@
@@ -17,7 +17,7 @@ index 09fc039..d9f3467 100644
 +	path = wayland-protocols
 +	url = https://gitlab.freedesktop.org/wayland/wayland-protocols.git
 diff --git a/Makefile.in b/Makefile.in
-index 7c28b8a..ec6f2d9 100644
+index 7c28b8a802ab759ef2144129b81b826dfa631169..6a2804e30de5a9c613d9c558cb99fa00bdde0d4f 100644
 --- a/Makefile.in
 +++ b/Makefile.in
 @@ -13,7 +13,7 @@ MFLAGS += V=1 VERBOSE=1
@@ -107,10 +107,7 @@ index 7c28b8a..ec6f2d9 100644
  WINE_i386_DEPENDS = vkd3d
  WINE_x86_64_DEPENDS = piper vkd3d
  WINE_aarch64_DEPENDS = piper
-@@ -1239,9 +1287,10 @@ all-dist: $(DIST_WINEMONO)
- ##
- ## xalia
- ##
+@@ -1242,6 +1290,7 @@ all-dist: $(DIST_WINEMONO)
  
  XALIA_VER := 0.4.9
  XALIA_ZIP := xalia-$(XALIA_VER)-net48-mono.zip
@@ -118,33 +115,19 @@ index 7c28b8a..ec6f2d9 100644
  DIST_XALIA_DIR := $(DST_DIR)/share/xalia
  DIST_XALIA := $(OBJ)/.xalia-dist
  XALIA_ZIP_URL := https://github.com/madewokherd/xalia/releases/download/xalia-$(XALIA_VER)/$(XALIA_ZIP)
-@@ -1249,4 +1298,5 @@ XALIA_ZIP_URL := https://github.com/madewokherd/xalia/releases/download/xalia-$(XALIA_VER)/$(XALIA_ZIP)
+@@ -1249,10 +1298,12 @@ XALIA_ZIP_URL := https://github.com/madewokherd/xalia/releases/download/xalia-$(
  $(SRC)/contrib/$(XALIA_ZIP):
--	mkdir -p $(dir $@)
--	wget --no-use-server-timestamps -O $@ $(XALIA_ZIP_URL) || (rm $@; false)
-+	mkdir -p $(dir $@)
-+	wget --no-use-server-timestamps -O $@ $(XALIA_ZIP_URL) || (rm $@; false)
+ 	mkdir -p $(dir $@)
+ 	wget --no-use-server-timestamps -O $@ $(XALIA_ZIP_URL) || (rm $@; false)
 +	printf '%s  %s\n' '$(XALIA_ZIP_SHA256)' '$@' | sha256sum -c - || (rm -f $@; false)
  
-@@ -1253,10 +1303,11 @@ $(SRC)/contrib/$(XALIA_ZIP):
  $(DIST_XALIA): $(SRC)/contrib/$(XALIA_ZIP) $(SRC)/xalia-fixups.gudl
--	rm -rf $(DIST_XALIA_DIR)
--	mkdir -p $(DIST_XALIA_DIR)
--	unzip $< -d $(DIST_XALIA_DIR)
--	mv $(DIST_XALIA_DIR)/main.gudl $(DIST_XALIA_DIR)/main.gudl.orig
--	cat $(SRC)/xalia-fixups.gudl $(DIST_XALIA_DIR)/main.gudl.orig|sed 's/\xef\xbb\xbf//' > $(DIST_XALIA_DIR)/main.gudl
--	rm $(DIST_XALIA_DIR)/main.gudl.orig
--	touch $@
-+	rm -rf $(DIST_XALIA_DIR)
-+	mkdir -p $(DIST_XALIA_DIR)
+ 	rm -rf $(DIST_XALIA_DIR)
+ 	mkdir -p $(DIST_XALIA_DIR)
 +	printf '%s  %s\n' '$(XALIA_ZIP_SHA256)' '$<' | sha256sum -c -
-+	unzip $< -d $(DIST_XALIA_DIR)
-+	mv $(DIST_XALIA_DIR)/main.gudl $(DIST_XALIA_DIR)/main.gudl.orig
-+	cat $(SRC)/xalia-fixups.gudl $(DIST_XALIA_DIR)/main.gudl.orig|sed 's/\xef\xbb\xbf//' > $(DIST_XALIA_DIR)/main.gudl
-+	rm $(DIST_XALIA_DIR)/main.gudl.orig
-+	touch $@
- 
- all-dist: $(DIST_XALIA)
+ 	unzip $< -d $(DIST_XALIA_DIR)
+ 	mv $(DIST_XALIA_DIR)/main.gudl $(DIST_XALIA_DIR)/main.gudl.orig
+ 	cat $(SRC)/xalia-fixups.gudl $(DIST_XALIA_DIR)/main.gudl.orig|sed 's/\xef\xbb\xbf//' > $(DIST_XALIA_DIR)/main.gudl
 @@ -1299,6 +1350,76 @@ all-dist: $(OBJ)/.icu-aarch64-dist
  endif
  
@@ -223,7 +206,7 @@ index 7c28b8a..ec6f2d9 100644
  ## openvr
  ##
 diff --git a/configure.sh b/configure.sh
-index 6e05eed..e352153 100755
+index 6e05eede4dbbd6acca4ff63d7ec3012e473f6c4a..e3521532ac6e2be870f0c6b4c4ae8eb6195b42da 100755
 --- a/configure.sh
 +++ b/configure.sh
 @@ -1,4 +1,4 @@
@@ -233,7 +216,7 @@ index 6e05eed..e352153 100755
  set -eu
  
 diff --git a/make/rules-meson.mk b/make/rules-meson.mk
-index 5dfcbb7..6f6477f 100644
+index 5dfcbb7b9af34328eeef6f51edfe9b388ba0937b..6f6477f8cbd1c143d150ffc54ae0726055849a20 100644
 --- a/make/rules-meson.mk
 +++ b/make/rules-meson.mk
 @@ -61,7 +61,7 @@ $$(OBJ)/.$(1)-$(3)-configure: $$($(2)_SRC)/meson.build
@@ -246,7 +229,7 @@ index 5dfcbb7..6f6477f 100644
  endif
  endef
 diff --git a/proton b/proton
-index 7166183..c57e95b 100755
+index 7166183f864a2b4eb1bce7cce236175d9577dca3..04b6517e1f76523ee1f6d19fc141dfbec0f9fb1b 100755
 --- a/proton
 +++ b/proton
 @@ -18,6 +18,10 @@ import uuid
@@ -313,27 +296,7 @@ index 7166183..c57e95b 100755
      def try_log_slr_versions(self):
          try:
              if "PRESSURE_VESSEL_RUNTIME_BASE" in self.env:
-@@ -1665,6 +1694,19 @@ class Session:
-                 log("%s" % sys.exc_info()[1])
-                 log("************************************************")
- 
-+        self.xr_mode = self.env.get("PROTON_XR_MODE", "auto").strip().lower()
-+        if self.xr_mode not in ("auto", "xrizer"):
-+            log("Unsupported PROTON_XR_MODE '%s'; falling back to auto." % self.xr_mode)
-+            self.xr_mode = "auto"
-+
-+        # XRizer implements the Windows OpenVR API on top of the native OpenXR
-+        # runtime.  Do not also initialize Proton's Windows OpenXR bridge in
-+        # this explicit mode: DXVK otherwise loads wineopenxr.dll while XRizer
-+        # is using the same native runtime.  Keep the default unchanged for
-+        # SteamVR, OpenComposite, and native Windows OpenXR applications.
-+        if self.xr_mode == "xrizer":
-+            self.dlloverrides["wineopenxr"] = "d"
-+
-         if "PROTON_LOG" in self.env and nonzero(self.env["PROTON_LOG"]):
-             self.env.setdefault("WINEDEBUG", "+timestamp,+pid,+tid,+seh,+unwind,+threadname,+debugstr,+loaddll,+mscoree")
-             self.env.setdefault("DXVK_LOG_LEVEL", "info")
-@@ -1705,6 +1747,8 @@ class Session:
+@@ -1705,6 +1734,8 @@ class Session:
          self.check_environment("PROTON_DISABLE_NVAPI", "disablenvapi")
          self.check_environment("PROTON_FORCE_NVAPI", "forcenvapi")
          self.check_environment("PROTON_HIDE_APU", "hideapu")
@@ -342,7 +305,7 @@ index 7166183..c57e95b 100755
  
          if "noesync" in self.compat_config:
              self.env.pop("WINEESYNC", "")
-@@ -1892,6 +1936,33 @@ class Session:
+@@ -1892,6 +1923,33 @@ class Session:
              self.env.setdefault("WINE_MONO_HIDETYPES", "1")
          self.env.setdefault("WINE_MONO_HIDETYPES", "0")
  
@@ -376,15 +339,7 @@ index 7166183..c57e95b 100755
          # NVIDIA software may check for the "DriverStore" by querying the
          # NGXCore\NGXPath registry key via `D3DDDI_QUERYREGISTRY_SERVICEKEY` for
          # a given adapter. In the case where this path cannot be found, the
-@@ -1912,6 +1983,7 @@ class Session:
-                     self.log_file.write("SteamGameId: " + self.env["SteamGameId"] + "\n")
-                 self.log_file.write("Command: " + str(sys.argv[2:] + self.cmdlineappend) + "\n")
-                 self.log_file.write("Options: " + str(self.compat_config) + "\n")
-+                self.log_file.write("XR mode: " + self.xr_mode + "\n")
- 
-                 self.try_log_slr_versions()
- 
-@@ -2003,6 +2075,10 @@ class Session:
+@@ -2003,6 +2061,10 @@ class Session:
                  s = dll + "=" + setting
          append_to_env_str(self.env, "WINEDLLOVERRIDES", s, ";")
  

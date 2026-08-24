@@ -1,7 +1,8 @@
 diff --git a/Makefile.in b/Makefile.in
+index 6a2804e30de5a9c613d9c558cb99fa00bdde0d4f..c5492ee27fcd7417759e3771ecc4f11faf746309 100644
 --- a/Makefile.in
 +++ b/Makefile.in
-@@ -413,6 +413,12 @@ $(eval $(call rules-cargo,gst_plugins_rs,i386,unix))
+@@ -414,6 +414,12 @@ $(eval $(call rules-cargo,gst_plugins_rs,i386,unix))
  $(eval $(call rules-cargo,gst_plugins_rs,x86_64,unix))
  $(eval $(call rules-cargo,gst_plugins_rs,aarch64,unix))
  
@@ -14,9 +15,8 @@ diff --git a/Makefile.in b/Makefile.in
  $(OBJ)/.gst_plugins_rs-x86_64-post-build:
  	mkdir -p $(GST_PLUGINS_RS_x86_64_DST)/lib/x86_64-linux-gnu/gstreamer-1.0/
  	cp -a $(GST_PLUGINS_RS_x86_64_OBJ)/x86_64-unknown-linux-gnu/release/libgstdav1d.so $(GST_PLUGINS_RS_x86_64_DST)/lib/x86_64-linux-gnu/gstreamer-1.0/
-
 diff --git a/proton b/proton
-index c57e95b..7bfb603 100755
+index 04b6517e1f76523ee1f6d19fc141dfbec0f9fb1b..dc635c7fbf46beb0f9c3fead46b3be2c2ae54c32 100755
 --- a/proton
 +++ b/proton
 @@ -45,7 +45,7 @@ from random import randrange
@@ -28,7 +28,7 @@ index c57e95b..7bfb603 100755
  
  PFX="Proton: "
  ld_path_var = "LD_LIBRARY_PATH"
-@@ -1947,19 +1947,19 @@ class Session:
+@@ -1934,19 +1934,19 @@ class Session:
              self.dlloverrides["winewayland.drv"] = "b"
              self.env["WINE_USE_EGL"] = "1"
              self.env["WINE_DISABLE_FULLSCREEN_HACK"] = "1"

@@ -4,9 +4,10 @@
 
 The scripts build from pinned upstream revisions in a neutral temporary path.
 This avoids embedding a maintainer's home-directory path in binaries and
-generated Wine registry data. Alpha 2 uses Proton-GE commit
-`9fad3bbe270409e67a8d2f4d123afc73d848306a`, selected from `master` on
-2026-07-13. This is a development snapshot, not GE-Proton11-2.
+generated Wine registry data. Beta 2 uses the exact annotated
+`proton-rtsp-11.0-20260609-2` and `GE-Proton11-5` releases, peeled to
+`c3ca33a4ebaf66cdebbac5e5fe432e342e395942` and
+`a2b6daedb7273267359ece9d938d6de8dec596b6` respectively.
 
 ## Requirements
 
@@ -72,7 +73,7 @@ are never excluded from scanning.
 The default work directory is:
 
 ```text
-/tmp/proton-rtsp-wayland-ge-work
+/tmp/proton-rtsp-wayland-ge-beta2-20260609-2
 ```
 
 Keep custom work paths similarly short. The pinned eSpeak NG phoneme compiler
@@ -92,7 +93,7 @@ The default is `PACKAGE_RELEASE=0`. It builds and verifies the compatibility
 tool at:
 
 ```text
-/tmp/proton-rtsp-wayland-ge-work/sources/proton-ge-rtsp/build/Proton-RTSP-Wayland-GE-Alpha2
+/tmp/proton-rtsp-wayland-ge-beta2-20260609-2/sources/proton-ge-rtsp/build/Proton-RTSP-Wayland-GE-Beta2
 ```
 
 It does not create release archives, push commits, publish a GitHub release, or
@@ -117,34 +118,22 @@ before extraction, and again before it enters the corresponding-source archive.
 
 Build products and fetched source trees are excluded from version control.
 
-## Switching the pin to GE-Proton11-2
+## Refreshing to a future GE release
 
-Do not treat the current `master` snapshot as an 11-2 release. When the
-`GE-Proton11-2` tag is published, make the swap as a new, reviewable source
-update:
+Treat every release change as a new source state:
 
-1. Fetch the release tag in a clean Proton-GE checkout and record the peeled
-   commit returned by `git rev-parse 'GE-Proton11-2^{commit}'`.
-2. In `config/upstream-pins.sh`, replace `GE_COMMIT` with that exact commit,
-   set `GE_SOURCE_KIND="release"`, and set
-   `GE_SOURCE_LABEL="GE-Proton11-2"`.
-3. Regenerate the GE Wayland patch bundle from the exact tagged tree. Update
-   `GE_WAYLAND_PATCH_DIR` and `GE_WAYLAND_PATCH_COUNT`; do not reuse the
-   current snapshot bundle without proving every file is identical.
-4. Copy the tag's exact
-   `patches/wineopenxr/wineopenxr_decouple.patch` into a newly named local
-   bundle and update `GE_WINEOPENXR_PATCH`. Do not merely change the commit pin
-   while retaining the development-snapshot repair. Re-audit the separate
-   RTSP makedep adapter against that patch; keep it only if the tag still adds
-   the conflicting `UNIX_LIBS` assignment.
-5. Update the documented commit, source label, patch count, and provenance.
-   Use a fresh `WORK_ROOT`, then rerun fetch, patch replay, the single-threaded
-   build, `scripts/verify.sh`, and the source/privacy audits.
-6. Repeat the complete game matrix: default X11/XWayland, native Wayland,
-   64-bit and 32-bit D3D11, RTSP/media playback, XR in `auto`, and the scoped
-   `xrizer` fallback.
-7. Leave `PACKAGE_RELEASE=0` until that exact tagged build has passed review.
-   Packaging is local only; publishing remains a separate, explicit decision.
+1. Fetch the annotated tag and record both its tag object and peeled commit.
+2. Use a new work path, build name, and display name. Advance the prefix
+   version only when prefix contents or migration behavior change.
+3. Regenerate the selected Wayland bundle from the tagged tree and audit every
+   inclusion and exclusion.
+4. Copy exact GE patches under new filenames. Re-audit each RTSP layout
+   adapter instead of assuming it is still required.
+5. Recompute all Git tree, blob, patch, and prepared-diff locks.
+6. Run source replay, build, artifact verification, and the complete game
+   matrix before changing any release documentation.
+7. Keep `PACKAGE_RELEASE=0` until that exact candidate is accepted. Packaging
+   and publishing remain separate explicit actions.
 
 ## Reproducibility and release hygiene
 

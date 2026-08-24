@@ -1,63 +1,66 @@
 <!-- SPDX-License-Identifier: BSD-3-Clause -->
 
-# Proton-RTSP-Wayland-GE Alpha 2
+# Proton-RTSP-Wayland-GE
 
-An unofficial, experimental Proton compatibility tool based on the pinned RTSP
-Proton 11 source tree. Alpha 2 carries 105 audited Wayland-focused Wine patches
-and the current WineOpenXR decoupling repair from a pinned Proton-GE development
-snapshot, plus a one-line RTSP build adapter, while preserving RTSP's GStreamer
-and media integration.
+Run Steam games on native Wayland from the RTSP Proton 11 base with selected
+Proton-GE Wayland work.
 
-The name is ordered deliberately: RTSP is the base distribution, while the
-`GE` suffix identifies the source of the selected Wayland patch subset. This is
-an RTSP-derived build, not a Proton-GE distribution.
+Each release pins an exact upstream RTSP Proton release and an exact GE-Proton
+release. Which ones is recorded in [`NOTICE.md`](NOTICE.md) and
+[`SOURCE.md`](SOURCE.md) on that release's branch and tag.
 
-This is not an official Valve, Proton-GE, RTSP, XRizer, WiVRn, or Monado release. The name describes its technical provenance; it does not imply affiliation or endorsement.
+## Why you'd want it
 
-> [!IMPORTANT]
-> Alpha 2 uses Proton-GE commit `9fad3bbe270409e67a8d2f4d123afc73d848306a`,
-> selected from `master` on 2026-07-13. It is a pinned development snapshot,
-> not GE-Proton11-2. The corresponding Proton-GE Wine commit is
-> `c37dd7179b4c7716331d1f7ed401c469038fbe44`. Alpha 2 is an experimental
-> public prerelease; native Wayland and XR compatibility should not be assumed
-> for every game, compositor, GPU, or XR runtime.
+- Avoid XWayland scaling blur.
+- Use correct fractional scaling and per-monitor refresh rates.
+- Work better with Wayland-first compositors that have limited X11 support.
+- Run the tested VRChat → XRizer → WiVRn route on native Wayland with
+  Proton's normal XR routing and no XR DLL override.
 
-## What this project changes
+## Releases
 
-- Builds Wine with the native Wayland driver for both 64-bit and 32-bit applications.
-- Packages the xrandr helper and X11 locale/Compose data used by the Wayland launcher.
-- Recognizes `PROTON_USE_WAYLAND=1` and `PROTON_ENABLE_WAYLAND=1` as opt-in native Wayland launch flags.
-- Retains the RTSP GStreamer, Media Foundation, and `winegstreamer` integration.
-- Applies the current GE WineOpenXR decoupling repair to RTSP's standalone
-  WineOpenXR source, followed by a one-line makedep integration fix.
-- Remaps Cargo's local checkout root in the bundled Rust AV1 decoder so runtime
-  diagnostic strings do not disclose the builder's home directory.
-- Adds `PROTON_XR_MODE=xrizer` for an explicit OpenVR-to-XRizer launch path.
-- Keeps Proton's normal XR routing when `PROTON_XR_MODE` is absent or set to
-  `auto`; no forced DLL disable is added in that mode.
+The current download is the latest entry on the
+[Releases page](https://github.com/Go08er/Proton-RTSP-Wayland-GE/releases).
+Every release publishes a binary archive, a corresponding-source archive, and a
+`.sha512sum` for each.
 
-This project does **not** bundle or install XRizer, WiVRn, Monado, SteamVR, or OpenComposite. Install and configure the XR components you intend to use separately.
+Per-release detail lives with the release rather than on this page, so this page
+does not go stale:
 
-## Current status
+| What | Where |
+| --- | --- |
+| What changed, and how it was tested | that release's notes on the Releases page |
+| Exact pinned upstream revisions | [`NOTICE.md`](NOTICE.md) on that release's tag |
+| Corresponding-source record | [`SOURCE.md`](SOURCE.md) on that release's tag |
+| Gate results and game-test checklists | [`docs/TESTING.md`](docs/TESTING.md) |
+| Component licence map | [`licenses/COMPONENTS.md`](licenses/COMPONENTS.md) |
 
-| Area | Alpha 2 status | Scope |
-| --- | --- | --- |
-| Source composition | Pinned and replay-audited | RTSP base, 105 byte-matched GE Wayland patches, byte-matched WineOpenXR repair, and hash-locked one-line RTSP adapter |
-| Build and artifact checks | Passed locally | The staged tool passed source locks, licensing, media routing, metadata, link/permission safety, and a binary-safe privacy scan of 6,181 files |
-| Default X11/XWayland path | Runtime test pending | Basic process and non-XR game startup |
-| Native Wayland startup | Passed locally | 64-bit and 32-bit command execution used a disposable prefix |
-| Native Wayland D3D11 | 64-bit smoke passed | DXVK created a device and presented one frame; a separate new 32-bit probe also aborts on the Alpha 1 control and is not counted as a pass |
-| RTSP media playback | Runtime test pending | Artifact and registry checks do not prove playback compatibility; a dead world URL exercised only failure cleanup |
-| OpenVR → XRizer → WiVRn in `auto` | Failed locally | Both XRizer and WineOpenXR reached the active runtime; DXVK then failed device creation with `VK_ERROR_EXTENSION_NOT_PRESENT` |
-| OpenVR → XRizer → WiVRn with `PROTON_XR_MODE=xrizer` | Passed locally | Reached `FOCUSED`, ran for 5 minutes 19 seconds without reconnecting, and exited cleanly with no Vulkan, DXGI, OpenXR, device-loss, or OOM error |
-| Direct Windows OpenXR, SteamVR, and OpenComposite | Runtime test pending | Must remain in `auto` unless a route specifically requires the fallback |
+Each release states its evidence explicitly and distinguishes machine-checked
+gates from maintainer attestation. Read that before relying on a build.
 
-Alpha 1 remains useful regression evidence, but the Alpha 2 XR result above is
-the relevant accepted route. The newer Proton-GE snapshot did not remove the
-active-runtime conflict in `auto`; the scoped XRizer mode remains required for
-the tested VRChat → XRizer 0.5.0 → WiVRn configuration.
+Direct Windows OpenXR, SteamVR, OpenComposite, broader media, and the default
+X11/XWayland path are outside the tested route on every release so far.
+Overlapping launches and forced termination are also untested. The previous
+release stays available as a fallback.
 
-## Installation
+## Install
+
+Download the latest release from the
+[Releases page](https://github.com/Go08er/Proton-RTSP-Wayland-GE/releases).
+Each release contains, where `<Release>` is that release's name such as
+`Beta2`:
+
+- `Proton-RTSP-Wayland-GE-<Release>.tar.gz`
+- `Proton-RTSP-Wayland-GE-<Release>-source.tar.gz`
+- a `.sha512sum` for each
+
+### Upgrading from Alpha 2 or Alpha 3
+
+Remove `PROTON_XR_MODE=xrizer` from the game's Steam launch options. No release
+since Alpha 4 defines or reads this retired selector, so leaving it set is inert and
+does nothing. This is separate from the still-supported advanced
+`WINEDLLOVERRIDES="wineopenxr=d"` diagnostic fallback documented in
+[Troubleshooting](#troubleshooting).
 
 1. Exit Steam completely.
 2. Extract the release directory into:
@@ -66,7 +69,8 @@ the tested VRChat → XRizer 0.5.0 → WiVRn configuration.
    ~/.local/share/Steam/compatibilitytools.d/
    ```
 
-   Create `compatibilitytools.d` if it does not exist. The extracted tool directory should contain `compatibilitytool.vdf` at its top level.
+   Create `compatibilitytools.d` if it does not exist. The extracted tool
+   directory should contain `compatibilitytool.vdf` at its top level.
 
    A common Steam Flatpak location is:
 
@@ -74,228 +78,132 @@ the tested VRChat → XRizer 0.5.0 → WiVRn configuration.
    ~/.var/app/com.valvesoftware.Steam/data/Steam/compatibilitytools.d/
    ```
 3. Start Steam again.
-4. Open a game's **Properties → Compatibility**, enable the option to force a compatibility tool, and select **Proton RTSP Wayland GE Alpha 2**.
+4. Open a game's **Properties → Compatibility**, enable the option to force a compatibility tool, and select the entry matching the release you installed, for example **Proton RTSP Wayland GE Beta 2**.
 
-Back up important saves and prefixes before changing compatibility tools. Do not delete an existing compatdata prefix merely as a first troubleshooting step.
-
-When an archive and adjacent checksum are provided, verify them before extraction:
+Verify both archives before extraction:
 
 ```sh
-sha512sum -c Proton-RTSP-Wayland-GE-Alpha2.tar.gz.sha512sum
-sha512sum -c Proton-RTSP-Wayland-GE-Alpha2-source.tar.gz.sha512sum
+sha512sum -c Proton-RTSP-Wayland-GE-<Release>.tar.gz.sha512sum
+sha512sum -c Proton-RTSP-Wayland-GE-<Release>-source.tar.gz.sha512sum
 ```
 
-Keep the matching source archive available with the binary. It contains the
-prepared source and external snapshots described in [`SOURCE.md`](SOURCE.md).
+Keep the matching source archive with the binary.
+
+### NixOS
+
+The repository's Nix package pins one verified release archive. Substitute the
+tag of the release you want:
+
+```nix
+inputs.proton-rtsp-wayland-ge.url =
+  "github:Go08er/Proton-RTSP-Wayland-GE/v11.1.0-beta.2";  # or a later tag
+inputs.proton-rtsp-wayland-ge.inputs.nixpkgs.follows = "nixpkgs";
+
+programs.steam = {
+  enable = true;
+  extraCompatPackages = [
+    inputs.proton-rtsp-wayland-ge.packages.x86_64-linux.default
+  ];
+};
+```
+
+Rebuild NixOS and restart Steam. Nix rejects an archive whose bytes differ
+from the hash pinned in [`nix/package.nix`](nix/package.nix).
 
 ## Launch options
 
-Use the default Proton/XWayland path:
+| What you want | What to paste |
+| --- | --- |
+| Default Proton/XWayland | `%command%` |
+| Native Wayland; test this first | `PROTON_USE_WAYLAND=1 %command%` |
+| Select a compositor output | `PROTON_WAYLAND_MONITOR=<output-name> PROTON_USE_WAYLAND=1 %command%` |
+| Compact native-Wayland log | `PROTON_LOG=1 WINEDEBUG=-all,+timestamp,+pid,+tid,+loaddll PROTON_USE_WAYLAND=1 %command%` |
 
-```text
-%command%
-```
+`PROTON_ENABLE_WAYLAND=1` remains an alias for
+`PROTON_USE_WAYLAND=1`. NTSync is selected automatically when the kernel
+interface is available. Disable logging after testing because detailed Wine
+logs can become large and reduce performance.
 
-Opt into native Wayland:
+Both betas use Proton's normal XR routing. See the
+[upgrade note](#upgrading-from-alpha-2-or-alpha-3) if old launch options still
+contain the retired selector.
 
-```text
-PROTON_USE_WAYLAND=1 %command%
-```
+## Known issues and test focus
 
-For direct Windows OpenXR, SteamVR, OpenComposite, or another route that does
-not specifically use XRizer, preserve normal Proton XR behavior:
-
-```text
-PROTON_USE_WAYLAND=1 %command%
-```
-
-For an OpenVR title using XRizer and a native OpenXR runtime, use the tested
-scoped route:
-
-```text
-PROTON_XR_MODE=xrizer PROTON_USE_WAYLAND=1 %command%
-```
-
-If automatic primary-output selection is wrong, supply the exact compositor
-output name explicitly:
-
-```text
-PROTON_WAYLAND_MONITOR=<output-name> PROTON_USE_WAYLAND=1 %command%
-```
-
-Capture a compact routing and DLL-load log for one test run:
-
-```text
-PROTON_LOG=1 WINEDEBUG=-all,+timestamp,+pid,+tid,+loaddll PROTON_USE_WAYLAND=1 %command%
-```
-
-For a compact XRizer diagnostic run:
-
-```text
-PROTON_LOG=1 WINEDEBUG=-all,+timestamp,+pid,+tid,+loaddll PROTON_XR_MODE=xrizer PROTON_USE_WAYLAND=1 %command%
-```
-
-Use Proton's full Wine exception trace only when the compact log is
-insufficient:
-
-```text
-PROTON_LOG=1 PROTON_USE_WAYLAND=1 %command%
-```
-
-For a full XRizer trace:
-
-```text
-PROTON_LOG=1 PROTON_XR_MODE=xrizer PROTON_USE_WAYLAND=1 %command%
-```
-
-Environment-variable order before `%command%` is not significant. Disable
-`PROTON_LOG` after testing because detailed Wine logs can become large and may
-reduce performance. Proton overwrites the same `steam-APPID.log` on the next
-logged launch, so preserve a needed log before rerunning.
-
-Repository users can produce a fixed-pattern, path-sanitized summary without
-copying the raw log:
-
-```sh
-./scripts/summarize-proton-log.sh /path/to/steam-APPID.log
-```
-
-The summary is not guaranteed anonymization; inspect it manually before
-sharing. For ordinary play, start with the minimal launch options above. This
-Wine build selects NTSync automatically when the kernel interface is available,
-so `PROTON_USE_NTSYNC=1` is unnecessary. NVAPI follows the base Proton policy;
-legacy force-enable or GPU-visibility variables are not required for the tested
-route.
-
-## XR mode architecture
-
-`PROTON_XR_MODE=auto` is the default and preserves Proton's normal behavior,
-including its Windows OpenXR bridge. Alpha 2 also applies the pinned GE
-WineOpenXR decoupling repair to that bridge. With VRChat, XRizer 0.5.0, and an
-active WiVRn runtime, local testing still reproduced
-`VK_ERROR_EXTENSION_NOT_PRESENT` during DXVK device creation in this mode.
-
-`PROTON_XR_MODE=xrizer` is intended only for this route:
-
-```text
-Windows OpenVR title → XRizer → native OpenXR runtime
-```
-
-In that explicit mode, the launcher disables Proton's `wineopenxr` DLL for the
-process. This prevented the tested dual-bridge conflict: WineOpenXR was not
-loaded, XRizer reached `FOCUSED`, and the session shut down cleanly.
-
-The mode is a scoped form of the tested `wineopenxr` override; it does not reproduce Proton 10 wholesale and does not replace an XR runtime. It also does not modify the default mode.
-
-Do not use `PROTON_XR_MODE=xrizer` for a direct Windows OpenXR application. SteamVR, OpenComposite, and other XR arrangements should remain on `auto` unless that exact configuration has been tested.
-
-## Limitations
-
-- Native Wayland support remains experimental and depends on compositor protocol support.
-- Some desktop integration, overlays, input methods, window-management behavior, or media paths may differ from XWayland.
-- The XRizer mode deliberately disables Proton's Windows OpenXR bridge for that process.
-- XRizer and the selected native OpenXR runtime must already work independently of this package.
-- Hybrid-GPU and multi-GPU systems may require correct Vulkan adapter selection throughout the game, XRizer, and the native runtime.
-- Preserving the RTSP media stack does not guarantee that every codec, site, stream, or game video will work.
-- Existing Proton prefixes can retain configuration from earlier tools. Test with backups and change one variable at a time.
-- Native Wayland follows the selected GE launcher behavior by disabling Xalia
-  and defaulting Steam Input off for that process. `PROTON_NO_STEAMINPUT=0` can
-  be used as a controlled compatibility test, but that override is not part of
-  the validated XR route.
+- Alpha 3's normal route failed on the tested VRChat → XRizer 0.5.0 → WiVRn
+  26.6.2 route when DXVK requested Wine's XR Vulkan device extension through
+  WineWayland; every release since Alpha 4 carries the repair.
+- GE forces Steam Input off under WineWayland and temporarily
+  selects the running game's AppID in the host Steam client; the expected
+  controller mapping and ordinary exit passed once.
+- Native Wayland depends on compositor protocol support. Overlays, input
+  methods, and window management can differ from XWayland.
+- The RTSP media stack does not guarantee every codec, site, stream, or
+  in-game player.
 
 ## Troubleshooting
 
-Start with the smallest launch option that reproduces the issue:
-
 1. Test `%command%` to establish the default-path baseline.
 2. Add `PROTON_USE_WAYLAND=1` to isolate the native Wayland path.
-3. Add `PROTON_XR_MODE=xrizer` only when the application uses OpenVR through XRizer.
-4. Add `PROTON_LOG=1` for a single diagnostic run.
+3. Add `PROTON_LOG=1` for a single diagnostic run.
 
-If an XR title fails, record which API the title actually uses—OpenVR or OpenXR—and which runtime is active. A direct OpenXR title failing in `xrizer` mode is expected misuse of the mode, not evidence that the default OpenXR path is broken.
+Advanced XRizer fallback: if an OpenVR application using XRizer still fails
+during XR initialization, try:
 
-When reporting a problem, include:
+```text
+WINEDLLOVERRIDES="wineopenxr=d" PROTON_USE_WAYLAND=1 %command%
+```
 
-- the selected Proton tool version;
-- the exact launch options;
-- whether XWayland or native Wayland was used;
-- the game API: OpenVR, OpenXR, D3D11, D3D12, or Vulkan;
-- the XR bridge and native runtime, if applicable;
-- whether the problem also occurs in the default `auto` XR mode;
-- a minimal, sanitized log excerpt surrounding the first relevant error.
+`wineopenxr=d` disables Wine's Windows OpenXR bridge for that launch so XRizer
+can be the only Windows-to-host XR bridge. It does not install XRizer or select
+the host OpenXR runtime. Remove it after troubleshooting and for direct Windows
+OpenXR applications; do not treat it as the default for SteamVR or
+OpenComposite. Those routes may fail while WineOpenXR is disabled.
+If the tested VRChat → XRizer → WiVRn route needs it, report that as a bug.
 
-### Sanitize logs before sharing
+If launch options already set `WINEDLLOVERRIDES`, add `;wineopenxr=d` inside
+the same quoted value instead of defining the variable twice.
 
-Proton, Wine, Vulkan, Steam, and OpenXR logs can expose personal or security-sensitive data. Never publish a raw log without reviewing it. Remove or replace:
+Sanitize logs before posting them — see [`docs/REPORTING.md`](docs/REPORTING.md).
 
-- user names, host names, and absolute home-directory paths;
-- account, profile, session, lobby, or device identifiers;
-- IP addresses, local network names, headset serial numbers, and hardware UUIDs;
-- authentication tokens, cookies, URLs containing secrets, and full command lines;
-- environment variables and registry values unrelated to the report.
+## Repository layout and provenance
 
-Do not upload an entire compatdata prefix, registry export, home directory, or environment dump. Automated redaction is not sufficient by itself; inspect the final file manually.
+`main` is the project front page and tracks the latest release's content. Each
+release has its own branch and immutable tag carrying a release-specific README,
+`NOTICE.md`, and `SOURCE.md`. Published branches and tags are never rewritten,
+and each release branch builds on the previous one without modifying it.
 
-## Source and build provenance
+Small upstream contributions stay on their own `feat/` branches, separate from
+release assembly.
 
-- Base project: [SpookySkeletons/proton-ge-rtsp](https://github.com/SpookySkeletons/proton-ge-rtsp)
-- Wayland and WineOpenXR patch reference: [GloriousEggroll/proton-ge-custom](https://github.com/GloriousEggroll/proton-ge-custom), pinned development snapshot
-- RTSP Proton commit: `3b4a5f407a5e0cabeef6d3757f29a23f277b429a`
-- RTSP Wine base commit: `fd920bd63abb7bf8b52b0f8e40da922ab9e784a4`
-- Proton-GE snapshot commit: `9fad3bbe270409e67a8d2f4d123afc73d848306a`
-- Proton-GE Wine commit: `c37dd7179b4c7716331d1f7ed401c469038fbe44`
-- Snapshot label: `master-2026-07-13` (`development-snapshot`, not GE-Proton11-2)
-- DXVK commit: `2cae043bdf767c8a7a2e0ee8d41537acfe773e8e`
-- Applied subset: 105 audited Wine commits above the RTSP Wine base
-- WineOpenXR repair: `patches/wineopenxr/wineopenxr_decouple.patch` from the
-  same pinned Proton-GE snapshot
-- WineOpenXR build adapter: one RTSP-specific line removal that preserves the
-  makedep wrapper's injected `ntdll.so` while the root build supplies
-  `-lopenxr_loader`
+### Live feature comparisons
 
-The Proton-GE snapshot is used as a patch source and behavior reference.
-Proton-GE is not the runtime base of this project, and unrelated GE patch
-groups are intentionally excluded. `scripts/build.sh` defaults to
-`PACKAGE_RELEASE=0`, so ordinary local builds do not produce release archives.
-The accepted Alpha 2 prerelease is packaged only with the explicit
-`PACKAGE_RELEASE=1` opt-in and its matching corresponding-source archive.
+Compare a branch against the upstream RTSP release it is built on, which that
+branch's [`NOTICE.md`](NOTICE.md) records:
 
-Build orchestration is documented in [`docs/BUILDING.md`](docs/BUILDING.md), the launcher and XR design in [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md), and the deliberately narrow test scope in [`docs/TESTING.md`](docs/TESTING.md). Generated source trees, build products, compatibility prefixes, and private logs are not intended to be committed.
+    https://github.com/SpookySkeletons/Proton-RTSP/compare/<rtsp-tag>...Go08er:Proton-RTSP-Wayland-GE:<branch>
 
-## Acknowledgements
+| Ref | Scope |
+| --- | --- |
+| latest release branch | Complete distribution integration: GE Wine replay, dependencies, packaging, and launcher |
+| `feat/wineopenxr-decouple` | Focused WineOpenXR registry and callback-state decoupling with the RTSP build adapter |
+| `feat/wayland-build-wiring` | Proton-side build and launcher wiring only |
 
-This work builds on Proton, Wine, DXVK, VKD3D-Proton, GStreamer, the RTSP Proton project, and the Wayland work maintained in Proton-GE. XR testing also relies on the independent XRizer, WiVRn, Monado, OpenXR, and OpenVR ecosystems.
-
-Thank you to the maintainers and contributors of those projects. All project names and trademarks belong to their respective owners. This repository is independently assembled and is not affiliated with or endorsed by Valve, CodeWeavers, GloriousEggroll, SpookySkeletons, Khronos, or the XR projects named above.
+For full scope, status, attribution, and contribution details, see
+[`docs/UPSTREAM-MRS.md`](docs/UPSTREAM-MRS.md).
 
 ## Licensing
 
-This is a multi-license repository. No single license covers the complete
-Proton distribution.
+Original project material is BSD-3-Clause. Upstream Proton, Wine, GE patches,
+and other components keep their existing licenses. See [`NOTICE.md`](NOTICE.md)
+and the [component license map](licenses/COMPONENTS.md).
 
-- Original material created for this repository—including its build and
-  verification scripts, documentation, smoke tests, patch-selection manifest,
-  and project-authored Proton changes—is BSD-3-Clause; see
-  [`LICENSE`](LICENSE).
-- Upstream Proton and RTSP top-level material represented by
-  [`patches/proton-rtsp-wayland.patch`](patches/proton-rtsp-wayland.patch)
-  retains its existing BSD-3-Clause terms and copyright notices; see
-  [`LICENSE.proton`](LICENSE.proton) and
-  [`LICENSE.upstream-proton`](LICENSE.upstream-proton).
-- Wine, the 105 selected GE Wine patches, and the WineOpenXR integration
-  modification are LGPL-2.1-or-later. Original patch authorship is retained in
-  the bundled format-patch files; see
-  [`LICENSE.wine`](LICENSE.wine) and
-  [`COPYING.LIB.wine`](COPYING.LIB.wine).
-- Every other fetched or bundled component remains subject to its own terms.
-  See [`NOTICE.md`](NOTICE.md) and the
-  [component license map](licenses/COMPONENTS.md).
+## Acknowledgements
 
-The project BSD license applies only to original project material. It does not
-relicense Proton, Wine, the GE Wine patches, an SDK-derived file, model, font,
-or another third-party component.
+This work builds on Proton, Wine, DXVK, VKD3D-Proton, GStreamer,
+SpookySkeletons' RTSP Proton, and Proton-GE's Wayland work. XR testing relies
+on XRizer, WiVRn, Monado, OpenXR, and OpenVR.
 
-Binary archives are paired with a complete prepared-source archive and
-checksum as described in [`SOURCE.md`](SOURCE.md). Pinned revisions support
-source reconstruction and review; the current toolchain is not sufficiently
-pinned to promise bit-identical binary reproduction.
+All project names and trademarks belong to their respective owners; this
+repository is independently assembled and is not affiliated with or endorsed
+by those projects.

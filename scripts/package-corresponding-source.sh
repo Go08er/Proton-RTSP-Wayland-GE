@@ -4,11 +4,11 @@ set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 source "$ROOT_DIR/config/upstream-pins.sh"
-WORK_ROOT="${WORK_ROOT:-/tmp/proton-rtsp-wayland-ge-work}"
+WORK_ROOT="${WORK_ROOT:-/tmp/proton-rtsp-wayland-ge-beta2-20260609-2}"
 SOURCES_DIR="${SOURCES_DIR:-$WORK_ROOT/sources}"
 SOURCE_TREE="${SOURCE_TREE:-$SOURCES_DIR/proton-ge-rtsp}"
 XALIA_SOURCE_DIR="${XALIA_SOURCE_DIR:-$SOURCES_DIR/xalia}"
-BUILD_NAME="${BUILD_NAME:-Proton-RTSP-Wayland-GE-Alpha2}"
+BUILD_NAME="${BUILD_NAME:-Proton-RTSP-Wayland-GE-Beta2}"
 PROTON_BUILD_DIR="${PROTON_BUILD_DIR:-$SOURCE_TREE/build/build-$BUILD_NAME}"
 DIST_DIR="${DIST_DIR:-$ROOT_DIR/dist}"
 SOURCE_NAME="$BUILD_NAME-source"
@@ -179,19 +179,40 @@ install -m 0644 "$ROOT_DIR/NOTICE.md" "$PACKAGE_DIR/NOTICE.md"
 reject_rg_matches \
   "corresponding source contains the builder's home path" \
   -a -l -i -F --hidden --no-ignore -- "$HOME" "$PACKAGE_DIR"
+[[ -n "${HOSTNAME:-}" ]] \
+  || fail "HOSTNAME must not be empty for privacy validation"
+reject_rg_matches \
+  "corresponding source contains the builder's hostname" \
+  -a -l -i -F --hidden --no-ignore -- "$HOSTNAME" "$PACKAGE_DIR"
 
 # Upstream source contains intentional documentation and tests with example
 # home paths.  Scan the distribution-authored portion generically while the
 # exact builder-home scan above still covers the complete source package.  The
 # one exception is LLVM-MinGW's immutable public CI source prefix.
-reject_rg_matches \
+# These public upstream fixtures retain contributor paths; exempt only byte-matched copies.
+require_sha256 \
+  "1a95ac359782526cb736de54b246a2bc0909b160ce4c455b00157625cb97fc79" \
+  "$PACKAGE_DIR/distribution/docs/DEBUGGING-LINUX.md"
+require_sha256 \
+  "8586c35a98b2a3b0d546caafb02ca0e2d85fcc19798ae6e597d80d0290b64e41" \
+  "$PACKAGE_DIR/distribution/wineopenxr/dxvk-interop.h"
+require_sha256 \
+  "138ecea56a07877f2edb9c4a4130a33eba419a7a56ec2bdc11cee9ed03fcc0c7" \
+  "$PACKAGE_DIR/distribution/vrclient_x64/dxvk-interop.h"
+(
+  cd "$PACKAGE_DIR/distribution"
+  reject_rg_matches \
     "corresponding source contains a personal home-directory path" \
     -a -l -i -P --hidden --no-ignore \
+    -g '!docs/DEBUGGING-LINUX.md' \
+    -g '!wineopenxr/dxvk-interop.h' \
+    -g '!vrclient_x64/dxvk-interop.h' \
     -e '/home/(?!runner/work/llvm-mingw/)[[:alnum:]_.-]+(?:/|$)' \
-    -e '/users/[[:alnum:]_.-]+(?:/|$)' \
-    -e '/root(?:/|$)' \
+    -e '(?<![[:alnum:]_.~-])/users/[[:alnum:]_.-]+(?:/|$)' \
+    -e '(?<![[:alnum:]_.~-])/root(?:/|$)' \
     -e '[a-z]:\\+users\\+[[:alnum:]_.-]+(?:\\+|$)' \
-    -- "$PACKAGE_DIR/distribution" "$PACKAGE_DIR/SOURCE.md" "$PACKAGE_DIR/NOTICE.md"
+    -- . "$PACKAGE_DIR/SOURCE.md" "$PACKAGE_DIR/NOTICE.md"
+)
 
 mkdir -p "$DIST_DIR"
 archive="$DIST_DIR/$SOURCE_NAME.tar.gz"
