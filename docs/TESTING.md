@@ -105,19 +105,25 @@ Beta 2's commits are deliberately ordered **RTSP pins first, GE second**, so an
 RTSP-only build is one checkout away and needs no re-derivation. Bisect that way
 before assuming which half is at fault. Beta 1 remains installed as the fallback.
 
-## Beta 2 candidate status
+## Beta 2 status
 
-**Not yet built, not yet tested, not published.** This table is the shape the
-result will take; every row is filled only by an actual gate passing.
+Released 2026-08-24 as `v11.1.0-beta.2`.
 
 | Path | Status |
 | --- | --- |
 | Source base | RTSP `proton-rtsp-11.0-20260609-2`, commit `c3ca33a4ebaf66cdebbac5e5fe432e342e395942`; Wine base `4a5f2736c5baf3d20ea7227b9da511e897ff9a2a`, a 2-commit fast-forward from Beta 1's base touching only `dlls/mf/session.c` and `dlls/ntdll/unix/thread.c`, neither of which any selected GE patch touches |
 | Pinned GE source | Annotated `GE-Proton11-5`, tag object `fc27a5029c7b90def3222b8fbaf33b69af973940`, peeled `a2b6daedb7273267359ece9d938d6de8dec596b6` |
-| Wayland selection | Re-derived by patch subject, not by numeric range; GE renumbered the series, so Beta 1's ranges do not transfer |
-| Wine replay | Pending |
-| Build and artifact verification | Pending |
-| Game smoke | Pending |
+| Wayland selection | Passed: 152 files re-derived by patch subject, not by numeric range, because GE renumbered the series; each byte-identical to its blob in the GE tree at the tag |
+| Wine replay | Passed: 155 Wine commits above the RTSP Wine base, final tree `d6271f4e2c2f50a2a9bd113807de645ad608e3f8` |
+| Build and artifact verification | Passed: the 1,465,929,866-byte artifact cleared build-integrated and standalone verification covering 6,181 regular files, 238 license/notice files, and 12 media schemes per registry view |
+| Sustained use | Passed by maintainer attestation. Beta 2 ran as the daily driver for an extended period after 2026-08-17. No defect was attributed to Beta 2; problems encountered in that period were traced to VRChat's own updates. |
+| Game smoke log | **Not captured.** Unlike Beta 1, no instrumented game-test log exists for Beta 2, so there is no evidence file behind the sustained-use row and no log-verifiable attribution report. |
+
+The published artifact is byte-identical to the copy that was used throughout
+that period: same 1,465,929,866 bytes, same 6,181 files and 1,746 symlinks, same
+build epoch `1787013508`. Packaging was done from the same prepared tree that
+produced it rather than from a fresh build, because this project does not promise
+bit-identical binary reproduction.
 
 ## Beta 1 game-test checklist
 
