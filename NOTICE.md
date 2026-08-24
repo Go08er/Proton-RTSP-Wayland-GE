@@ -10,7 +10,7 @@ SpookySkeletons, Khronos, XRizer, WiVRn, Monado, or VRChat.
 
 ## Beta 2 pinned revisions
 
-- RTSP Proton: `SpookySkeletons/Proton-RTSP` annotated tag
+- RTSP Proton: `SpookySkeletons/Proton-RTSP` (formerly `proton-ge-rtsp`) annotated tag
   `proton-rtsp-11.0-20260609-2`, tag object
   `315720bb897873e2f4a158c0b06d88d6198a8703`, peeled commit
   `c3ca33a4ebaf66cdebbac5e5fe432e342e395942`

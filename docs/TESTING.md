@@ -38,6 +38,87 @@ The device test exits after creating D3D11 successfully. The swapchain test
 opens a small window, presents one frame, and exits. Repeat the commands with
 the i686 executables to exercise the 32-bit path.
 
+## Beta 2 game-test checklist
+
+Beta 2 moves **two** things at once: the RTSP base gains upstream's `mf` fix, and
+the GE Wayland set moves from `GE-Proton11-3` to `GE-Proton11-5`. The checklist
+is ordered so the reason-to-ship is tested first and the regression-prone changes
+are tested deliberately rather than incidentally.
+
+### First: the change Beta 2 exists for
+
+1. Run `scripts/verify.sh` on the built tool.
+2. **In-game video players.** Upstream's release note for
+   `proton-rtsp-11.0-20260609-2` is *"Fixed assert in mf which broke video
+   players."* Exercise the players that previously asserted: load a video world,
+   start playback, and let it run past the point where playback previously
+   failed. This is the single result that decides whether Beta 2 was worth
+   shipping.
+3. Re-test RTSP and other media playback used by the title. Artifact, registry,
+   and plugin-set checks do not validate playback.
+4. Exercise seek, pause/resume, and a second consecutive video without
+   restarting the game — the fixed assert was in session rate-change command
+   handling, so repeated transport commands are the interesting case.
+
+### Second: the GE-Proton11-5 changes most likely to regress
+
+These are behaviour changes, not fixes, and are the reason to test deliberately
+rather than assume parity with Beta 1.
+
+5. **Mouse look and relative pointer.** GE-Proton11-5 *removes* WineWayland's
+   pointer relative mode and moves pointer warping to `pSetCursorPos`. Under
+   native Wayland, confirm desktop-mode mouse look tracks correctly, does not
+   drift or hit an invisible boundary, and that the cursor recentres as expected.
+6. **Fullscreen behaviour.** 11-5 treats fullscreen windows as resizeable and
+   removes an implicit fullscreen path. Confirm entering and leaving fullscreen,
+   and alt-tab, behave as they did on Beta 1.
+7. **IME**, if used at all. 11-5 replaces the `SetIMEEnabled` driver call with
+   `pEnableIMEContext`. Confirm text entry still works; note that 11-5 gates some
+   IME behaviour behind an explicit env toggle.
+8. **Window lifecycle under load.** 11-5 carries a broader `winewayland.drv`
+   ABBA deadlock fix superseding Beta 1's client-surface deadlock patch. Open and
+   close windows, change worlds, and alt-tab repeatedly looking for hangs. A hang
+   here is the failure this fix is meant to prevent, so its absence is the
+   expected result rather than evidence of improvement.
+
+### Then: the standing Wayland and XR route
+
+9. Confirm the default launch path starts without an injected `wineopenxr=d`
+   override.
+10. Confirm `PROTON_USE_WAYLAND=1` loads `winewayland.drv` and does not load
+    `winex11.drv`.
+11. Check that the log has no missing xrandr or Compose-file error.
+12. Exercise 64-bit and 32-bit Wine startup, D3D11 device creation, and a
+    window/swapchain under native Wayland.
+13. For an OpenVR title using XRizer, use normal Proton routing; do not set
+    `PROTON_XR_MODE`. Confirm graphics-device initialization and XR session
+    creation succeed, the session reaches ready/focused, and shutdown is clean.
+14. Under native Wayland, verify the controller uses the game's layout rather
+    than Steam's desktop layout, and that ordinary exit restores Steam's global
+    input selection. Run one XWayland/non-XR control.
+15. Create and destroy more than one XR session, or restart the XR application,
+    looking for stale-session or teardown failures.
+
+### If something regresses
+
+Beta 2's commits are deliberately ordered **RTSP pins first, GE second**, so an
+RTSP-only build is one checkout away and needs no re-derivation. Bisect that way
+before assuming which half is at fault. Beta 1 remains installed as the fallback.
+
+## Beta 2 candidate status
+
+**Not yet built, not yet tested, not published.** This table is the shape the
+result will take; every row is filled only by an actual gate passing.
+
+| Path | Status |
+| --- | --- |
+| Source base | RTSP `proton-rtsp-11.0-20260609-2`, commit `c3ca33a4ebaf66cdebbac5e5fe432e342e395942`; Wine base `4a5f2736c5baf3d20ea7227b9da511e897ff9a2a`, a 2-commit fast-forward from Beta 1's base touching only `dlls/mf/session.c` and `dlls/ntdll/unix/thread.c`, neither of which any selected GE patch touches |
+| Pinned GE source | Annotated `GE-Proton11-5`, tag object `fc27a5029c7b90def3222b8fbaf33b69af973940`, peeled `a2b6daedb7273267359ece9d938d6de8dec596b6` |
+| Wayland selection | Re-derived by patch subject, not by numeric range; GE renumbered the series, so Beta 1's ranges do not transfer |
+| Wine replay | Pending |
+| Build and artifact verification | Pending |
+| Game smoke | Pending |
+
 ## Beta 1 game-test checklist
 
 1. Run `scripts/verify.sh` on the built tool.
