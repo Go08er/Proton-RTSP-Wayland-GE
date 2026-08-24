@@ -57,7 +57,7 @@ fi
 (( ORCHESTRATOR_JOBS * COMPONENT_JOBS <= JOBS )) \
   || fail "nested worker budget exceeds JOBS ($ORCHESTRATOR_JOBS x $COMPONENT_JOBS > $JOBS)"
 
-BUILD_LOCK="${PROTON_BUILD_LOCK:-/home/goober/Documents/.proton-build.lock}"
+BUILD_LOCK="${PROTON_BUILD_LOCK:-${HOME:?HOME must be set}/Documents/.proton-build.lock}"
 mkdir -p "$(dirname "$BUILD_LOCK")"
 exec 9>"$BUILD_LOCK"
 flock -n 9 || fail "another cooperating Proton build holds $BUILD_LOCK"
