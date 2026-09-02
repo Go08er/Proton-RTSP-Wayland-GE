@@ -3,14 +3,14 @@
 set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-WORK_ROOT="${WORK_ROOT:-/tmp/proton-rtsp-wayland-ge-beta2-20260609-2}"
+WORK_ROOT="${WORK_ROOT:-/tmp/proton-rtsp-wayland-ge-beta3-20260609-3}"
 SOURCES_DIR="${SOURCES_DIR:-$WORK_ROOT/sources}"
 RTSP_TREE="${RTSP_TREE:-$SOURCES_DIR/proton-ge-rtsp}"
 GE_TREE="${GE_TREE:-$SOURCES_DIR/proton-ge-custom}"
 source "$ROOT_DIR/config/upstream-pins.sh"
 source "$ROOT_DIR/scripts/lib/prepared-state.sh"
-BUILD_NAME="${BUILD_NAME:-Proton-RTSP-Wayland-GE-Beta2}"
-DISPLAY_NAME="${DISPLAY_NAME:-Proton RTSP Wayland GE Beta 2}"
+BUILD_NAME="${BUILD_NAME:-Proton-RTSP-Wayland-GE-Beta3}"
+DISPLAY_NAME="${DISPLAY_NAME:-Proton RTSP Wayland GE Beta 3}"
 JOBS="${JOBS:-1}"
 ORCHESTRATOR_JOBS="${ORCHESTRATOR_JOBS:-}"
 COMPONENT_JOBS="${COMPONENT_JOBS:-}"
@@ -24,7 +24,8 @@ OPENXR_SESSION_PATCH="$ROOT_DIR/patches/$RTSP_WINEOPENXR_SESSION_PATCH"
 WINEBUS_NO_STEAMINPUT_ADAPTER_PATCH="$ROOT_DIR/patches/$GE_WINEBUS_NO_STEAMINPUT_ADAPTER_PATCH"
 STEAM_INPUT_ADAPTER_PATCH="$ROOT_DIR/patches/$RTSP_STEAM_INPUT_ADAPTER_PATCH"
 WINEWAYLAND_XR_PATCH="$ROOT_DIR/patches/$RTSP_WINEWAYLAND_XR_PATCH"
-BETA2_PATCH="$ROOT_DIR/patches/$PROTON_BETA2_PATCH"
+WAYLAND_CURSOR_PATCH="$ROOT_DIR/patches/$GE_WAYLAND_CURSOR_PATCH"
+BETA3_PATCH="$ROOT_DIR/patches/$PROTON_BETA3_PATCH"
 
 if [[ "${LOW_IMPACT_REEXEC:-0}" != "1" ]]; then
   export LOW_IMPACT_REEXEC=1
@@ -149,16 +150,16 @@ require_head "$GE_TREE" "$GE_COMMIT"
 [[ "$(git -C "$GE_TREE" rev-parse 'HEAD:locale')" == "$GE_LOCALE_TREE" ]] \
   || fail "GE locale tree no longer matches the recorded state"
 [[ "$(tracked_diff_sha256 root)" == "$FINAL_RTSP_TRACKED_DIFF_SHA256" ]] \
-  || fail "Proton tracked diff no longer matches the prepared Beta 2 state"
+  || fail "Proton tracked diff no longer matches the prepared Beta 3 state"
 [[ "$(tracked_diff_sha256 wineopenxr)" == "$FINAL_WINEOPENXR_DIFF_SHA256" ]] \
-  || fail "WineOpenXR diff no longer matches the prepared Beta 2 state"
+  || fail "WineOpenXR diff no longer matches the prepared Beta 3 state"
 diff -qr --no-dereference "$GE_TREE/locale" "$RTSP_TREE/locale" > /dev/null \
   || fail "copied locale tree no longer matches the pinned GE source"
 [[ "$(git -C "$WINE_TREE" rev-parse 'HEAD^{tree}')" == "$FINAL_WINE_TREE" ]] \
-  || fail "Wine source tree no longer matches the deterministic Beta 2 lock"
+  || fail "Wine source tree no longer matches the deterministic Beta 3 lock"
 [[ "$(git -C "$WINE_TREE" rev-list --count "$RTSP_WINE_BASE..HEAD")" == \
     "$FINAL_WINE_PATCH_COUNT" ]] \
-  || fail "Wine source history no longer matches the Beta 2 patch count"
+  || fail "Wine source history no longer matches the Beta 3 patch count"
 require_pristine "$WINE_TREE"
 require_head "$PIPER_TREE" "$RTSP_PIPER_COMMIT"
 [[ "$(git -C "$PIPER_TREE" status --porcelain --untracked-files=all)" == " M CMakeLists.txt" ]] \
@@ -179,10 +180,12 @@ cmp "$PIPER_PATCH" <(git -C "$PIPER_TREE" diff --no-ext-diff --binary -- CMakeLi
   || fail "Steam Input adapter no longer matches its source lock"
 [[ "$(sha256sum "$WINEWAYLAND_XR_PATCH" | awk '{print $1}')" == "$RTSP_WINEWAYLAND_XR_SHA256" ]] \
   || fail "WineWayland XR patch no longer matches its source lock"
-[[ "$(sha256sum "$BETA2_PATCH" | awk '{print $1}')" == "$PROTON_BETA2_SHA256" ]] \
-  || fail "Beta 2 launcher patch no longer matches its source lock"
-grep -Fqx 'CURRENT_PREFIX_VERSION="11.0-103"' "$RTSP_TREE/proton" \
-  || fail "expected 11.0-103 prefix identity is missing"
+[[ "$(sha256sum "$WAYLAND_CURSOR_PATCH" | awk '{print $1}')" == "$GE_WAYLAND_CURSOR_PATCH_SHA256" ]] \
+  || fail "GE WineWayland cursor patch no longer matches its source lock"
+[[ "$(sha256sum "$BETA3_PATCH" | awk '{print $1}')" == "$PROTON_BETA3_SHA256" ]] \
+  || fail "Beta 3 launcher patch no longer matches its source lock"
+grep -Fqx 'CURRENT_PREFIX_VERSION="11.0-104"' "$RTSP_TREE/proton" \
+  || fail "expected 11.0-104 prefix identity is missing"
 grep -Fq 'self.env["PROTON_NO_STEAMINPUT"] = "1"' "$RTSP_TREE/proton" \
   || fail "$GE_SOURCE_LABEL WineWayland Steam Input policy is missing"
 grep -Fq 'list_remove(&wine_session->entry);' "$RTSP_TREE/wineopenxr/openxr_loader.c" \
@@ -204,7 +207,7 @@ grep -Fqx "XALIA_ZIP_SHA256 := $XALIA_ZIP_SHA256" "$RTSP_TREE/Makefile.in" \
 
 [[ -x "$RTSP_TREE/configure.sh" ]] || fail "prepared RTSP source is missing"
 if (( ${#PIPER_PHONEME_PATH} > PIPER_PHONEME_PATH_LIMIT )); then
-  fail "build path is too long for eSpeak NG's phoneme compiler (${#PIPER_PHONEME_PATH} > $PIPER_PHONEME_PATH_LIMIT characters); use a shorter neutral WORK_ROOT such as /tmp/proton-rtsp-wayland-ge-beta2-20260609-2"
+  fail "build path is too long for eSpeak NG's phoneme compiler (${#PIPER_PHONEME_PATH} > $PIPER_PHONEME_PATH_LIMIT characters); use a shorter neutral WORK_ROOT such as /tmp/proton-rtsp-wayland-ge-beta3-20260609-3"
 fi
 
 if [[ ! -f "$RTSP_TREE/build/build-$BUILD_NAME/Makefile" ]]; then
