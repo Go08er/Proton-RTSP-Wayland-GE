@@ -2,13 +2,47 @@
 
 # Source and redistribution notice
 
-Proton-RTSP-Wayland-GE Beta 2 is an unpublished, unofficial assembly based on
-the projects listed below. Published Beta 1 and Alpha 3 remain available
-separately and retain their own immutable source records. This project is not
-affiliated with or endorsed by Valve, CodeWeavers, GloriousEggroll,
-SpookySkeletons, Khronos, XRizer, WiVRn, Monado, or VRChat.
+Proton-RTSP-Wayland-GE Beta 3 is an unpublished, unofficial test candidate
+based on the projects listed below. Published Beta 2, Beta 1, and Alpha 3
+remain available separately and retain their own immutable source records.
+This project is not affiliated with or endorsed by Valve, CodeWeavers,
+GloriousEggroll, SpookySkeletons, Khronos, XRizer, WiVRn, Monado, or VRChat.
 
-## Beta 2 pinned revisions
+## Beta 3 pinned revisions
+
+- RTSP Proton: `SpookySkeletons/Proton-RTSP` annotated tag
+  `proton-rtsp-11.0-20260609-3`, tag object
+  `60d1695539cb3e9205bd6d05d00cf4a30268b9e8`, peeled commit
+  `f3f25735b3c4e37968c97417ede300bc836a6cd2`
+- RTSP Wine base: `a7fcac55ca756e35d5dc0a7c8b70272d9c6a9675`
+- Proton-GE release: annotated tag `GE-Proton11-6`, tag object
+  `855db4875be1dee8c194b6e08abfe336babc126b`, peeled commit
+  `7e88cefffc122ea1584c2156b8d7bae6cf69b2a7`
+- Proton-GE Wine provenance: `9358696fe9a2261329f4a83aa6a65fd436106154`
+- DXVK: `2cae043bdf767c8a7a2e0ee8d41537acfe773e8`
+- libxml2: `b7fa62cbe8ef0df5869e000d5b690bdedd07f33e`
+- libxkbcommon: `dd642359f8d43c09968e34ca7f1eb1121b2dfd70`
+- Wayland Protocols: `810f1adaf33521cc55fc510566efba2a1418174f`
+- xrandr 1.5.4 archive SHA-256:
+  `2cafccb2aaf2491a4068676117a0d4f90ab307724b96fffc54cd1da953779400`
+- piper-phonemize:
+  `5ecbb9b59abcffe03a9775ae82491c9ac5037f4d`, archive SHA-256
+  `cd89aff6c3728776ffbf382bd6574876cc67d13402140fc5e3ec8c2bc813335f`
+- Xalia 0.4.9:
+  `6d946216c29052c29c660ad4cac950a6bd08a2b4`
+- Xalia SDL3-CS:
+  `e26a111c1b90301e37475a4dfb6f5ce47447d677`
+
+Beta 3 carries 160 exact main WineWayland patches and GE's exact DDB cursor
+patch, for 161 GE-derived changes. The Winebus and SetupAPI adapters and the
+two-line WineWayland VR capability repair complete a 164-commit replay above
+the RTSP Wine base, tree
+`b256fa0664b725fdd55ab1f27820c52ea291000d`. The 58-patch child-rendering
+stack, including its SNI and Reflex dependencies, and every other `em-fixups`
+patch are not included. These source and replay facts do not establish runtime
+behaviour. The candidate launcher uses prefix identity `11.0-104`.
+
+## Published Beta 2 pinned revisions
 
 - RTSP Proton: `SpookySkeletons/Proton-RTSP` (formerly `proton-ge-rtsp`) annotated tag
   `proton-rtsp-11.0-20260609-2`, tag object

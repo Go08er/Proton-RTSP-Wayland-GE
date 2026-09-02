@@ -1,37 +1,44 @@
 <!-- SPDX-License-Identifier: BSD-3-Clause -->
 
-# Proton-RTSP-Wayland-GE Beta 2
+# Proton-RTSP-Wayland-GE Beta 3 candidate
 
-Run Steam games on native Wayland from the RTSP Proton 11 base with the
-released GE-Proton11-5 Wayland work.
+This local candidate combines Proton-RTSP 11-3 with the reviewed
+GE-Proton11-6 Wayland work. Published Beta 2 remains the current release.
 
 ## Why you'd want it
 
 - Avoid XWayland scaling blur.
 - Use correct fractional scaling and per-monitor refresh rates.
 - Work better with Wayland-first compositors that have limited X11 support.
-- Run the tested VRChat → XRizer → WiVRn route on native Wayland with
-  Proton's normal XR routing and no XR DLL override.
+- Keep Proton's normal XR routing for the VRChat → XRizer → WiVRn route that
+  passed on Beta 2; Beta 3 still needs its own runtime test.
 
 ## Current status
 
-**Beta 2 is the current release.** It moves two things forward from Beta 1:
+**Beta 3 is an unpublished test candidate.** It moves two source inputs
+forward from the published Beta 2 release:
 
-- **RTSP base** to `proton-rtsp-11.0-20260609-2`, whose upstream release note is
-  *"Fixed assert in mf which broke video players."* This is the reason Beta 2
-  exists. The Wine base advances two commits from Beta 1's, a fast-forward
-  touching only `dlls/mf/session.c` and `dlls/ntdll/unix/thread.c` — neither
-  touched by any selected GE patch.
-- **GE Wayland work** from `GE-Proton11-3` to `GE-Proton11-5`, re-derived by
-  patch subject because GE renumbered its series. Mostly upstream stability work,
-  including a broader `winewayland.drv` deadlock fix, and carrying some behaviour
-  changes: WineWayland's pointer relative mode is removed, pointer warping moves
-  to `pSetCursorPos`, and the IME driver call is reworked.
+- **RTSP base** to `proton-rtsp-11.0-20260609-3` at `f3f25735`, with Wine at
+  `a7fcac55`. This upstream source adds anti-starvation sample-pump scheduling
+  in `mfmediaengine`; it has not yet established any runtime improvement here.
+- **GE source** to `GE-Proton11-6` at `7e88ceff`. The candidate replays 160
+  exact main WineWayland selections plus GE's exact DDB cursor patch. The
+  58-patch child-rendering stack, including its SNI and Reflex dependencies,
+  and every other `em-fixups` patch are intentionally excluded.
 
-Beta 2 replays 152 selected GE Wine patches byte-for-byte and locks 155 Wine
-commits above the RTSP Wine base. The exact 1,465,929,866-byte artifact passed
-its build-integrated and standalone verifiers, covering all 6,181 regular files,
-238 license and notice files, and 12 media schemes per registry view.
+Those 161 GE-derived patches plus three local follow-ups produce 164 Wine
+commits above the RTSP Wine base and tree
+`b256fa0664b725fdd55ab1f27820c52ea291000d`. Beta 3 uses prefix identity
+`11.0-104`. These are source-replay facts, not build or runtime results;
+`PACKAGE_RELEASE=0` remains mandatory while the candidate is tested.
+
+### Published Beta 2 record
+
+Beta 2 remains the current release. It replays 152 selected GE Wine patches
+byte-for-byte and locks 155 Wine commits above its RTSP Wine base. The exact
+1,465,929,866-byte artifact passed its build-integrated and standalone
+verifiers, covering all 6,181 regular files, 238 license and notice files, and
+12 media schemes per registry view.
 
 It then ran as the maintainer's daily driver for an extended period. No defect
 was attributed to Beta 2: the problems encountered during that period were
@@ -40,18 +47,19 @@ attestation from sustained real-world use, not an instrumented test run** — no
 game-test log was captured for Beta 2, so there is no evidence file behind this
 paragraph, unlike Beta 1's smoke test.
 
-Beta 2 keeps everything Beta 1 established: Proton's normal XR routing with no
+Beta 2 kept everything Beta 1 established: Proton's normal XR routing with no
 custom selector, the WineWayland XR capability repair that fixes
 `VK_ERROR_EXTENSION_NOT_PRESENT` on the tested VRChat → XRizer → WiVRn route,
 and the RTSP GStreamer media stack as the authoritative media implementation.
 
-Direct Windows OpenXR, SteamVR, OpenComposite, broader media, and the default
-X11/XWayland path remain untested. Overlapping launches and forced termination
-also remain untested. Beta 1 remains available as a fallback.
+For Beta 2, direct Windows OpenXR, SteamVR, OpenComposite, broader media, and
+the default X11/XWayland path remain untested. Overlapping launches and forced
+termination also remain untested. Beta 1 remains available as a fallback.
+Beta 3 must not inherit any of these runtime results without testing.
 
 ## Install
 
-Download `v11.1.0-beta.2` from
+Beta 3 has no download. Install the published `v11.1.0-beta.2` from
 [GitHub Releases](https://github.com/Go08er/Proton-RTSP-Wayland-GE/releases).
 It includes:
 
@@ -60,10 +68,10 @@ It includes:
 
 ### Upgrading from Alpha 2 or Alpha 3
 
-Remove `PROTON_XR_MODE=xrizer` from the game's Steam launch options. Neither
-Beta 1 nor Beta 2 defines or reads this retired selector, so leaving it set is inert and
-does nothing. This is separate from the still-supported advanced
-`WINEDLLOVERRIDES="wineopenxr=d"` diagnostic fallback documented in
+Remove `PROTON_XR_MODE=xrizer` from the game's Steam launch options. Beta 1,
+Beta 2, and the Beta 3 candidate do not define or read this retired selector.
+Leaving it set is inert and does nothing. This is separate from the supported
+advanced `WINEDLLOVERRIDES="wineopenxr=d"` diagnostic fallback documented in
 [Troubleshooting](#troubleshooting).
 
 1. Exit Steam completely.
@@ -95,7 +103,9 @@ Keep the matching source archive with the binary.
 
 ### NixOS
 
-The repository's Nix package is pinned to the verified Beta 2 archive:
+The repository's Nix package remains pinned to the verified, published Beta 2
+archive. It will not move to Beta 3 unless a future publication decision is
+made:
 
 ```nix
 inputs.proton-rtsp-wayland-ge.url =
@@ -127,7 +137,7 @@ from the pinned Beta 2 hash.
 interface is available. Disable logging after testing because detailed Wine
 logs can become large and reduce performance.
 
-Both betas use Proton's normal XR routing. See the
+Beta 1, Beta 2, and the Beta 3 candidate use Proton's normal XR routing. See the
 [upgrade note](#upgrading-from-alpha-2-or-alpha-3) if old launch options still
 contain the retired selector.
 
@@ -135,10 +145,12 @@ contain the retired selector.
 
 - Alpha 3's normal route failed on the tested VRChat → XRizer 0.5.0 → WiVRn
   26.6.2 route when DXVK requested Wine's XR Vulkan device extension through
-  WineWayland; Beta 1 and Beta 2 both carry the repair.
-- GE forces Steam Input off under WineWayland and temporarily
-  selects the running game's AppID in the host Steam client; the expected
-  controller mapping and ordinary exit passed once.
+  WineWayland; Beta 1 and Beta 2 both carry the repair. Beta 3's source replay
+  retains it, but that composition is not runtime-tested.
+- Beta 2 forces Steam Input off under WineWayland and temporarily selects the
+  running game's AppID in the host Steam client; the expected controller
+  mapping and ordinary exit passed once. Beta 3 retains that source policy but
+  has not tested it.
 - Native Wayland depends on compositor protocol support. Overlays, input
   methods, and window management can differ from XWayland.
 - The RTSP media stack does not guarantee every codec, site, stream, or
@@ -177,6 +189,8 @@ promotes that GE-Proton11-3 integration and retires the custom XR selector
 without changing either earlier branch. The `beta2` branch builds on `beta1`
 without modifying it, moving the RTSP base forward and re-deriving the GE
 Wayland selection against `GE-Proton11-5`.
+The local `beta3` branch leaves Beta 2 unchanged while preparing the newer
+RTSP and GE sources; it is neither published nor a release.
 Small upstream contributions remain separate from release assembly.
 
 ### Live feature comparisons
@@ -184,6 +198,8 @@ Small upstream contributions remain separate from release assembly.
 Each comparison uses the RTSP release that branch is built on:
 `rtsp-11.0-20260609-2` for `beta2`, `rtsp-11.0-20260609-1` for everything
 earlier.
+
+Beta 3 is deliberately absent from this live-ref table while it remains local.
 
 | Ref | Scope | Compare |
 | --- | --- | --- |
@@ -195,7 +211,15 @@ earlier.
 For full scope, status, attribution, and contribution details, see
 [`docs/UPSTREAM-MRS.md`](docs/UPSTREAM-MRS.md).
 
-Beta 2 (current release):
+Beta 3 (local unpublished candidate):
+
+- RTSP Proton: `f3f25735b3c4e37968c97417ede300bc836a6cd2`
+- RTSP Wine base: `a7fcac55ca756e35d5dc0a7c8b70272d9c6a9675`
+- GE-Proton11-6 peeled commit: `7e88cefffc122ea1584c2156b8d7bae6cf69b2a7`
+- GE-Proton11-6 Wine gitlink: `9358696fe9a2261329f4a83aa6a65fd436106154` (provenance only; GE's Wine is never built here)
+- Final Beta 3 Wine tree: `b256fa0664b725fdd55ab1f27820c52ea291000d`
+
+Beta 2 (published current release):
 
 - RTSP Proton: `c3ca33a4ebaf66cdebbac5e5fe432e342e395942`
 - RTSP Wine base: `4a5f2736c5baf3d20ea7227b9da511e897ff9a2a`

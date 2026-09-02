@@ -4,10 +4,11 @@
 
 The scripts build from pinned upstream revisions in a neutral temporary path.
 This avoids embedding a maintainer's home-directory path in binaries and
-generated Wine registry data. Beta 2 uses the exact annotated
-`proton-rtsp-11.0-20260609-2` and `GE-Proton11-5` releases, peeled to
-`c3ca33a4ebaf66cdebbac5e5fe432e342e395942` and
-`a2b6daedb7273267359ece9d938d6de8dec596b6` respectively.
+generated Wine registry data. The unpublished Beta 3 candidate uses the exact
+annotated `proton-rtsp-11.0-20260609-3` and `GE-Proton11-6` releases, peeled to
+`f3f25735b3c4e37968c97417ede300bc836a6cd2` and
+`7e88cefffc122ea1584c2156b8d7bae6cf69b2a7` respectively. Its RTSP Wine base
+is `a7fcac55ca756e35d5dc0a7c8b70272d9c6a9675`.
 
 ## Requirements
 
@@ -33,6 +34,13 @@ work. Preparation writes a new state only after all patches and dependency
 checks succeed. The build compares that state byte-for-byte against the exact
 pins and canonical RTSP/GE source paths, then rechecks the deterministic Wine
 tree. A failed or interrupted preparation therefore cannot authorize a build.
+
+The Beta 3 replay gate requires 160 exact main WineWayland selections, GE's
+exact DDB cursor patch, and three local Wine follow-ups: 164 commits and final
+tree `b256fa0664b725fdd55ab1f27820c52ea291000d`. It rejects the separate
+58-patch child-rendering stack, including its SNI and Reflex dependencies, and
+every other `em-fixups` patch rather than silently broadening the selected GE
+subset.
 
 The build defaults to `JOBS=1`. `scripts/build.sh` also re-executes itself with
 `nice -n 19` and, when available, idle-class `ionice` so the preparation build
@@ -73,7 +81,7 @@ are never excluded from scanning.
 The default work directory is:
 
 ```text
-/tmp/proton-rtsp-wayland-ge-beta2-20260609-2
+/tmp/proton-rtsp-wayland-ge-beta3-20260609-3
 ```
 
 Keep custom work paths similarly short. The pinned eSpeak NG phoneme compiler
@@ -93,11 +101,12 @@ The default is `PACKAGE_RELEASE=0`. It builds and verifies the compatibility
 tool at:
 
 ```text
-/tmp/proton-rtsp-wayland-ge-beta2-20260609-2/sources/proton-ge-rtsp/build/Proton-RTSP-Wayland-GE-Beta2
+/tmp/proton-rtsp-wayland-ge-beta3-20260609-3/sources/proton-ge-rtsp/build/Proton-RTSP-Wayland-GE-Beta3
 ```
 
 It does not create release archives, push commits, publish a GitHub release, or
 upload anything. Keep that default through source review and game testing.
+Beta 3 is currently in that unpublished state.
 
 Only after the exact build has been accepted for distribution, explicitly run:
 

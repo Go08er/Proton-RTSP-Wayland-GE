@@ -20,11 +20,11 @@ i686-w64-mingw32-gcc -O2 -Wall -Wextra \
   -o tests/d3d11-swapchain-smoke-i686.exe tests/d3d11-swapchain-smoke.c -ld3d11 -ldxgi
 ```
 
-Run them with the built Beta 1 game-test directory and a disposable prefix,
-never a live game prefix. For example:
+Run them with the exact built candidate under test and a disposable prefix,
+never a live game prefix. For Beta 3, after it is built:
 
 ```sh
-TOOL_DIR=/path/to/Proton-RTSP-Wayland-GE-Beta1
+TOOL_DIR=/path/to/Proton-RTSP-Wayland-GE-Beta3
 mkdir -p /tmp/proton-rtsp-wayland-ge-d3d11-smoke
 STEAM_COMPAT_DATA_PATH=/tmp/proton-rtsp-wayland-ge-d3d11-smoke \
   PROTON_USE_WAYLAND=1 \
@@ -38,7 +38,44 @@ The device test exits after creating D3D11 successfully. The swapchain test
 opens a small window, presents one frame, and exits. Repeat the commands with
 the i686 executables to exercise the 32-bit path.
 
-## Beta 2 game-test checklist
+## Beta 3 candidate checklist
+
+Beta 3 is local and unpublished. Its source replay is locked, but no build or
+runtime result follows from that. Keep `PACKAGE_RELEASE=0` and test one axis at
+a time:
+
+1. Run `scripts/verify.sh` on the exact Beta 3 tool after it is built.
+2. Re-test repeated media startup, pause/resume, seek, source replacement, and
+   end-of-stream. Proton-RTSP 11-3 adds anti-starvation sample-pump scheduling
+   in `mfmediaengine`; only a runtime test can establish its effect.
+3. Re-test the RTSP and ordinary web-media paths used by the title. The RTSP
+   source bump and Wine bump make Beta 2's media results historical controls,
+   not Beta 3 evidence.
+4. Establish `%command%` as the X11/XWayland control, then change only
+   `PROTON_USE_WAYLAND=1` and repeat startup, D3D11, fullscreen, text input,
+   mouse look, cursor rendering, and window lifecycle checks.
+5. On native Wayland, include DDB-backed cursor changes in the cursor check;
+   Beta 3 selects GE-Proton11-6's exact DDB cursor patch for the first time.
+6. For an OpenVR title using XRizer, keep normal Proton routing and verify
+   graphics-device initialization, session focus, input, audio, and clean
+   shutdown. Do not infer this route from Beta 2.
+7. Verify the game controller uses the game's layout under WineWayland and
+   that ordinary exit restores Steam's global input selection.
+
+### Beta 3 source status
+
+| Path | Status |
+| --- | --- |
+| Source base | Pinned: RTSP `proton-rtsp-11.0-20260609-3`, Proton `f3f25735b3c4e37968c97417ede300bc836a6cd2`, Wine `a7fcac55ca756e35d5dc0a7c8b70272d9c6a9675` |
+| Pinned GE source | Annotated `GE-Proton11-6`, peeled `7e88cefffc122ea1584c2156b8d7bae6cf69b2a7` |
+| GE selection | Source-locked: 160 exact main WineWayland patches plus GE's exact DDB cursor patch; the 58-patch child-rendering stack, including its SNI and Reflex dependencies, and every other `em-fixups` patch are excluded |
+| Wine replay | Source-locked: 161 GE-derived patches plus three local follow-ups, 164 commits, final tree `b256fa0664b725fdd55ab1f27820c52ea291000d` |
+| Prefix identity | Prepared as `11.0-104` |
+| Build and artifact verification | Pending; no artifact claim |
+| Runtime and game testing | Pending; no media, Wayland, XR, or continuity claim |
+| Nix package | Unchanged: remains on published Beta 2 pending a separate publication decision |
+
+## Published Beta 2 game-test checklist
 
 Beta 2 moves **two** things at once: the RTSP base gains upstream's `mf` fix, and
 the GE Wayland set moves from `GE-Proton11-3` to `GE-Proton11-5`. The checklist
@@ -105,7 +142,7 @@ Beta 2's commits are deliberately ordered **RTSP pins first, GE second**, so an
 RTSP-only build is one checkout away and needs no re-derivation. Bisect that way
 before assuming which half is at fault. Beta 1 remains installed as the fallback.
 
-## Beta 2 status
+## Published Beta 2 status
 
 Released 2026-08-24 as `v11.1.0-beta.2`.
 
@@ -153,7 +190,7 @@ bit-identical binary reproduction.
     than Steam's desktop layout and that ordinary exit restores Steam's global
     input selection. Also run one XWayland/non-XR control.
 
-## Beta 1 candidate status
+## Published Beta 1 status
 
 | Path | Status |
 | --- | --- |
@@ -168,7 +205,7 @@ bit-identical binary reproduction.
 Promotion does not change the normal XR route that passed in Alpha 4: the
 retired selector injected a DLL override only when explicitly set to
 `xrizer`. The fresh build, verifier passes, and short no-custom-flag game smoke
-have now passed. Beta 1 remains unpublished.
+have now passed. Beta 1 is published as `v11.1.0-beta.1`.
 
 ## Alpha 4 precursor evidence
 
