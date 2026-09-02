@@ -1,14 +1,15 @@
 #!/usr/bin/env bash
 # SPDX-License-Identifier: BSD-3-Clause
 
-# Beta 2 release input.  Both annotated upstream tags are recorded with their
-# peeled commits and independently verified Git trees/blobs.
-RTSP_COMMIT="c3ca33a4ebaf66cdebbac5e5fe432e342e395942"
-RTSP_WINE_BASE="4a5f2736c5baf3d20ea7227b9da511e897ff9a2a"
-RTSP_SOURCE_LABEL="proton-rtsp-11.0-20260609-2"
-RTSP_TAG_OBJECT="315720bb897873e2f4a158c0b06d88d6198a8703"
+# Proton-RTSP 11-3 input with Beta 2's GE-Proton11-5 selection retained.
+# Both annotated upstream tags are recorded with their peeled commits and
+# independently verified Git trees/blobs.
+RTSP_COMMIT="f3f25735b3c4e37968c97417ede300bc836a6cd2"
+RTSP_WINE_BASE="a7fcac55ca756e35d5dc0a7c8b70272d9c6a9675"
+RTSP_SOURCE_LABEL="proton-rtsp-11.0-20260609-3"
+RTSP_TAG_OBJECT="60d1695539cb3e9205bd6d05d00cf4a30268b9e8"
 RTSP_PIPER_COMMIT="9d06b74959570772e8bcbe7a3f696664d2421167"
-FINAL_WINE_TREE="d6271f4e2c2f50a2a9bd113807de645ad608e3f8"
+FINAL_WINE_TREE="3988d551e219a9b59d69c98377d1930778e16907"
 FINAL_WINE_PATCH_COUNT="155"
 FINAL_RTSP_TRACKED_DIFF_SHA256="b26992637ebd60c3f67eb8bd8126df4a360d2c9f0774cb659270f38ecf82885a"
 FINAL_WINEOPENXR_DIFF_SHA256="7e9b9fabd2eabea87c2ea02975281026904c683e10a5a9d65451265597e46b84"
