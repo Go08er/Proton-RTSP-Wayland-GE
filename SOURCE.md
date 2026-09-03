@@ -8,6 +8,9 @@ Beta 3 is an **unpublished local test candidate**. No Beta 3 tag, release, or
 asset exists. `PACKAGE_RELEASE=0` remains required while it is reviewed and
 tested.
 
+If it is accepted and packaged later, its corresponding-source archive will be
+named `Proton-RTSP-Wayland-GE-Beta3-source.tar.gz`.
+
 Beta 3 retains Proton-RTSP's Wine lineage. GE's Wine is never checked out or
 built by this project: selected GE patches are replayed onto the pinned RTSP
 Wine base, while `GE_WINE_COMMIT` records the GE release's own gitlink only as
