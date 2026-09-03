@@ -40,11 +40,11 @@ the i686 executables to exercise the 32-bit path.
 
 ## Beta 3 candidate checklist
 
-Beta 3 is local and unpublished. Its source replay is locked, but no build or
-runtime result follows from that. Keep `PACKAGE_RELEASE=0` and test one axis at
-a time:
+Beta 3 is local and unpublished. Its source replay, build, and static artifact
+gates passed, but no runtime result follows from them. Keep `PACKAGE_RELEASE=0`
+and test one axis at a time:
 
-1. Run `scripts/verify.sh` on the exact Beta 3 tool after it is built.
+1. Static gate complete: `scripts/verify.sh` passed on the exact Beta 3 tool.
 2. Re-test repeated media startup, pause/resume, seek, source replacement, and
    end-of-stream. Proton-RTSP 11-3 adds anti-starvation sample-pump scheduling
    in `mfmediaengine`; only a runtime test can establish its effect.
@@ -71,7 +71,7 @@ a time:
 | GE selection | Source-locked: 160 exact main WineWayland patches plus GE's exact DDB cursor patch; the 58-patch child-rendering stack, including its SNI and Reflex dependencies, and every other `em-fixups` patch are excluded |
 | Wine replay | Source-locked: 161 GE-derived patches plus three local follow-ups, 164 commits, final tree `b256fa0664b725fdd55ab1f27820c52ea291000d` |
 | Prefix identity | Prepared as `11.0-104` |
-| Build and artifact verification | Pending; no artifact claim |
+| Build and artifact verification | Passed: the 1,465,937,982-byte artifact cleared build-integrated, standalone, and staged-copy verification covering 6,181 regular files, 238 license/notice files, and 12 media schemes per registry view |
 | Runtime and game testing | Pending; no media, Wayland, XR, or continuity claim |
 | Nix package | Unchanged: remains on published Beta 2 pending a separate publication decision |
 

@@ -29,7 +29,8 @@ forward from the published Beta 2 release:
 Those 161 GE-derived patches plus three local follow-ups produce 164 Wine
 commits above the RTSP Wine base and tree
 `b256fa0664b725fdd55ab1f27820c52ea291000d`. Beta 3 uses prefix identity
-`11.0-104`. These are source-replay facts, not build or runtime results;
+`11.0-104`. The local 1,465,937,982-byte tool passed build-integrated,
+standalone, and staged-copy verification. Runtime remains untested, and
 `PACKAGE_RELEASE=0` remains mandatory while the candidate is tested.
 
 ### Published Beta 2 record
