@@ -21,7 +21,7 @@ i686-w64-mingw32-gcc -O2 -Wall -Wextra \
 ```
 
 Run them with the exact built candidate under test and a disposable prefix,
-never a live game prefix. For Beta 3, after it is built:
+never a live game prefix. For Beta 3:
 
 ```sh
 TOOL_DIR=/path/to/Proton-RTSP-Wayland-GE-Beta3
@@ -38,11 +38,17 @@ The device test exits after creating D3D11 successfully. The swapchain test
 opens a small window, presents one frame, and exits. Repeat the commands with
 the i686 executables to exercise the 32-bit path.
 
-## Beta 3 candidate checklist
+## Published Beta 3 evidence and follow-up checklist
 
-Beta 3 is local and unpublished. Its source replay, build, and static artifact
-gates passed, but no runtime result follows from them. Keep `PACKAGE_RELEASE=0`
-and test one axis at a time:
+Beta 3's source replay, build, and static artifact gates passed. On 2026-09-05
+the maintainer reported a quick click/smoke test, described stability as
+comparable to the prior build, and authorized publication. This is maintainer
+attestation; no instrumented Beta 3 log or completed detailed checklist was
+provided. The binary archive preserves the exact tested tool bytes.
+
+Direct Windows OpenXR, SteamVR, OpenComposite, broader media, the default
+X11/XWayland path, overlapping launches, and forced termination remain
+untested on Beta 3. The following are follow-up checks, not claimed passes:
 
 1. Static gate complete: `scripts/verify.sh` passed on the exact Beta 3 tool.
 2. Re-test repeated media startup, pause/resume, seek, source replacement, and
@@ -72,8 +78,8 @@ and test one axis at a time:
 | Wine replay | Source-locked: 161 GE-derived patches plus three local follow-ups, 164 commits, final tree `b256fa0664b725fdd55ab1f27820c52ea291000d` |
 | Prefix identity | Prepared as `11.0-104` |
 | Build and artifact verification | Passed: the 1,465,937,982-byte artifact cleared build-integrated, standalone, and staged-copy verification covering 6,181 regular files, 238 license/notice files, and 12 media schemes per registry view |
-| Runtime and game testing | Pending; no media, Wayland, XR, or continuity claim |
-| Nix package | Unchanged: remains on published Beta 2 pending a separate publication decision |
+| Runtime and game testing | Maintainer-reported quick click/smoke pass on 2026-09-05; stability comparable to the prior build, without an instrumented log or detailed route qualification |
+| Nix package | Pinned to the published Beta 3 archive |
 
 ## Published Beta 2 game-test checklist
 

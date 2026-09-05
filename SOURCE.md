@@ -2,14 +2,19 @@
 
 # Corresponding source
 
-## Beta 3 candidate record
+## Published Beta 3 record
 
-Beta 3 is an **unpublished local test candidate**. No Beta 3 tag, release, or
-asset exists. `PACKAGE_RELEASE=0` remains required while it is reviewed and
-tested.
+Beta 3 is published as `v11.1.0-beta.3`. Its release files are:
 
-If it is accepted and packaged later, its corresponding-source archive will be
-named `Proton-RTSP-Wayland-GE-Beta3-source.tar.gz`.
+- `Proton-RTSP-Wayland-GE-Beta3.tar.gz`
+- `Proton-RTSP-Wayland-GE-Beta3.tar.gz.sha512sum`
+- `Proton-RTSP-Wayland-GE-Beta3-source.tar.gz`
+- `Proton-RTSP-Wayland-GE-Beta3-source.tar.gz.sha512sum`
+
+The binary archive preserves the exact tested tool, including its build-time
+SOURCE and NOTICE records that still describe the pre-publication candidate.
+The source archive's top-level records and `distribution/` contain the release
+documentation and Nix package. No binaries were rebuilt for publication.
 
 Beta 3 retains Proton-RTSP's Wine lineage. GE's Wine is never checked out or
 built by this project: selected GE patches are replayed onto the pinned RTSP
@@ -46,8 +51,7 @@ The 58-patch child-rendering stack, including its SNI and Reflex dependencies,
 and every other `em-fixups` patch from GE-Proton11-6 are intentionally
 excluded.
 
-The Nix flake remains pinned to published Beta 2. Moving it to Beta 3 requires
-a separate future publication decision.
+The Nix flake is pinned to the verified Beta 3 binary archive.
 
 ## Published Beta 2 record
 

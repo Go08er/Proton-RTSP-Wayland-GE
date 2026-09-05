@@ -4,7 +4,7 @@
 
 The scripts build from pinned upstream revisions in a neutral temporary path.
 This avoids embedding a maintainer's home-directory path in binaries and
-generated Wine registry data. The unpublished Beta 3 candidate uses the exact
+generated Wine registry data. Beta 3 uses the exact
 annotated `proton-rtsp-11.0-20260609-3` and `GE-Proton11-6` releases, peeled to
 `f3f25735b3c4e37968c97417ede300bc836a6cd2` and
 `7e88cefffc122ea1584c2156b8d7bae6cf69b2a7` respectively. Its RTSP Wine base
@@ -106,7 +106,10 @@ tool at:
 
 It does not create release archives, push commits, publish a GitHub release, or
 upload anything. Keep that default through source review and game testing.
-Beta 3 is currently in that unpublished state.
+Beta 3 was accepted for publication on 2026-09-05. Its release archives were
+assembled from the existing verified tool and corresponding sources without
+rerunning `build.sh`: the upstream `redist` step regenerates the deployment
+and its version timestamp, so rerunning it would change the tested bytes.
 
 Only after the exact build has been accepted for distribution, explicitly run:
 

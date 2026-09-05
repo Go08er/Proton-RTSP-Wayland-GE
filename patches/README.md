@@ -13,7 +13,7 @@
 - `proton-beta1.patch` preserves the published Beta 1 launcher input.
 - `proton-beta2.patch` preserves the published Beta 2 launcher input.
 - `proton-beta3.patch` retains the same functional launcher changes while
-  identifying the Beta 3 candidate in its patch metadata.
+  identifying Beta 3 in its patch metadata.
 - `piper-phonemize-pin.patch` replaces Piper's mutable dependency URL with the
   exact commit and archive hash used by the build.
 

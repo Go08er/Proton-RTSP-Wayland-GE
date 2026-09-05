@@ -2,7 +2,7 @@
 
 # Source and redistribution notice
 
-Proton-RTSP-Wayland-GE Beta 3 is an unpublished, unofficial test candidate
+Proton-RTSP-Wayland-GE Beta 3 is a published, unofficial distribution
 based on the projects listed below. Published Beta 2, Beta 1, and Alpha 3
 remain available separately and retain their own immutable source records.
 This project is not affiliated with or endorsed by Valve, CodeWeavers,
@@ -40,7 +40,7 @@ the RTSP Wine base, tree
 `b256fa0664b725fdd55ab1f27820c52ea291000d`. The 58-patch child-rendering
 stack, including its SNI and Reflex dependencies, and every other `em-fixups`
 patch are not included. These source and replay facts do not establish runtime
-behaviour. The candidate launcher uses prefix identity `11.0-104`.
+behaviour. The launcher uses prefix identity `11.0-104`.
 
 ## Published Beta 2 pinned revisions
 

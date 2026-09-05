@@ -1,13 +1,13 @@
 # Historical Alpha 3 Wayland patch triage
 
 This table preserves the published Alpha 3 classification for Proton-GE
-snapshot `a5c30efa`. It is not the active Beta 3 candidate patch list. The
+snapshot `a5c30efa`. It is not the active Beta 3 patch list. The
 published Beta 1 record remains in
 [`../patches/ge-proton11-3-selection.md`](../patches/ge-proton11-3-selection.md);
 see [`../patches/ge-proton11-5-selection.md`](../patches/ge-proton11-5-selection.md)
 for published Beta 2's 152-file selection.
 
-The local Beta 3 candidate is defined by
+Beta 3 is defined by
 [`../patches/ge-proton11-6-selection.md`](../patches/ge-proton11-6-selection.md)
 and [`../config/upstream-pins.sh`](../config/upstream-pins.sh): 160 exact main
 WineWayland patches plus GE's exact DDB cursor patch, followed by three local
