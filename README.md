@@ -1,5 +1,10 @@
 <!-- SPDX-License-Identifier: BSD-3-Clause -->
 
+> **Local Beta 4 preparation branch:** see
+> [the upstream audit and replay plan](docs/BETA4_PREPARATION.md).
+> There is no Beta 4 build yet. The inherited build configuration and Nix
+> package still target Beta 3; the release record below remains Beta 3's.
+
 # Proton-RTSP-Wayland-GE Beta 3
 
 This release combines Proton-RTSP 11-3 with the reviewed
