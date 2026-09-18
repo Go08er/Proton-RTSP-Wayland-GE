@@ -38,7 +38,7 @@ maintainer smoke-test attestation, not a route-by-route qualification.
   `855db4875be1dee8c194b6e08abfe336babc126b`, peeled commit
   `7e88cefffc122ea1584c2156b8d7bae6cf69b2a7`
 - Proton-GE Wine provenance: `9358696fe9a2261329f4a83aa6a65fd436106154`
-- DXVK: `2cae043bdf767c8a7a2e0ee8d41537acfe773e8`
+- DXVK: `2cae043bdf767c8a7a2e0ee8d41537acfe773e8e`
 - libxml2: `b7fa62cbe8ef0df5869e000d5b690bdedd07f33e`
 - libxkbcommon: `dd642359f8d43c09968e34ca7f1eb1121b2dfd70`
 - Wayland Protocols: `810f1adaf33521cc55fc510566efba2a1418174f`
@@ -72,7 +72,7 @@ behaviour. The launcher uses prefix identity `11.0-104`.
   `fc27a5029c7b90def3222b8fbaf33b69af973940`, peeled commit
   `a2b6daedb7273267359ece9d938d6de8dec596b6`
 - Proton-GE Wine provenance: `36078f5f947532885a596dabbc7893c048133660`
-- DXVK: `2cae043bdf767c8a7a2e0ee8d41537acfe773e8`
+- DXVK: `2cae043bdf767c8a7a2e0ee8d41537acfe773e8e`
 - libxml2: `b7fa62cbe8ef0df5869e000d5b690bdedd07f33e`
 - libxkbcommon: `dd642359f8d43c09968e34ca7f1eb1121b2dfd70`
 - Wayland Protocols: `810f1adaf33521cc55fc510566efba2a1418174f`

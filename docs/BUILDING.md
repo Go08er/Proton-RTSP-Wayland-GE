@@ -112,18 +112,21 @@ tool at:
 
 It does not create release archives, push commits, publish a GitHub release, or
 upload anything. Keep that default through source review and game testing.
-Beta 3 was accepted for publication on 2026-09-05. Its release archives were
+Beta 4 was accepted on 2026-09-17 and published on 2026-09-18. Its archives were
 assembled from the existing verified tool and corresponding sources without
 rerunning `build.sh`: the upstream `redist` step regenerates the deployment
 and its version timestamp, so rerunning it would change the tested bytes.
 
-Only after the exact build has been accepted for distribution, explicitly run:
+Do not rerun `build.sh` to package an already accepted tool, including Beta 4.
+For a **new candidate build** in fresh paths, and only with explicit build
+and packaging authorization, packaging can instead be included in the build:
 
 ```sh
 PACKAGE_RELEASE=1 JOBS=1 ./scripts/build.sh
 ```
 
-That local packaging mode writes both the binary archive and a companion
+The resulting tool bytes still require acceptance before publication. That
+local packaging mode writes both the binary archive and a companion
 prepared-source archive to `dist/`, with a SHA-512 checksum for each. The
 source package includes the applied Proton/Wine trees, original GE format-patch
 files, Xalia source, speech-stack external snapshots, and optional Cargo

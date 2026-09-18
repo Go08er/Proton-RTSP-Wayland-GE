@@ -4,14 +4,21 @@
 
 Compatibility claims should be limited to the exact path exercised. Back up important prefixes and change only one variable per comparison.
 
-## Beta 4 preparation only
+## Published Beta 4 evidence and follow-up checklist
 
-Beta 4 has no binary or runtime result yet. Source replay and prerequisite
-checks are recorded in [BETA4_PREPARATION.md](BETA4_PREPARATION.md), with
-input-gate tests in `tests/preparation-gates.sh`. Do not reinterpret any of
-the historical results below as Beta 4 results. After a separately authorized
-build, test the retained native-Wayland/XR route, focus/activation, clipboard,
-monitor removal and non-US keyboard layouts. Compare media continuity and
+Beta 4 passed build-integrated, standalone, and staged-copy artifact verification.
+On 2026-09-17 the maintainer reported a smoke pass and accepted the exact tool
+bytes for release; `v11.1.0-beta.4` was published on 2026-09-18. This is
+maintainer attestation, without an instrumented Beta 4 log or a completed
+route-by-route checklist. It does not establish a media improvement or broad
+Wayland/XR qualification. The binary archive preserves the tested tool bytes.
+
+Source replay and prerequisite checks are recorded in
+[BETA4_PREPARATION.md](BETA4_PREPARATION.md), with input-gate tests in
+`tests/preparation-gates.sh`. Do not reinterpret any historical result below
+as a Beta 4 result. Follow-up checks remain: native-Wayland/XR routing,
+focus/activation, clipboard, monitor removal and non-US keyboard layouts.
+Compare media continuity and
 seek/replacement latency with RTSP's new default video queue; initially leave
 `WINE_MFME_VIDEO_QUEUE_SIZE` unset. No test or installation is authorized by
 this checklist alone.
@@ -33,10 +40,10 @@ i686-w64-mingw32-gcc -O2 -Wall -Wextra \
 ```
 
 Run them with the exact built candidate under test and a disposable prefix,
-never a live game prefix. For Beta 3:
+never a live game prefix. For Beta 4:
 
 ```sh
-TOOL_DIR=/path/to/Proton-RTSP-Wayland-GE-Beta3
+TOOL_DIR=/path/to/Proton-RTSP-Wayland-GE-Beta4
 mkdir -p /tmp/proton-rtsp-wayland-ge-d3d11-smoke
 STEAM_COMPAT_DATA_PATH=/tmp/proton-rtsp-wayland-ge-d3d11-smoke \
   PROTON_USE_WAYLAND=1 \

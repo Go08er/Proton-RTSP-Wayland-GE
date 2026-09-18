@@ -1,11 +1,20 @@
 <!-- SPDX-License-Identifier: BSD-3-Clause -->
 
-# Beta 4 prepared for build — 2026-09-16
+# Beta 4 preparation record — 2026-09-16
 
-**Source preparation and no-build preflight passed. Compilation is on hold
-at the maintainer's request.** No Beta 4 binary, installation, game result,
-release archive or publication exists. Published Beta 3 and its Nix package
-remain untouched.
+**Status update, 2026-09-18:** Beta 4 was built, verified, installed, accepted
+by maintainer smoke-test attestation, and published as `v11.1.0-beta.4`.
+See [TESTING.md](TESTING.md) for the evidence limits and
+[SOURCE.md](../SOURCE.md) for the release record.
+
+The remainder is the **historical 2026-09-16 preparation snapshot**, not a
+current build or resume instruction. At that time source preparation and
+no-build preflight had passed, while compilation was on hold and no Beta 4
+binary or release existed. The later successful build used 8 workers
+(Make 4 × Ninja 2), reduced from the 16-worker preparation budget below;
+the local build environment now defaults to that successful 8-worker budget.
+Do not rerun a build in the published tool's path. Published Beta 3 and its
+Nix package remain unchanged.
 
 Active worktree: `ge_on_rtsp/beta4/Proton-RTSP-Wayland-GE`, branch `beta4`,
 based on published Beta 3 commit `7699ff4edc2fa0295c4719a93e61b1d951696b47`.

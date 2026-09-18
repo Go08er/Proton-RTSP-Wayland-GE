@@ -44,7 +44,7 @@ does not establish a media improvement or broad qualification.
 
 Note for Wayland sessions: GE main patch 0293 makes `wl_output` version 4 a
 requirement, so a compositor advertising an older `wl_output` will not have its
-outputs registered. Every current mainstream compositor satisfies this.
+outputs registered. Check this requirement when using an older compositor.
 
 ### Published Beta 2 record
 
@@ -69,21 +69,21 @@ and the RTSP GStreamer media stack as the authoritative media implementation.
 For Beta 2, direct Windows OpenXR, SteamVR, OpenComposite, broader media, and
 the default X11/XWayland path remain untested. Overlapping launches and forced
 termination also remain untested. Beta 1 remains available as a fallback.
-These detailed Beta 2 runtime results are historical controls, not Beta 3 results.
+These detailed Beta 2 runtime results are historical controls, not Beta 4 results.
 
 ## Install
 
-Install `v11.1.0-beta.3` from
-[GitHub Releases](https://github.com/Go08er/Proton-RTSP-Wayland-GE/releases/tag/v11.1.0-beta.3).
+Install `v11.1.0-beta.4` from
+[GitHub Releases](https://github.com/Go08er/Proton-RTSP-Wayland-GE/releases/tag/v11.1.0-beta.4).
 It includes:
 
-- `Proton-RTSP-Wayland-GE-Beta3.tar.gz`
-- `Proton-RTSP-Wayland-GE-Beta3-source.tar.gz`
+- `Proton-RTSP-Wayland-GE-Beta4.tar.gz`
+- `Proton-RTSP-Wayland-GE-Beta4-source.tar.gz`
 
 ### Upgrading from Alpha 2 or Alpha 3
 
-Remove `PROTON_XR_MODE=xrizer` from the game's Steam launch options. Beta 1,
-Beta 2, and Beta 3 do not define or read this retired selector.
+Remove `PROTON_XR_MODE=xrizer` from the game's Steam launch options. Beta 1
+through Beta 4 do not define or read this retired selector.
 Leaving it set is inert and does nothing. This is separate from the supported
 advanced `WINEDLLOVERRIDES="wineopenxr=d"` diagnostic fallback documented in
 [Troubleshooting](#troubleshooting).
@@ -104,25 +104,25 @@ advanced `WINEDLLOVERRIDES="wineopenxr=d"` diagnostic fallback documented in
    ~/.var/app/com.valvesoftware.Steam/data/Steam/compatibilitytools.d/
    ```
 3. Start Steam again.
-4. Open a game's **Properties → Compatibility**, enable the option to force a compatibility tool, and select **Proton RTSP Wayland GE Beta 3**.
+4. Open a game's **Properties → Compatibility**, enable the option to force a compatibility tool, and select **Proton RTSP Wayland GE Beta 4**.
 
 Verify both archives before extraction:
 
 ```sh
-sha512sum -c Proton-RTSP-Wayland-GE-Beta3.tar.gz.sha512sum
-sha512sum -c Proton-RTSP-Wayland-GE-Beta3-source.tar.gz.sha512sum
+sha512sum -c Proton-RTSP-Wayland-GE-Beta4.tar.gz.sha512sum
+sha512sum -c Proton-RTSP-Wayland-GE-Beta4-source.tar.gz.sha512sum
 ```
 
 Keep the matching source archive with the binary.
 
 ### NixOS
 
-The repository's Nix package extracts the verified, hash-pinned Beta 3
+The repository's Nix package extracts the verified, hash-pinned Beta 4
 archive; it does not compile Proton:
 
 ```nix
 inputs.proton-rtsp-wayland-ge.url =
-  "github:Go08er/Proton-RTSP-Wayland-GE/v11.1.0-beta.3";
+  "github:Go08er/Proton-RTSP-Wayland-GE/v11.1.0-beta.4";
 inputs.proton-rtsp-wayland-ge.inputs.nixpkgs.follows = "nixpkgs";
 
 programs.steam = {
@@ -134,7 +134,7 @@ programs.steam = {
 ```
 
 Rebuild NixOS and restart Steam. Nix rejects an archive whose bytes differ
-from the pinned Beta 3 hash.
+from the pinned Beta 4 hash.
 
 ## Launch options
 
@@ -150,7 +150,7 @@ from the pinned Beta 3 hash.
 interface is available. Disable logging after testing because detailed Wine
 logs can become large and reduce performance.
 
-Beta 1, Beta 2, and Beta 3 use Proton's normal XR routing. See the
+Beta 1 through Beta 4 use Proton's normal XR routing. See the
 [upgrade note](#upgrading-from-alpha-2-or-alpha-3) if old launch options still
 contain the retired selector.
 
@@ -158,12 +158,12 @@ contain the retired selector.
 
 - Alpha 3's normal route failed on the tested VRChat → XRizer 0.5.0 → WiVRn
   26.6.2 route when DXVK requested Wine's XR Vulkan device extension through
-  WineWayland; Beta 1 and Beta 2 both carry the repair. Beta 3's source replay
-  retains it; its quick smoke report does not separately qualify XR routing.
+  WineWayland; Beta 1 and Beta 2 both carry the repair. Beta 3 and Beta 4 retain
+  it; their smoke reports do not separately qualify XR routing.
 - Beta 2 forces Steam Input off under WineWayland and temporarily selects the
   running game's AppID in the host Steam client; the expected controller
-  mapping and ordinary exit passed once. Beta 3 retains that source policy but
-  has no separate controller/lifecycle test record.
+  mapping and ordinary exit passed once. Beta 3 and Beta 4 retain that source
+  policy but have no separate controller/lifecycle test record.
 - Native Wayland depends on compositor protocol support. Overlays, input
   methods, and window management can differ from XWayland.
 - The RTSP media stack does not guarantee every codec, site, stream, or
@@ -204,18 +204,22 @@ without modifying it, moving the RTSP base forward and re-deriving the GE
 Wayland selection against `GE-Proton11-5`.
 The published `beta3` branch leaves Beta 2 unchanged and integrates the newer
 RTSP and GE sources.
+The published `beta4` branch builds on Beta 3 with RTSP 11-4 and the reviewed
+GE-Proton11-7 selection; earlier releases remain unchanged.
 Small upstream contributions remain separate from release assembly.
 
 ### Live feature comparisons
 
 Each comparison uses the RTSP release that branch is built on:
+`proton-rtsp-11.0-20260609-4` for `beta4`,
 `proton-rtsp-11.0-20260609-3` for `beta3`, `rtsp-11.0-20260609-2` for
 `beta2`, and `rtsp-11.0-20260609-1` for everything earlier.
 
 | Ref | Scope | Compare |
 | --- | --- | --- |
-| `beta3` | Current release: RTSP 11-3 with GE-Proton11-6 Wayland selection | [RTSP base → Beta 3](https://github.com/SpookySkeletons/Proton-RTSP/compare/proton-rtsp-11.0-20260609-3...Go08er:Proton-RTSP-Wayland-GE:beta3) |
-| `beta2` | Previous release: GE-Proton11-5 Wayland selection | [RTSP base → Beta 2](https://github.com/SpookySkeletons/Proton-RTSP/compare/rtsp-11.0-20260609-2...Go08er:Proton-RTSP-Wayland-GE:beta2) |
+| `beta4` | Current release: RTSP 11-4 with GE-Proton11-7 Wayland selection | [RTSP base → Beta 4](https://github.com/SpookySkeletons/Proton-RTSP/compare/proton-rtsp-11.0-20260609-4...Go08er:Proton-RTSP-Wayland-GE:beta4) |
+| `beta3` | Previous release: RTSP 11-3 with GE-Proton11-6 Wayland selection | [RTSP base → Beta 3](https://github.com/SpookySkeletons/Proton-RTSP/compare/proton-rtsp-11.0-20260609-3...Go08er:Proton-RTSP-Wayland-GE:beta3) |
+| `beta2` | Historical release: GE-Proton11-5 Wayland selection | [RTSP base → Beta 2](https://github.com/SpookySkeletons/Proton-RTSP/compare/rtsp-11.0-20260609-2...Go08er:Proton-RTSP-Wayland-GE:beta2) |
 | `beta1` | Complete distribution integration: GE Wine replay, dependencies, packaging, and launcher | [RTSP base → Beta 1](https://github.com/SpookySkeletons/Proton-RTSP/compare/rtsp-11.0-20260609-1...Go08er:Proton-RTSP-Wayland-GE:beta1) |
 | `feat/wineopenxr-decouple` | Focused WineOpenXR registry and callback-state decoupling with the RTSP build adapter | [RTSP base → WineOpenXR decoupling](https://github.com/SpookySkeletons/Proton-RTSP/compare/rtsp-11.0-20260609-1...Go08er:Proton-RTSP-Wayland-GE:feat/wineopenxr-decouple) |
 | `feat/wayland-build-wiring` | Proton-side build and launcher wiring only | [RTSP base → Wayland wiring](https://github.com/SpookySkeletons/Proton-RTSP/compare/rtsp-11.0-20260609-1...Go08er:Proton-RTSP-Wayland-GE:feat/wayland-build-wiring) |
@@ -223,7 +227,15 @@ Each comparison uses the RTSP release that branch is built on:
 For full scope, status, attribution, and contribution details, see
 [`docs/UPSTREAM-MRS.md`](docs/UPSTREAM-MRS.md).
 
-Beta 3 (published current release):
+Beta 4 (published current release):
+
+- RTSP Proton: `2faa9d3640bdd0139fc77d52bfd45db6b3807acd`
+- RTSP Wine base: `fe6a2883bbe62967cd1da5044b7ceaf2c9a43dfe`
+- GE-Proton11-7 peeled commit: `c191f35dcebbeccfacd3b4c6f6eea026e588c1c2`
+- GE-Proton11-7 Wine gitlink: `46b29104e3741fe23bf5e2547196a253aab88c89` (provenance only; GE's Wine is never built here)
+- Final Beta 4 Wine tree: `0c7b3be3791ce1a4f5e53e2655b31d72cabcd3f6`
+
+Beta 3 (published previous release):
 
 - RTSP Proton: `f3f25735b3c4e37968c97417ede300bc836a6cd2`
 - RTSP Wine base: `a7fcac55ca756e35d5dc0a7c8b70272d9c6a9675`
@@ -231,7 +243,7 @@ Beta 3 (published current release):
 - GE-Proton11-6 Wine gitlink: `9358696fe9a2261329f4a83aa6a65fd436106154` (provenance only; GE's Wine is never built here)
 - Final Beta 3 Wine tree: `b256fa0664b725fdd55ab1f27820c52ea291000d`
 
-Beta 2 (published previous release):
+Beta 2 (published historical release):
 
 - RTSP Proton: `c3ca33a4ebaf66cdebbac5e5fe432e342e395942`
 - RTSP Wine base: `4a5f2736c5baf3d20ea7227b9da511e897ff9a2a`
