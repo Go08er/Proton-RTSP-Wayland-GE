@@ -1,11 +1,21 @@
 # Historical Alpha 3 Wayland patch triage
 
 This table preserves the published Alpha 3 classification for Proton-GE
-snapshot `a5c30efa`. It is not the active Beta 2 patch list. The published
-Beta 1 record remains in
+snapshot `a5c30efa`. It is not the active Beta 3 patch list. The
+published Beta 1 record remains in
 [`../patches/ge-proton11-3-selection.md`](../patches/ge-proton11-3-selection.md);
 see [`../patches/ge-proton11-5-selection.md`](../patches/ge-proton11-5-selection.md)
-for Beta 2's 152-file selection.
+for published Beta 2's 152-file selection.
+
+Beta 3 is defined by
+[`../patches/ge-proton11-6-selection.md`](../patches/ge-proton11-6-selection.md)
+and [`../config/upstream-pins.sh`](../config/upstream-pins.sh): 160 exact main
+WineWayland patches plus GE's exact DDB cursor patch, followed by three local
+Wine follow-ups. The 58-patch child-rendering stack, including its SNI and
+Reflex dependencies, and every other `em-fixups` patch are intentionally
+excluded. The locked result is 164 commits above the RTSP 11-3 Wine base, tree
+`b256fa0664b725fdd55ab1f27820c52ea291000d`; this is source evidence, not a
+runtime result.
 
 | # | subject | area | class | vrchat | note |
 | --- | --- | --- | --- | --- | --- |

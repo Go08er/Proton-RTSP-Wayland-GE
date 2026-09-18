@@ -2,10 +2,90 @@
 
 # Corresponding source
 
-## Beta 2 development record
+## Published Beta 4 record
 
-Beta 2 is an **unpublished candidate**. No tag, release, or asset exists for
-it. If it is accepted and packaged, its files will be named:
+The active recipe uses RTSP lightweight tag `proton-rtsp-11.0-20260609-4`
+at `2faa9d3640bdd0139fc77d52bfd45db6b3807acd`, Wine base
+`fe6a2883bbe62967cd1da5044b7ceaf2c9a43dfe`, and GE annotated tag
+`GE-Proton11-7`, object `4d2eb7396b175821d2a4beed97e3d36da3012bde`, peeled
+to `c191f35dcebbeccfacd3b4c6f6eea026e588c1c2`.
+
+The [selection record](patches/ge-proton11-7-selection.md) accounts for 173
+GE-derived Wine selections: 171 applied unchanged and two context-only
+adapters. The three established local Wine follow-ups bring the total to
+176 commits and tree `0c7b3be3791ce1a4f5e53e2655b31d72cabcd3f6`.
+The WineOpenXR patches, dependency pins and Steam Input policy are retained;
+the launcher prefix identity is `11.0-105`. The RTSP -4 base changes the
+video sample queue from two to five by default. These are source facts, not
+compilation or playback claims. The 85-patch child-rendering subsystem and
+unselected EM changes are excluded. GE Wine is provenance only, never the base.
+
+Beta 4 is published as `v11.1.0-beta.4`. Its release files are:
+
+- `Proton-RTSP-Wayland-GE-Beta4.tar.gz`
+- `Proton-RTSP-Wayland-GE-Beta4.tar.gz.sha512sum`
+- `Proton-RTSP-Wayland-GE-Beta4-source.tar.gz`
+- `Proton-RTSP-Wayland-GE-Beta4-source.tar.gz.sha512sum`
+
+The binary archive preserves the exact tested tool, including its build-time
+SOURCE and NOTICE records that still describe the pre-publication candidate.
+No binaries were rebuilt for publication. The Nix package now installs Beta 4.
+Historical records and bundles below remain unchanged.
+
+## Published Beta 3 record
+
+Beta 3 is published as `v11.1.0-beta.3`. Its release files are:
+
+- `Proton-RTSP-Wayland-GE-Beta3.tar.gz`
+- `Proton-RTSP-Wayland-GE-Beta3.tar.gz.sha512sum`
+- `Proton-RTSP-Wayland-GE-Beta3-source.tar.gz`
+- `Proton-RTSP-Wayland-GE-Beta3-source.tar.gz.sha512sum`
+
+The binary archive preserves the exact tested tool, including its build-time
+SOURCE and NOTICE records that still describe the pre-publication candidate.
+The source archive's top-level records and `distribution/` contain the release
+documentation and Nix package. No binaries were rebuilt for publication.
+
+Beta 3 retains Proton-RTSP's Wine lineage. GE's Wine is never checked out or
+built by this project: selected GE patches are replayed onto the pinned RTSP
+Wine base, while `GE_WINE_COMMIT` records the GE release's own gitlink only as
+provenance.
+
+The prepared Beta 3 source consists of:
+
+- RTSP release `proton-rtsp-11.0-20260609-3`, annotated tag object
+  `60d1695539cb3e9205bd6d05d00cf4a30268b9e8`, peeled to Proton commit
+  `f3f25735b3c4e37968c97417ede300bc836a6cd2`;
+- RTSP Wine base
+  `a7fcac55ca756e35d5dc0a7c8b70272d9c6a9675`;
+- the exact annotated `GE-Proton11-6` tag object
+  `855db4875be1dee8c194b6e08abfe336babc126b`, peeled to commit
+  `7e88cefffc122ea1584c2156b8d7bae6cf69b2a7`;
+- 160 exact main WineWayland format patches plus GE's exact DDB cursor patch,
+  for 161 GE-derived patches in the active replay;
+- three local Wine follow-ups: the Winebus and SetupAPI Steam Input adapters
+  and the two-line WineWayland OpenVR/OpenXR capability repair;
+- GE's exact WineOpenXR decoupling patch, the source-equivalent session-list
+  cleanup, and the RTSP one-line makedep adapter;
+- the Beta 3 launcher patch with prefix identity `11.0-104`, dependency
+  sources, X11 locale data, and license files.
+
+The resulting RTSP Wine history is locked to 164 commits above its base and
+tree `b256fa0664b725fdd55ab1f27820c52ea291000d`. The corresponding GE release's
+Wine gitlink is `9358696fe9a2261329f4a83aa6a65fd436106154`; it is provenance, not a
+build input.
+
+The pinned RTSP 11-3 source adds anti-starvation sample-pump scheduling in
+`mfmediaengine`. That is a source change, not evidence of runtime behaviour.
+The 58-patch child-rendering stack, including its SNI and Reflex dependencies,
+and every other `em-fixups` patch from GE-Proton11-6 are intentionally
+excluded.
+
+The Nix flake is pinned to the verified Beta 3 binary archive.
+
+## Published Beta 2 record
+
+Beta 2 is published as `v11.1.0-beta.2`. Its release files are:
 
 - `Proton-RTSP-Wayland-GE-Beta2.tar.gz`
 - `Proton-RTSP-Wayland-GE-Beta2.tar.gz.sha512sum`
@@ -21,7 +101,7 @@ built by this project: selected GE patches are replayed onto the pinned RTSP
 Wine base, while `GE_WINE_COMMIT` records the GE release's own gitlink only as
 provenance.
 
-The prepared Beta 2 source consists of:
+The published Beta 2 source consists of:
 
 - RTSP release `proton-rtsp-11.0-20260609-2`, annotated tag object
   `315720bb897873e2f4a158c0b06d88d6198a8703`, peeled to Proton commit
@@ -51,9 +131,9 @@ Three follow-up patches retain `ge-proton11-3` in their filenames. Their bytes
 remain valid on the pinned GE-Proton11-5 composition, and their names record
 the release from which they were originally derived.
 
-The published Beta 1 GE patch bundle, selection record, and launcher patch
-remain tracked as historical corresponding source. Beta 2's active pins do
-not replay them.
+The published Beta 1 GE patch bundle, selection record, and launcher patch and
+the published Beta 2 bundle remain tracked as historical corresponding source.
+Beta 3's active pins do not replay those older bundles.
 
 ## Beta 1 development record
 

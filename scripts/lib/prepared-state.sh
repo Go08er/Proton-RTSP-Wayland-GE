@@ -5,6 +5,18 @@
 # compared byte-for-byte with freshly generated state; it is never evaluated as
 # shell input.
 
+# A lightweight release tag is not an excuse to relax object or commit checks.
+prepared_require_tag() {
+  local tree="$1" label="$2" expected_type="$3" expected_object="$4" expected_commit="$5"
+  local object type commit
+
+  object="$(git -C "$tree" rev-parse "refs/tags/$label")" || return 1
+  type="$(git -C "$tree" cat-file -t "$object")" || return 1
+  commit="$(git -C "$tree" rev-parse "refs/tags/$label^{}")" || return 1
+  [[ "$type" == "$expected_type" && "$object" == "$expected_object" &&
+     "$commit" == "$expected_commit" ]]
+}
+
 prepared_state_canonical_dir() {
   local path="$1"
 
@@ -16,13 +28,15 @@ prepared_state_emit() {
   local rtsp_tree="$1"
   local ge_tree="$2"
 
-  printf 'format=%q\n' "2"
+  printf 'format=%q\n' "3"
   printf 'rtsp_tree=%q\n' "$rtsp_tree"
   printf 'ge_tree=%q\n' "$ge_tree"
   printf 'rtsp_commit=%q\n' "$RTSP_COMMIT"
   printf 'rtsp_wine_base=%q\n' "$RTSP_WINE_BASE"
   printf 'rtsp_source_label=%q\n' "$RTSP_SOURCE_LABEL"
   printf 'rtsp_tag_object=%q\n' "$RTSP_TAG_OBJECT"
+  printf 'rtsp_tag_type=%q\n' "$RTSP_TAG_TYPE"
+  printf 'ge_tag_type=%q\n' "$GE_TAG_TYPE"
   printf 'rtsp_piper_commit=%q\n' "$RTSP_PIPER_COMMIT"
   printf 'final_wine_tree=%q\n' "$FINAL_WINE_TREE"
   printf 'final_wine_patch_count=%q\n' "$FINAL_WINE_PATCH_COUNT"
@@ -37,6 +51,17 @@ prepared_state_emit() {
   printf 'ge_wine_commit=%q\n' "$GE_WINE_COMMIT"
   printf 'ge_wayland_patch_tree=%q\n' "$GE_WAYLAND_PATCH_TREE"
   printf 'ge_wayland_patch_count=%q\n' "$GE_WAYLAND_PATCH_COUNT"
+  printf 'ge_selected_patch_count=%q\n' "$GE_SELECTED_PATCH_COUNT"
+  printf 'ge_focus_adapter_patch=%q\n' "$GE_FOCUS_ADAPTER_PATCH"
+  printf 'ge_focus_adapter_sha256=%q\n' "$GE_FOCUS_ADAPTER_SHA256"
+  printf 'ge_followup_manifest=%q\n' "$GE_FOLLOWUP_MANIFEST"
+  printf 'ge_followup_manifest_sha256=%q\n' "$GE_FOLLOWUP_MANIFEST_SHA256"
+  printf 'ge_child_rendering_patch_tree=%q\n' "$GE_CHILD_RENDERING_PATCH_TREE"
+  printf 'ge_child_rendering_patch_count=%q\n' "$GE_CHILD_RENDERING_PATCH_COUNT"
+  printf 'ge_wayland_cursor_patch=%q\n' "$GE_WAYLAND_CURSOR_PATCH"
+  printf 'ge_wayland_cursor_patch_path=%q\n' "$GE_WAYLAND_CURSOR_PATCH_PATH"
+  printf 'ge_wayland_cursor_patch_blob=%q\n' "$GE_WAYLAND_CURSOR_PATCH_BLOB"
+  printf 'ge_wayland_cursor_patch_sha256=%q\n' "$GE_WAYLAND_CURSOR_PATCH_SHA256"
   printf 'ge_wineopenxr_blob=%q\n' "$GE_WINEOPENXR_BLOB"
   printf 'ge_wineopenxr_sha256=%q\n' "$GE_WINEOPENXR_SHA256"
   printf 'rtsp_wineopenxr_integration_patch=%q\n' "$RTSP_WINEOPENXR_INTEGRATION_PATCH"
@@ -56,8 +81,8 @@ prepared_state_emit() {
   printf 'rtsp_steam_input_adapter_sha256=%q\n' "$RTSP_STEAM_INPUT_ADAPTER_SHA256"
   printf 'rtsp_winewayland_xr_patch=%q\n' "$RTSP_WINEWAYLAND_XR_PATCH"
   printf 'rtsp_winewayland_xr_sha256=%q\n' "$RTSP_WINEWAYLAND_XR_SHA256"
-  printf 'proton_beta2_patch=%q\n' "$PROTON_BETA2_PATCH"
-  printf 'proton_beta2_sha256=%q\n' "$PROTON_BETA2_SHA256"
+  printf 'proton_beta4_patch=%q\n' "$PROTON_BETA4_PATCH"
+  printf 'proton_beta4_sha256=%q\n' "$PROTON_BETA4_SHA256"
   printf 'libxml2_commit=%q\n' "$LIBXML2_COMMIT"
   printf 'libxkbcommon_commit=%q\n' "$LIBXKBCOMMON_COMMIT"
   printf 'wayland_protocols_commit=%q\n' "$WAYLAND_PROTOCOLS_COMMIT"

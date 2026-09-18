@@ -9,8 +9,8 @@ It is not a substitute for the original license files copied into
 | Component or material | License | Primary bundled authority |
 | --- | --- | --- |
 | Original project scripts, documentation, tests, selection manifest, and project-authored Proton additions | BSD-3-Clause | `../LICENSE` |
-| Proton and RTSP top-level code from pinned Proton-RTSP commit `c3ca33a4ebaf66cdebbac5e5fe432e342e395942` | BSD-3-Clause | `../LICENSE.proton`, `../LICENSE.upstream-proton`, `../config/upstream-pins.sh` |
-| Wine, the active 152 exact selected GE Wine patches from pinned `GE-Proton11-5` (`a2b6daedb7273267359ece9d938d6de8dec596b6`), the retained published-Beta-1 138-patch provenance bundle, the local Wine adapters, and the WineOpenXR integration modification | LGPL-2.1-or-later | `../LICENSE.wine`, `../COPYING.LIB.wine`, `../config/upstream-pins.sh`, `../patches/ge-proton11-5-selection.md`, `../patches/ge-proton11-3-selection.md`, `../patches/wineopenxr-rtsp-makedep-integration.patch` |
+| Proton and RTSP top-level code from pinned Proton-RTSP commit `2faa9d3640bdd0139fc77d52bfd45db6b3807acd` | BSD-3-Clause | `../LICENSE.proton`, `../LICENSE.upstream-proton`, `../config/upstream-pins.sh` |
+| Wine; the active 173 GE-derived Wine changes (171 exact applications and two context adapters) from pinned `GE-Proton11-7` (`c191f35dcebbeccfacd3b4c6f6eea026e588c1c2`); the retained published Beta 1, Beta 2 and Beta 3 provenance bundles; the three local Wine follow-ups; and the WineOpenXR integration modification | LGPL-2.1-or-later | `../LICENSE.wine`, `../COPYING.LIB.wine`, `../config/upstream-pins.sh`, `../patches/ge-proton11-7-selection.md`, `../patches/ge-proton11-6-selection.md`, `../patches/ge-proton11-5-selection.md`, `../patches/ge-proton11-3-selection.md`, `../patches/wineopenxr-rtsp-makedep-integration.patch` |
 | DXVK | Zlib | `upstream/dxvk/LICENSE` |
 | DXVK-NVAPI | MIT | `upstream/dxvk-nvapi/LICENSE` |
 | vkd3d and vkd3d-proton | LGPL-2.1-or-later, with separately licensed subprojects | `upstream/vkd3d/`, `upstream/vkd3d-proton/` |
@@ -44,8 +44,9 @@ repository-level MIT license; no separate model-specific notice was present in
 the exact downloaded snapshot. This fact is recorded rather than inventing a
 different license.
 
-The X11 locale tree was copied from the pinned `GE-Proton11-5` release at
-`a2b6daedb7273267359ece9d938d6de8dec596b6` without a local COPYING file. Its
+The X11 locale tree was copied from the pinned `GE-Proton11-7` release at
+`c191f35dcebbeccfacd3b4c6f6eea026e588c1c2` without a local COPYING file. Its
+tree is byte-identical to the GE 11-6 locale tree. That earlier tree's
 layout and generated `locale.dir` were compared with
 the official X.Org libX11 1.8.13 source; `locale.dir` is byte-identical while
 the intentionally reduced Compose mapping differs. The full libX11 COPYING

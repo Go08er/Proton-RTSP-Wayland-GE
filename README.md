@@ -14,8 +14,8 @@ release's branch and tag; the current release's records are linked below.
 - Avoid XWayland scaling blur.
 - Use correct fractional scaling and per-monitor refresh rates.
 - Work better with Wayland-first compositors that have limited X11 support.
-- Run the tested VRChat → XRizer → WiVRn route on native Wayland with
-  Proton's normal XR routing and no XR DLL override.
+- Keep Proton's normal XR routing for the VRChat → XRizer → WiVRn route
+  tested on earlier releases; Beta 4 has a maintainer-reported smoke pass.
 
 ## Releases
 
@@ -23,6 +23,10 @@ The current download is the latest entry on the
 [Releases page](https://github.com/Go08er/Proton-RTSP-Wayland-GE/releases).
 Every release publishes a binary archive, a corresponding-source archive, and a
 `.sha512sum` for each.
+
+Current release: **Beta 4**, combining Proton-RTSP 11-4 with the reviewed
+GE-Proton11-7 Wayland selection. Its source recipe and Nix package are also
+on `main`; Beta 3 remains available as a fallback.
 
 Per-release detail lives with the release rather than on this page. The links
 below target Beta 4; use the matching branch or tag for an older release:
@@ -92,8 +96,8 @@ Keep the matching source archive with the binary.
 ### NixOS
 
 The Nix package extracts a hash-pinned prebuilt archive; it does not compile
-Proton. Pin the release tag, not `main`, whose package may lag the latest
-release. For Beta 4:
+Proton. `main` currently installs Beta 4 too, but pin the release tag for a
+stable input rather than following a moving branch:
 
 ```nix
 inputs.proton-rtsp-wayland-ge.url =
@@ -138,8 +142,9 @@ contain the retired selector.
 - GE forces Steam Input off under WineWayland and temporarily
   selects the running game's AppID in the host Steam client; the expected
   controller mapping and ordinary exit passed once.
-- Native Wayland depends on compositor protocol support. Overlays, input
-  methods, and window management can differ from XWayland.
+- Native Wayland depends on compositor protocol support. Beta 4 requires
+  `wl_output` version 4; older advertised versions will not register outputs.
+  Overlays, input methods, and window management can differ from XWayland.
 - The RTSP media stack does not guarantee every codec, site, stream, or
   in-game player.
 
@@ -170,10 +175,11 @@ Sanitize logs before posting them — see [`docs/REPORTING.md`](docs/REPORTING.m
 
 ## Repository layout and provenance
 
-`main` is the project front page; its recipe is not the current release recipe.
-Use the chosen release branch or tag for source and build instructions. Each
-release has its own branch and immutable tag carrying a release-specific README,
-`NOTICE.md`, and `SOURCE.md`. Published branches and tags are never rewritten,
+`main` contains the published Beta 4 recipe with this project landing page.
+Its other tracked files match the `beta4` branch. Use a release tag for a
+fixed source snapshot. Each release has its own branch and immutable tag
+carrying a release-specific README, `NOTICE.md`, and `SOURCE.md`.
+Published branches and tags are never rewritten,
 and each release branch builds on the previous one without modifying it.
 
 Small upstream contributions stay on their own `feat/` branches, separate from
@@ -186,11 +192,11 @@ branch's [`NOTICE.md`](NOTICE.md) records:
 
     https://github.com/SpookySkeletons/Proton-RTSP/compare/<rtsp-tag>...Go08er:Proton-RTSP-Wayland-GE:<branch>
 
-| Ref | Scope |
-| --- | --- |
-| latest release branch | Complete distribution integration: GE Wine replay, dependencies, packaging, and launcher |
-| `feat/wineopenxr-decouple` | Focused WineOpenXR registry and callback-state decoupling with the RTSP build adapter |
-| `feat/wayland-build-wiring` | Proton-side build and launcher wiring only |
+| Ref | Scope | Compare |
+| --- | --- | --- |
+| `beta4` | RTSP 11-4 with GE-Proton11-7 Wayland selection | [RTSP base → Beta 4](https://github.com/SpookySkeletons/Proton-RTSP/compare/proton-rtsp-11.0-20260609-4...Go08er:Proton-RTSP-Wayland-GE:beta4) |
+| `feat/wineopenxr-decouple` | WineOpenXR state decoupling with the RTSP build adapter | [RTSP base → XR decoupling](https://github.com/SpookySkeletons/Proton-RTSP/compare/rtsp-11.0-20260609-1...Go08er:Proton-RTSP-Wayland-GE:feat/wineopenxr-decouple) |
+| `feat/wayland-build-wiring` | Proton-side build and launcher wiring only | [RTSP base → Wayland wiring](https://github.com/SpookySkeletons/Proton-RTSP/compare/rtsp-11.0-20260609-1...Go08er:Proton-RTSP-Wayland-GE:feat/wayland-build-wiring) |
 
 For full scope, status, attribution, and contribution details, see
 [`docs/UPSTREAM-MRS.md`](docs/UPSTREAM-MRS.md).

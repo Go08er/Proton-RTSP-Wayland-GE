@@ -4,10 +4,10 @@ set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 TOOL_DIR="${1:-}"
-BUILD_NAME="${BUILD_NAME:-Proton-RTSP-Wayland-GE-Beta2}"
-DISPLAY_NAME="${DISPLAY_NAME:-Proton RTSP Wayland GE Beta 2}"
+BUILD_NAME="${BUILD_NAME:-Proton-RTSP-Wayland-GE-Beta4}"
+DISPLAY_NAME="${DISPLAY_NAME:-Proton RTSP Wayland GE Beta 4}"
 SOURCE_ARCHIVE_NAME="${SOURCE_ARCHIVE_NAME:-${BUILD_NAME}-source.tar.gz}"
-GE_SOURCE_LABEL="${GE_SOURCE_LABEL:-GE-Proton11-5}"
+GE_SOURCE_LABEL="${GE_SOURCE_LABEL:-GE-Proton11-7}"
 
 fail() {
   printf 'FAIL: %s\n' "$*" >&2
@@ -239,8 +239,8 @@ grep -Fq 'self.check_environment("PROTON_USE_WAYLAND", "wayland")' "$TOOL_DIR/pr
   || fail "retired project-specific XR mode handling remains in the launcher"
 ! grep -Fq 'self.dlloverrides["wineopenxr"] = "d"' "$TOOL_DIR/proton" \
   || fail "project-injected WineOpenXR disable remains in the launcher"
-grep -Fqx 'CURRENT_PREFIX_VERSION="11.0-103"' "$TOOL_DIR/proton" \
-  || fail "expected 11.0-103 prefix identity is missing"
+grep -Fqx 'CURRENT_PREFIX_VERSION="11.0-105"' "$TOOL_DIR/proton" \
+  || fail "expected 11.0-105 prefix identity is missing"
 grep -Fq 'self.env["PROTON_NO_STEAMINPUT"] = "1"' "$TOOL_DIR/proton" \
   || fail "$GE_SOURCE_LABEL WineWayland Steam Input policy is missing"
 grep -Fq 'self.force_steam_input_appid = True' "$TOOL_DIR/proton" \

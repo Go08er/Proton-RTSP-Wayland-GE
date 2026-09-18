@@ -4,11 +4,11 @@ set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 source "$ROOT_DIR/config/upstream-pins.sh"
-WORK_ROOT="${WORK_ROOT:-/tmp/proton-rtsp-wayland-ge-beta2-20260609-2}"
+WORK_ROOT="${WORK_ROOT:-/tmp/proton-rtsp-wayland-ge-beta4-20260609-4}"
 SOURCES_DIR="${SOURCES_DIR:-$WORK_ROOT/sources}"
 SOURCE_TREE="${SOURCE_TREE:-$SOURCES_DIR/proton-ge-rtsp}"
 XALIA_SOURCE_DIR="${XALIA_SOURCE_DIR:-$SOURCES_DIR/xalia}"
-BUILD_NAME="${BUILD_NAME:-Proton-RTSP-Wayland-GE-Beta2}"
+BUILD_NAME="${BUILD_NAME:-Proton-RTSP-Wayland-GE-Beta4}"
 PROTON_BUILD_DIR="${PROTON_BUILD_DIR:-$SOURCE_TREE/build/build-$BUILD_NAME}"
 DIST_DIR="${DIST_DIR:-$ROOT_DIR/dist}"
 SOURCE_NAME="$BUILD_NAME-source"

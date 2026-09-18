@@ -4,14 +4,14 @@
   fetchurl,
   gnutar,
   gzip,
-  archiveUrl ? "https://github.com/Go08er/Proton-RTSP-Wayland-GE/releases/download/v11.1.0-beta.2/Proton-RTSP-Wayland-GE-Beta2.tar.gz",
-  archiveHash ? "sha256-nhWR2hp+iwuzg10WEVVOZGiyPQyQl3uQIdBLYsXPAUg=",
+  archiveUrl ? "https://github.com/Go08er/Proton-RTSP-Wayland-GE/releases/download/v11.1.0-beta.4/Proton-RTSP-Wayland-GE-Beta4.tar.gz",
+  archiveHash ? "sha256-POos9fR2a0f3Q5bLtNXG3PdTTcNk2KGMboF4ODgF2Ek=",
   archivePath ? null,
-  steamDisplayName ? "Proton RTSP Wayland GE Beta 2",
+  steamDisplayName ? "Proton RTSP Wayland GE Beta 4",
 }:
 stdenvNoCC.mkDerivation (finalAttrs: {
   pname = "proton-rtsp-wayland-ge-bin";
-  version = "11.1.0-beta.2";
+  version = "11.1.0-beta.4";
 
   src =
     if archivePath != null then
@@ -51,7 +51,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
   preFixup = ''
     substituteInPlace "$steamcompattool/compatibilitytool.vdf" \
       --replace-fail \
-        '"display_name" "Proton RTSP Wayland GE Beta 2"' \
+        '"display_name" "Proton RTSP Wayland GE Beta 4"' \
         '"display_name" "${steamDisplayName}"'
   '';
 
