@@ -2,13 +2,31 @@
 
 # Source and redistribution notice
 
-Proton-RTSP-Wayland-GE Beta 3 is a published, unofficial distribution
-based on the projects listed below. Published Beta 2, Beta 1, and Alpha 3
+Proton-RTSP-Wayland-GE Beta 4 is an unbuilt, unofficial candidate
+based on the projects listed below. Published Beta 3, Beta 2, Beta 1, and Alpha 3
 remain available separately and retain their own immutable source records.
 This project is not affiliated with or endorsed by Valve, CodeWeavers,
 GloriousEggroll, SpookySkeletons, Khronos, XRizer, WiVRn, Monado, or VRChat.
 
-## Beta 3 pinned revisions
+## Beta 4 pinned revisions
+
+- RTSP lightweight tag `proton-rtsp-11.0-20260609-4` and commit:
+  `2faa9d3640bdd0139fc77d52bfd45db6b3807acd`
+- RTSP Wine base: `fe6a2883bbe62967cd1da5044b7ceaf2c9a43dfe`
+- GE annotated tag `GE-Proton11-7`, object
+  `4d2eb7396b175821d2a4beed97e3d36da3012bde`, peeled commit
+  `c191f35dcebbeccfacd3b4c6f6eea026e588c1c2`
+- GE Wine gitlink (provenance only): `46b29104e3741fe23bf5e2547196a253aab88c89`
+- Final Wine tree: `0c7b3be3791ce1a4f5e53e2655b31d72cabcd3f6`
+
+The active selection is 173 GE-derived Wine changes (171 exact applications
+and two context adapters) plus three retained local follow-ups: 176 commits.
+See `patches/ge-proton11-7-selection.md` for scope and attribution. The
+85-patch child-rendering subsystem is excluded. Other component pins remain
+as in the Beta 3 record below; prefix identity advances to `11.0-105`.
+No compilation or runtime qualification is claimed for this candidate.
+
+## Published Beta 3 pinned revisions
 
 - RTSP Proton: `SpookySkeletons/Proton-RTSP` annotated tag
   `proton-rtsp-11.0-20260609-3`, tag object

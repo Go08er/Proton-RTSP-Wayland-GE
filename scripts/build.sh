@@ -3,14 +3,14 @@
 set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-WORK_ROOT="${WORK_ROOT:-/tmp/proton-rtsp-wayland-ge-beta3-20260609-3}"
+WORK_ROOT="${WORK_ROOT:-/tmp/proton-rtsp-wayland-ge-beta4-20260609-4}"
 SOURCES_DIR="${SOURCES_DIR:-$WORK_ROOT/sources}"
 RTSP_TREE="${RTSP_TREE:-$SOURCES_DIR/proton-ge-rtsp}"
 GE_TREE="${GE_TREE:-$SOURCES_DIR/proton-ge-custom}"
 source "$ROOT_DIR/config/upstream-pins.sh"
 source "$ROOT_DIR/scripts/lib/prepared-state.sh"
-BUILD_NAME="${BUILD_NAME:-Proton-RTSP-Wayland-GE-Beta3}"
-DISPLAY_NAME="${DISPLAY_NAME:-Proton RTSP Wayland GE Beta 3}"
+BUILD_NAME="${BUILD_NAME:-Proton-RTSP-Wayland-GE-Beta4}"
+DISPLAY_NAME="${DISPLAY_NAME:-Proton RTSP Wayland GE Beta 4}"
 JOBS="${JOBS:-1}"
 ORCHESTRATOR_JOBS="${ORCHESTRATOR_JOBS:-}"
 COMPONENT_JOBS="${COMPONENT_JOBS:-}"
@@ -25,7 +25,7 @@ WINEBUS_NO_STEAMINPUT_ADAPTER_PATCH="$ROOT_DIR/patches/$GE_WINEBUS_NO_STEAMINPUT
 STEAM_INPUT_ADAPTER_PATCH="$ROOT_DIR/patches/$RTSP_STEAM_INPUT_ADAPTER_PATCH"
 WINEWAYLAND_XR_PATCH="$ROOT_DIR/patches/$RTSP_WINEWAYLAND_XR_PATCH"
 WAYLAND_CURSOR_PATCH="$ROOT_DIR/patches/$GE_WAYLAND_CURSOR_PATCH"
-BETA3_PATCH="$ROOT_DIR/patches/$PROTON_BETA3_PATCH"
+BETA4_PATCH="$ROOT_DIR/patches/$PROTON_BETA4_PATCH"
 
 if [[ "${LOW_IMPACT_REEXEC:-0}" != "1" ]]; then
   export LOW_IMPACT_REEXEC=1
@@ -58,10 +58,19 @@ fi
 (( ORCHESTRATOR_JOBS * COMPONENT_JOBS <= JOBS )) \
   || fail "nested worker budget exceeds JOBS ($ORCHESTRATOR_JOBS x $COMPONENT_JOBS > $JOBS)"
 
+CHECK_ONLY=0
+case "${1:-}" in
+  --check-only) CHECK_ONLY=1; shift ;;
+  "") ;;
+  *) fail "usage: $0 [--check-only]" ;;
+esac
+(( $# == 0 )) || fail "usage: $0 [--check-only]"
 BUILD_LOCK="${PROTON_BUILD_LOCK:-${HOME:?HOME must be set}/Documents/.proton-build.lock}"
-mkdir -p "$(dirname "$BUILD_LOCK")"
-exec 9>"$BUILD_LOCK"
-flock -n 9 || fail "another cooperating Proton build holds $BUILD_LOCK"
+if (( ! CHECK_ONLY )); then
+  mkdir -p "$(dirname "$BUILD_LOCK")"
+  exec 9>"$BUILD_LOCK"
+  flock -n 9 || fail "another cooperating Proton build holds $BUILD_LOCK"
+fi
 
 require_head() {
   local tree="$1"
@@ -144,22 +153,26 @@ TOOL_DIR="$RTSP_TREE/build/$BUILD_NAME"
 PIPER_PHONEME_PATH="$RTSP_TREE/build/build-$BUILD_NAME/obj-piper-x86_64/p/src/piper_phonemize_external-build/e/src/espeak_ng_external-build/espeak-ng-data/../phsource/vwl_en_us_nyc/a_raised"
 
 require_head "$RTSP_TREE" "$RTSP_COMMIT"
+prepared_require_tag "$RTSP_TREE" "$RTSP_SOURCE_LABEL" "$RTSP_TAG_TYPE" "$RTSP_TAG_OBJECT" "$RTSP_COMMIT" \
+  || fail "RTSP release tag no longer matches its source lock"
 require_head "$GE_TREE" "$GE_COMMIT"
+prepared_require_tag "$GE_TREE" "$GE_SOURCE_LABEL" "$GE_TAG_TYPE" "$GE_TAG_OBJECT" "$GE_COMMIT" \
+  || fail "GE release tag no longer matches its source lock"
 [[ "$(git -C "$GE_TREE" rev-parse 'HEAD^{tree}')" == "$GE_ROOT_TREE" ]] \
   || fail "GE source tree no longer matches the recorded state"
 [[ "$(git -C "$GE_TREE" rev-parse 'HEAD:locale')" == "$GE_LOCALE_TREE" ]] \
   || fail "GE locale tree no longer matches the recorded state"
 [[ "$(tracked_diff_sha256 root)" == "$FINAL_RTSP_TRACKED_DIFF_SHA256" ]] \
-  || fail "Proton tracked diff no longer matches the prepared Beta 3 state"
+  || fail "Proton tracked diff no longer matches the prepared Beta 4 state"
 [[ "$(tracked_diff_sha256 wineopenxr)" == "$FINAL_WINEOPENXR_DIFF_SHA256" ]] \
-  || fail "WineOpenXR diff no longer matches the prepared Beta 3 state"
+  || fail "WineOpenXR diff no longer matches the prepared Beta 4 state"
 diff -qr --no-dereference "$GE_TREE/locale" "$RTSP_TREE/locale" > /dev/null \
   || fail "copied locale tree no longer matches the pinned GE source"
 [[ "$(git -C "$WINE_TREE" rev-parse 'HEAD^{tree}')" == "$FINAL_WINE_TREE" ]] \
-  || fail "Wine source tree no longer matches the deterministic Beta 3 lock"
+  || fail "Wine source tree no longer matches the deterministic Beta 4 lock"
 [[ "$(git -C "$WINE_TREE" rev-list --count "$RTSP_WINE_BASE..HEAD")" == \
     "$FINAL_WINE_PATCH_COUNT" ]] \
-  || fail "Wine source history no longer matches the Beta 3 patch count"
+  || fail "Wine source history no longer matches the Beta 4 patch count"
 require_pristine "$WINE_TREE"
 require_head "$PIPER_TREE" "$RTSP_PIPER_COMMIT"
 [[ "$(git -C "$PIPER_TREE" status --porcelain --untracked-files=all)" == " M CMakeLists.txt" ]] \
@@ -182,10 +195,20 @@ cmp "$PIPER_PATCH" <(git -C "$PIPER_TREE" diff --no-ext-diff --binary -- CMakeLi
   || fail "WineWayland XR patch no longer matches its source lock"
 [[ "$(sha256sum "$WAYLAND_CURSOR_PATCH" | awk '{print $1}')" == "$GE_WAYLAND_CURSOR_PATCH_SHA256" ]] \
   || fail "GE WineWayland cursor patch no longer matches its source lock"
-[[ "$(sha256sum "$BETA3_PATCH" | awk '{print $1}')" == "$PROTON_BETA3_SHA256" ]] \
-  || fail "Beta 3 launcher patch no longer matches its source lock"
-grep -Fqx 'CURRENT_PREFIX_VERSION="11.0-104"' "$RTSP_TREE/proton" \
-  || fail "expected 11.0-104 prefix identity is missing"
+[[ "$(sha256sum "$BETA4_PATCH" | awk '{print $1}')" == "$PROTON_BETA4_SHA256" ]] \
+  || fail "Beta 4 launcher patch no longer matches its source lock"
+[[ "$(sha256sum "$ROOT_DIR/patches/$GE_FOCUS_ADAPTER_PATCH" | awk '{print $1}')" == "$GE_FOCUS_ADAPTER_SHA256" ]] \
+  || fail "GE focus adapter no longer matches its source lock"
+[[ "$(sha256sum "$ROOT_DIR/patches/$GE_FOLLOWUP_MANIFEST" | awk '{print $1}')" == "$GE_FOLLOWUP_MANIFEST_SHA256" ]] \
+  || fail "GE follow-up manifest no longer matches its source lock"
+while IFS=$'\t' read -r upstream hash local_patch local_hash; do
+  [[ "$(sha256sum "$GE_TREE/$upstream" | awk '{print $1}')" == "$hash" &&
+     "$(sha256sum "$ROOT_DIR/patches/ge-proton11-7-followups/${upstream##*/}" | awk '{print $1}')" == "$hash" &&
+     "$(sha256sum "$ROOT_DIR/$local_patch" | awk '{print $1}')" == "$local_hash" ]] \
+    || fail "GE follow-up changed after preparation: $local_patch"
+done < "$ROOT_DIR/patches/$GE_FOLLOWUP_MANIFEST"
+grep -Fqx 'CURRENT_PREFIX_VERSION="11.0-105"' "$RTSP_TREE/proton" \
+  || fail "expected 11.0-105 prefix identity is missing"
 grep -Fq 'self.env["PROTON_NO_STEAMINPUT"] = "1"' "$RTSP_TREE/proton" \
   || fail "$GE_SOURCE_LABEL WineWayland Steam Input policy is missing"
 grep -Fq 'list_remove(&wine_session->entry);' "$RTSP_TREE/wineopenxr/openxr_loader.c" \
@@ -207,7 +230,13 @@ grep -Fqx "XALIA_ZIP_SHA256 := $XALIA_ZIP_SHA256" "$RTSP_TREE/Makefile.in" \
 
 [[ -x "$RTSP_TREE/configure.sh" ]] || fail "prepared RTSP source is missing"
 if (( ${#PIPER_PHONEME_PATH} > PIPER_PHONEME_PATH_LIMIT )); then
-  fail "build path is too long for eSpeak NG's phoneme compiler (${#PIPER_PHONEME_PATH} > $PIPER_PHONEME_PATH_LIMIT characters); use a shorter neutral WORK_ROOT such as /tmp/proton-rtsp-wayland-ge-beta3-20260609-3"
+  fail "build path is too long for eSpeak NG's phoneme compiler (${#PIPER_PHONEME_PATH} > $PIPER_PHONEME_PATH_LIMIT characters); use a shorter neutral WORK_ROOT such as /tmp/proton-rtsp-wayland-ge-beta4-20260609-4"
+fi
+
+if (( CHECK_ONLY )); then
+  printf 'PASS: %s prepared inputs verified; no lock, configure, build or packaging performed.\n' "$BUILD_NAME"
+  printf 'Future build lock: %s; worker budget: %s x %s <= %s\n' "$BUILD_LOCK" "$ORCHESTRATOR_JOBS" "$COMPONENT_JOBS" "$JOBS"
+  exit 0
 fi
 
 if [[ ! -f "$RTSP_TREE/build/build-$BUILD_NAME/Makefile" ]]; then

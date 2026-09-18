@@ -1,9 +1,12 @@
 <!-- SPDX-License-Identifier: BSD-3-Clause -->
 
 > **Local Beta 4 preparation branch:** see
-> [the upstream audit and replay plan](docs/BETA4_PREPARATION.md).
-> There is no Beta 4 build yet. The inherited build configuration and Nix
-> package still target Beta 3; the release record below remains Beta 3's.
+> [the source preparation record](docs/BETA4_PREPARATION.md).
+> Build inputs now target RTSP 11-4 plus selected GE-Proton11-7 backports,
+> with 176 Wine commits and prefix identity `11.0-105`. No Beta 4 binary or
+> runtime result exists yet. Use [the build instructions](docs/BUILDING.md)
+> for preparation; do not build until authorized. The Nix package and the
+> published release/install record below deliberately remain on Beta 3.
 
 # Proton-RTSP-Wayland-GE Beta 3
 

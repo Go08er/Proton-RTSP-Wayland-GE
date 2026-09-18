@@ -3,7 +3,7 @@
 set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-WORK_ROOT="${WORK_ROOT:-/tmp/proton-rtsp-wayland-ge-beta3-20260609-3}"
+WORK_ROOT="${WORK_ROOT:-/tmp/proton-rtsp-wayland-ge-beta4-20260609-4}"
 SOURCES_DIR="${SOURCES_DIR:-$WORK_ROOT/sources}"
 RTSP_TREE="${RTSP_TREE:-$SOURCES_DIR/proton-ge-rtsp}"
 GE_TREE="${GE_TREE:-$SOURCES_DIR/proton-ge-custom}"
@@ -17,7 +17,7 @@ WINEBUS_NO_STEAMINPUT_ADAPTER_PATCH="$ROOT_DIR/patches/$GE_WINEBUS_NO_STEAMINPUT
 STEAM_INPUT_ADAPTER_PATCH="$ROOT_DIR/patches/$RTSP_STEAM_INPUT_ADAPTER_PATCH"
 WINEWAYLAND_XR_PATCH="$ROOT_DIR/patches/$RTSP_WINEWAYLAND_XR_PATCH"
 WAYLAND_CURSOR_PATCH="$ROOT_DIR/patches/$GE_WAYLAND_CURSOR_PATCH"
-BETA3_PATCH="$ROOT_DIR/patches/$PROTON_BETA3_PATCH"
+BETA4_PATCH="$ROOT_DIR/patches/$PROTON_BETA4_PATCH"
 PIPER_PATCH="$ROOT_DIR/patches/piper-phonemize-pin.patch"
 PREPARED_STATE="$WORK_ROOT/.prepared"
 
@@ -106,22 +106,6 @@ require_gitlink() {
     || fail "$tree:$path is not the expected gitlink $expected"
 }
 
-require_annotated_tag() {
-  local tree="$1"
-  local tag="$2"
-  local expected_object="$3"
-  local expected_commit="$4"
-  local actual_object actual_type actual_commit
-
-  actual_object="$(git -C "$tree" rev-parse "refs/tags/$tag")"
-  actual_type="$(git -C "$tree" cat-file -t "$actual_object")"
-  actual_commit="$(git -C "$tree" rev-parse "refs/tags/$tag^{}")"
-  [[ "$actual_type" == "tag" && "$actual_object" == "$expected_object" ]] \
-    || fail "$tree:$tag is not the expected annotated tag object $expected_object"
-  [[ "$actual_commit" == "$expected_commit" ]] \
-    || fail "$tree:$tag peels to $actual_commit, expected $expected_commit"
-}
-
 require_sha256() {
   local path="$1"
   local expected="$2"
@@ -181,9 +165,11 @@ PIPER_TREE="$RTSP_TREE/piper"
 XALIA_TREE="$SOURCES_DIR/xalia"
 
 require_head "$RTSP_TREE" "$RTSP_COMMIT"
-require_annotated_tag "$RTSP_TREE" "$RTSP_SOURCE_LABEL" "$RTSP_TAG_OBJECT" "$RTSP_COMMIT"
+prepared_require_tag "$RTSP_TREE" "$RTSP_SOURCE_LABEL" "$RTSP_TAG_TYPE" "$RTSP_TAG_OBJECT" "$RTSP_COMMIT" \
+  || fail "RTSP tag type, object or commit mismatch"
 require_head "$GE_TREE" "$GE_COMMIT"
-require_annotated_tag "$GE_TREE" "$GE_SOURCE_LABEL" "$GE_TAG_OBJECT" "$GE_COMMIT"
+prepared_require_tag "$GE_TREE" "$GE_SOURCE_LABEL" "$GE_TAG_TYPE" "$GE_TAG_OBJECT" "$GE_COMMIT" \
+  || fail "GE tag type, object or commit mismatch"
 require_head "$WINE_TREE" "$RTSP_WINE_BASE"
 require_head "$PIPER_TREE" "$RTSP_PIPER_COMMIT"
 require_initial_rtsp
@@ -228,14 +214,16 @@ require_sha256 "$WINEBUS_NO_STEAMINPUT_ADAPTER_PATCH" "$GE_WINEBUS_NO_STEAMINPUT
 require_sha256 "$STEAM_INPUT_ADAPTER_PATCH" "$RTSP_STEAM_INPUT_ADAPTER_SHA256"
 require_sha256 "$WINEWAYLAND_XR_PATCH" "$RTSP_WINEWAYLAND_XR_SHA256"
 require_sha256 "$WAYLAND_CURSOR_PATCH" "$GE_WAYLAND_CURSOR_PATCH_SHA256"
-require_sha256 "$BETA3_PATCH" "$PROTON_BETA3_SHA256"
+require_sha256 "$BETA4_PATCH" "$PROTON_BETA4_SHA256"
+require_sha256 "$ROOT_DIR/patches/$GE_FOCUS_ADAPTER_PATCH" "$GE_FOCUS_ADAPTER_SHA256"
+require_sha256 "$ROOT_DIR/patches/$GE_FOLLOWUP_MANIFEST" "$GE_FOLLOWUP_MANIFEST_SHA256"
 mapfile -t WAYLAND_PATCHES < <(
   find "$PATCH_BUNDLE" -maxdepth 1 -type f -name '*.patch' -print | LC_ALL=C sort
 )
 [[ "${#WAYLAND_PATCHES[@]}" == "$GE_WAYLAND_PATCH_COUNT" ]] \
   || fail "expected $GE_WAYLAND_PATCH_COUNT GE Wayland patches, found ${#WAYLAND_PATCHES[@]}"
-[[ "$GE_SELECTED_PATCH_COUNT" == "$((GE_WAYLAND_PATCH_COUNT + 1))" ]] \
-  || fail "selected GE patch count does not include exactly the independent cursor repair"
+[[ "$GE_SELECTED_PATCH_COUNT" == "$((GE_WAYLAND_PATCH_COUNT + 4))" ]] \
+  || fail "selected GE patch count must include three follow-ups and the cursor repair"
 require_sha256 "$PIPER_PATCH" "$PIPER_PATCH_SHA256"
 
 git -C "$RTSP_TREE" apply --check "$ROOT_DIR/patches/proton-rtsp-wayland.patch"
@@ -244,8 +232,8 @@ git -C "$RTSP_TREE" apply --check "$ROOT_DIR/patches/proton-alpha2.patch"
 git -C "$RTSP_TREE" apply "$ROOT_DIR/patches/proton-alpha2.patch"
 git -C "$RTSP_TREE" apply --check "$ROOT_DIR/patches/proton-alpha3.patch"
 git -C "$RTSP_TREE" apply "$ROOT_DIR/patches/proton-alpha3.patch"
-git -C "$RTSP_TREE" apply --check "$BETA3_PATCH"
-git -C "$RTSP_TREE" apply "$BETA3_PATCH"
+git -C "$RTSP_TREE" apply --check "$BETA4_PATCH"
+git -C "$RTSP_TREE" apply "$BETA4_PATCH"
 grep -Fqx "XALIA_ZIP_SHA256 := $XALIA_ZIP_SHA256" "$RTSP_TREE/Makefile.in" \
   || fail "prepared Makefile does not contain the pinned Xalia archive hash"
 
@@ -258,31 +246,48 @@ for patch_path in "${WAYLAND_PATCHES[@]}"; do
   [[ -f "$upstream_patch" ]] || fail "pinned GE source is missing patch: $patch_name"
   cmp "$patch_path" "$upstream_patch" \
     || fail "bundled patch differs from pinned GE source: $patch_name"
+  if [[ "$patch_name" == 0196-* ]]; then
+    patch_path="$ROOT_DIR/patches/$GE_FOCUS_ADAPTER_PATCH"
+  fi
+  git -C "$WINE_TREE" apply --check "$patch_path"
   git -c user.name='Proton RTSP Wayland Build' \
       -c user.email='build@localhost' \
-      -C "$WINE_TREE" am --3way --keep-cr "$patch_path"
+      -C "$WINE_TREE" am --keep-cr "$patch_path"
 done
+
+while IFS=$'\t' read -r upstream hash local_patch local_hash; do
+  require_sha256 "$GE_TREE/$upstream" "$hash"
+  require_sha256 "$ROOT_DIR/patches/ge-proton11-7-followups/${upstream##*/}" "$hash"
+  require_sha256 "$ROOT_DIR/$local_patch" "$local_hash"
+  git -C "$WINE_TREE" apply --check "$ROOT_DIR/$local_patch"
+  git -c user.name='Proton RTSP Wayland Build' -c user.email='build@localhost' \
+      -C "$WINE_TREE" am --keep-cr "$ROOT_DIR/$local_patch"
+done < "$ROOT_DIR/patches/$GE_FOLLOWUP_MANIFEST"
 
 cmp "$WAYLAND_CURSOR_PATCH" "$GE_TREE/$GE_WAYLAND_CURSOR_PATCH_PATH" \
   || fail "bundled cursor patch differs from pinned GE source"
+git -C "$WINE_TREE" apply --check "$WAYLAND_CURSOR_PATCH"
 git -c user.name='Proton RTSP Wayland Build' \
     -c user.email='build@localhost' \
-    -C "$WINE_TREE" am --3way --keep-cr "$WAYLAND_CURSOR_PATCH"
+    -C "$WINE_TREE" am --keep-cr "$WAYLAND_CURSOR_PATCH"
 
+git -C "$WINE_TREE" apply --check "$WINEBUS_NO_STEAMINPUT_ADAPTER_PATCH"
 git -c user.name='Proton RTSP Wayland Build' \
     -c user.email='build@localhost' \
-    -C "$WINE_TREE" am --3way --keep-cr "$WINEBUS_NO_STEAMINPUT_ADAPTER_PATCH"
+    -C "$WINE_TREE" am --keep-cr "$WINEBUS_NO_STEAMINPUT_ADAPTER_PATCH"
+git -C "$WINE_TREE" apply --check "$STEAM_INPUT_ADAPTER_PATCH"
 git -c user.name='Proton RTSP Wayland Build' \
     -c user.email='build@localhost' \
-    -C "$WINE_TREE" am --3way --keep-cr "$STEAM_INPUT_ADAPTER_PATCH"
+    -C "$WINE_TREE" am --keep-cr "$STEAM_INPUT_ADAPTER_PATCH"
+git -C "$WINE_TREE" apply --check "$WINEWAYLAND_XR_PATCH"
 git -c user.name='Proton RTSP Wayland Build' \
     -c user.email='build@localhost' \
-    -C "$WINE_TREE" am --3way --keep-cr "$WINEWAYLAND_XR_PATCH"
+    -C "$WINE_TREE" am --keep-cr "$WINEWAYLAND_XR_PATCH"
 
 [[ "$(git -C "$WINE_TREE" rev-list --count "$RTSP_WINE_BASE..HEAD")" == "$FINAL_WINE_PATCH_COUNT" ]] \
-  || fail "Wine patch count does not match the audited Beta 3 series"
+  || fail "Wine patch count does not match the audited Beta 4 series"
 [[ "$(git -C "$WINE_TREE" rev-parse 'HEAD^{tree}')" == "$FINAL_WINE_TREE" ]] \
-  || fail "prepared Wine tree does not match the deterministic Beta 3 lock"
+  || fail "prepared Wine tree does not match the deterministic Beta 4 lock"
 [[ "$(git -C "$WINE_TREE" diff-tree --no-commit-id --name-only -r HEAD)" == \
     "dlls/winewayland.drv/vulkan.c" ]] \
   || fail "WineWayland XR repair changed an unexpected path"
@@ -309,12 +314,12 @@ require_pristine "$WINE_TREE"
 
 cmp "$OPENXR_PATCH" "$GE_TREE/patches/wineopenxr/wineopenxr_decouple.patch" \
   || fail "bundled WineOpenXR patch differs from pinned GE source"
-patch -d "$RTSP_TREE/wineopenxr" -Np1 --batch --forward --no-backup-if-mismatch --dry-run < "$OPENXR_PATCH"
-patch -d "$RTSP_TREE/wineopenxr" -Np1 --batch --forward --no-backup-if-mismatch < "$OPENXR_PATCH"
-patch -d "$RTSP_TREE/wineopenxr" -Np1 --batch --forward --no-backup-if-mismatch --dry-run < "$OPENXR_SESSION_PATCH"
-patch -d "$RTSP_TREE/wineopenxr" -Np1 --batch --forward --no-backup-if-mismatch < "$OPENXR_SESSION_PATCH"
-patch -d "$RTSP_TREE/wineopenxr" -Np1 --batch --forward --no-backup-if-mismatch --dry-run < "$OPENXR_INTEGRATION_PATCH"
-patch -d "$RTSP_TREE/wineopenxr" -Np1 --batch --forward --no-backup-if-mismatch < "$OPENXR_INTEGRATION_PATCH"
+patch -d "$RTSP_TREE/wineopenxr" -Np1 --batch --forward --no-backup-if-mismatch --fuzz=0 --dry-run < "$OPENXR_PATCH"
+patch -d "$RTSP_TREE/wineopenxr" -Np1 --batch --forward --no-backup-if-mismatch --fuzz=0 < "$OPENXR_PATCH"
+patch -d "$RTSP_TREE/wineopenxr" -Np1 --batch --forward --no-backup-if-mismatch --fuzz=0 --dry-run < "$OPENXR_SESSION_PATCH"
+patch -d "$RTSP_TREE/wineopenxr" -Np1 --batch --forward --no-backup-if-mismatch --fuzz=0 < "$OPENXR_SESSION_PATCH"
+patch -d "$RTSP_TREE/wineopenxr" -Np1 --batch --forward --no-backup-if-mismatch --fuzz=0 --dry-run < "$OPENXR_INTEGRATION_PATCH"
+patch -d "$RTSP_TREE/wineopenxr" -Np1 --batch --forward --no-backup-if-mismatch --fuzz=0 < "$OPENXR_INTEGRATION_PATCH"
 [[ "$(grep -Fxc '  list_remove(&wine_session->entry);' \
     "$RTSP_TREE/wineopenxr/openxr_loader.c")" == "1" ]] \
   || fail "WineOpenXR session-list cleanup is missing or duplicated"
@@ -334,9 +339,9 @@ require_expected_untracked_roots
 diff -qr --no-dereference "$GE_TREE/locale" "$RTSP_TREE/locale" > /dev/null \
   || fail "copied locale tree differs from the pinned GE source"
 [[ "$(tracked_diff_sha256 root)" == "$FINAL_RTSP_TRACKED_DIFF_SHA256" ]] \
-  || fail "prepared Proton tracked diff does not match the Beta 3 lock"
+  || fail "prepared Proton tracked diff does not match the Beta 4 lock"
 [[ "$(tracked_diff_sha256 wineopenxr)" == "$FINAL_WINEOPENXR_DIFF_SHA256" ]] \
-  || fail "prepared WineOpenXR diff does not match the Beta 3 lock"
+  || fail "prepared WineOpenXR diff does not match the Beta 4 lock"
 
 piper_status="$(git -C "$PIPER_TREE" status --porcelain --untracked-files=all)"
 [[ "$piper_status" == " M CMakeLists.txt" ]] \

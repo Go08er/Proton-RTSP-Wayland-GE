@@ -1,32 +1,34 @@
 #!/usr/bin/env bash
 # SPDX-License-Identifier: BSD-3-Clause
 
-# Beta 3 candidate input. Proton-RTSP remains the runtime and media base;
+# Beta 4 candidate input. Proton-RTSP remains the runtime and media base;
 # GE-Proton supplies only the reviewed WineWayland/XR source material below.
-# Both annotated upstream tags are recorded with their peeled commits and
-# independently verified Git trees/blobs.
-RTSP_COMMIT="f3f25735b3c4e37968c97417ede300bc836a6cd2"
-RTSP_WINE_BASE="a7fcac55ca756e35d5dc0a7c8b70272d9c6a9675"
-RTSP_SOURCE_LABEL="proton-rtsp-11.0-20260609-3"
-RTSP_TAG_OBJECT="60d1695539cb3e9205bd6d05d00cf4a30268b9e8"
+# RTSP's lightweight tag and GE's annotated tag are checked by exact type,
+# object, peeled commit, and independently verified Git trees/blobs.
+RTSP_COMMIT="2faa9d3640bdd0139fc77d52bfd45db6b3807acd"
+RTSP_WINE_BASE="fe6a2883bbe62967cd1da5044b7ceaf2c9a43dfe"
+RTSP_SOURCE_LABEL="proton-rtsp-11.0-20260609-4"
+RTSP_TAG_OBJECT="2faa9d3640bdd0139fc77d52bfd45db6b3807acd"
+RTSP_TAG_TYPE="commit"
+GE_TAG_TYPE="tag"
 RTSP_PIPER_COMMIT="9d06b74959570772e8bcbe7a3f696664d2421167"
-FINAL_WINE_TREE="b256fa0664b725fdd55ab1f27820c52ea291000d"
-FINAL_WINE_PATCH_COUNT="164"
-FINAL_RTSP_TRACKED_DIFF_SHA256="3a697b28fa86721d1c609b759bee5178584029b4e1234b42669f9d118854597a"
+FINAL_WINE_TREE="0c7b3be3791ce1a4f5e53e2655b31d72cabcd3f6"
+FINAL_WINE_PATCH_COUNT="176"
+FINAL_RTSP_TRACKED_DIFF_SHA256="a90d019a61c8d146278c914fa960fd1e7f66fbc0304f38cde2869b591893904e"
 FINAL_WINEOPENXR_DIFF_SHA256="7e9b9fabd2eabea87c2ea02975281026904c683e10a5a9d65451265597e46b84"
-GE_TAG_OBJECT="855db4875be1dee8c194b6e08abfe336babc126b"
-GE_COMMIT="7e88cefffc122ea1584c2156b8d7bae6cf69b2a7"
-GE_ROOT_TREE="851680369dc46489360e4f67bfa3acc6b701ef4a"
+GE_TAG_OBJECT="4d2eb7396b175821d2a4beed97e3d36da3012bde"
+GE_COMMIT="c191f35dcebbeccfacd3b4c6f6eea026e588c1c2"
+GE_ROOT_TREE="9ce007c8526d8c04d0face13dacff1612ff23c8b"
 GE_LOCALE_TREE="7c8f3ed92d04fc80a139e3204d86650870e21d8f"
-GE_WINE_COMMIT="9358696fe9a2261329f4a83aa6a65fd436106154"
+GE_WINE_COMMIT="46b29104e3741fe23bf5e2547196a253aab88c89"
 GE_SOURCE_KIND="release"
-GE_SOURCE_LABEL="GE-Proton11-6"
-GE_WAYLAND_PATCH_DIR="ge-proton11-6-wayland"
-GE_WAYLAND_PATCH_COUNT="160"
-GE_SELECTED_PATCH_COUNT="161"
-GE_WAYLAND_PATCH_TREE="520be55bde6c9bab2b602757de43928443b01cc6"
-GE_CHILD_RENDERING_PATCH_TREE="535e81aa6407a48f0934f766523fd9bfd6c3c50b"
-GE_CHILD_RENDERING_PATCH_COUNT="58"
+GE_SOURCE_LABEL="GE-Proton11-7"
+GE_WAYLAND_PATCH_DIR="ge-proton11-7-wayland"
+GE_WAYLAND_PATCH_COUNT="169"
+GE_SELECTED_PATCH_COUNT="173"
+GE_WAYLAND_PATCH_TREE="b026a03caf61f362559387ba0ea59b4f4a0d6033"
+GE_CHILD_RENDERING_PATCH_TREE="fa298db4d83772e6ab289371f74bb182125998ff"
+GE_CHILD_RENDERING_PATCH_COUNT="85"
 GE_WAYLAND_CURSOR_PATCH="winewayland-render-ddb-cursors-ge-proton11-6.patch"
 GE_WAYLAND_CURSOR_PATCH_PATH="patches/wine-hotfixes/em-fixups/winewayland-render-ddb-cursors-to-32bit-dib.patch"
 GE_WAYLAND_CURSOR_PATCH_BLOB="1c5f9717e7811400bb2e3568466fd6eeff952fcd"
@@ -43,16 +45,23 @@ RTSP_WINEOPENXR_SESSION_SHA256="c9a7729988bc5a12b0285fdb49e9dc431497fc040b257048
 GE_STEAM_INPUT_PATCH_PATH="patches/wine-hotfixes/em-fixups/winewayland-ignore-steam-desktop-virtual-controller.patch"
 GE_STEAM_INPUT_PATCH_BLOB="09a960d40982342c25f3be63726043f48d0316b1"
 GE_STEAM_INPUT_PATCH_SHA256="9d5c8b72abae299570b7a26ebc80ee47b250e0d9efc0e6e93bef787f43d58472"
-GE_PROTON_BLOB="cc486032f224504d985f583890084f5e07c47e61"
-GE_PROTON_SHA256="95a41f83184ab574d118fdd20f8647d5db0c350eb571314b475f0d25087311cf"
+GE_PROTON_BLOB="dc8224e6fa0341b900e6d3e4a75dd0c8588b95df"
+GE_PROTON_SHA256="c0fe398829c78c82b26d39c20fbeb6b28d1e46941723962d794d7e5f67d402be"
 GE_WINEBUS_NO_STEAMINPUT_ADAPTER_PATCH="winebus-no-steaminput-ge-proton11-5-rtsp-adapter.patch"
 GE_WINEBUS_NO_STEAMINPUT_ADAPTER_SHA256="8cc0f1d9c96e6d5c6370d862d62114281255443842606c2590de91c1daa80ac0"
 RTSP_STEAM_INPUT_ADAPTER_PATCH="winewayland-steam-input-ge-proton11-3-rtsp-adapter.patch"
 RTSP_STEAM_INPUT_ADAPTER_SHA256="1a0bf54c6c9af9b0da26bed30f04ef9dd1352c58dd6ddc4b190dec1c427c4dd2"
 RTSP_WINEWAYLAND_XR_PATCH="winewayland-advertise-wine-vr-device-extensions.patch"
 RTSP_WINEWAYLAND_XR_SHA256="aa16c39363cee1ac14cce28ba8db23d657e7e4f67d59ffff8875afa9ecb1a0b1"
-PROTON_BETA3_PATCH="proton-beta3.patch"
-PROTON_BETA3_SHA256="4de49869ca917767caf36e54c6dc9429a6864ced9d6dd3181d49b94ab3917e3e"
+PROTON_BETA4_PATCH="proton-beta4.patch"
+PROTON_BETA4_SHA256="7023e412593f2f975cf339e318d904ead3ad64320ff8c0a2061cdfaef44ee0d9"
+
+# 169 main patches (0196 context-adapted), three EM follow-ups (0048
+# context-adapted), and the exact cursor repair: 173 GE-derived Wine commits.
+GE_FOCUS_ADAPTER_PATCH="winewayland-focus-ge-proton11-7-rtsp-adapter.patch"
+GE_FOCUS_ADAPTER_SHA256="cbfbd233bce261542a3178bf0155c543336253c3d013a42e3446def957532c12"
+GE_FOLLOWUP_MANIFEST="ge-proton11-7-followups.tsv"
+GE_FOLLOWUP_MANIFEST_SHA256="5ee32bc95c6893afbeb36f4a180c5ba33780770a6e5baa4f20342ff53f721c77"
 
 # Dependency gitlinks from the exact GE root tree above.  Preparation verifies
 # that each value still matches that tree before cloning or reusing it.

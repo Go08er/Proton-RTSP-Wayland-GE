@@ -3,9 +3,10 @@
 set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-WORK_ROOT="${WORK_ROOT:-/tmp/proton-rtsp-wayland-ge-beta3-20260609-3}"
+WORK_ROOT="${WORK_ROOT:-/tmp/proton-rtsp-wayland-ge-beta4-20260609-4}"
 SOURCES_DIR="${SOURCES_DIR:-$WORK_ROOT/sources}"
 source "$ROOT_DIR/config/upstream-pins.sh"
+source "$ROOT_DIR/scripts/lib/prepared-state.sh"
 
 RTSP_REPO="https://github.com/SpookySkeletons/Proton-RTSP.git"
 GE_REPO="https://github.com/GloriousEggroll/proton-ge-custom.git"
@@ -38,22 +39,12 @@ clone_at_commit() {
   git_safe -C "$path" checkout --detach "$commit"
 }
 
-fetch_annotated_tag() {
-  local path="$1"
-  local label="$2"
-  local expected_object="$3"
-  local expected_commit="$4"
-  local actual_object actual_type actual_commit
-
+fetch_pinned_tag() {
+  local path="$1" label="$2" type="$3" object="$4" commit="$5"
   git_safe -C "$path" fetch --filter=blob:none --depth=1 \
     origin "refs/tags/$label:refs/tags/$label"
-  actual_object="$(git -C "$path" rev-parse "refs/tags/$label")"
-  actual_type="$(git -C "$path" cat-file -t "$actual_object")"
-  actual_commit="$(git -C "$path" rev-parse "refs/tags/$label^{}")"
-  [[ "$actual_type" == "tag" && "$actual_object" == "$expected_object" ]] \
-    || fail "$label is not the expected annotated tag object $expected_object"
-  [[ "$actual_commit" == "$expected_commit" ]] \
-    || fail "$label peels to $actual_commit, expected $expected_commit"
+  prepared_require_tag "$path" "$label" "$type" "$object" "$commit" \
+    || fail "$label does not match its pinned type, object and commit"
 }
 
 mkdir -p "$WORK_ROOT" "$SOURCES_DIR"
@@ -64,10 +55,10 @@ clone_at_commit proton-ge-rtsp "$RTSP_REPO" "$RTSP_COMMIT"
 clone_at_commit proton-ge-custom "$GE_REPO" "$GE_COMMIT"
 clone_at_commit xalia "$XALIA_REPO" "$XALIA_COMMIT"
 
-fetch_annotated_tag "$SOURCES_DIR/proton-ge-rtsp" \
-  "$RTSP_SOURCE_LABEL" "$RTSP_TAG_OBJECT" "$RTSP_COMMIT"
-fetch_annotated_tag "$SOURCES_DIR/proton-ge-custom" \
-  "$GE_SOURCE_LABEL" "$GE_TAG_OBJECT" "$GE_COMMIT"
+fetch_pinned_tag "$SOURCES_DIR/proton-ge-rtsp" \
+  "$RTSP_SOURCE_LABEL" "$RTSP_TAG_TYPE" "$RTSP_TAG_OBJECT" "$RTSP_COMMIT"
+fetch_pinned_tag "$SOURCES_DIR/proton-ge-custom" \
+  "$GE_SOURCE_LABEL" "$GE_TAG_TYPE" "$GE_TAG_OBJECT" "$GE_COMMIT"
 
 git_safe -C "$SOURCES_DIR/proton-ge-rtsp" submodule update --init --recursive
 git_safe -C "$SOURCES_DIR/xalia" submodule update --init --recursive

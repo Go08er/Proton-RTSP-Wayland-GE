@@ -4,6 +4,18 @@
 
 Compatibility claims should be limited to the exact path exercised. Back up important prefixes and change only one variable per comparison.
 
+## Beta 4 preparation only
+
+Beta 4 has no binary or runtime result yet. Source replay and prerequisite
+checks are recorded in [BETA4_PREPARATION.md](BETA4_PREPARATION.md), with
+input-gate tests in `tests/preparation-gates.sh`. Do not reinterpret any of
+the historical results below as Beta 4 results. After a separately authorized
+build, test the retained native-Wayland/XR route, focus/activation, clipboard,
+monitor removal and non-US keyboard layouts. Compare media continuity and
+seek/replacement latency with RTSP's new default video queue; initially leave
+`WINE_MFME_VIDEO_QUEUE_SIZE` unset. No test or installation is authorized by
+this checklist alone.
+
 ## D3D11 smoke programs
 
 The two small programs in `tests/` can be built with MinGW-w64. Build both

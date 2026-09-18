@@ -1,5 +1,5 @@
-# Provisional GE-Proton11-7 main-directory review selection; not an active build series.
-# GE commit c191f35dcebbeccfacd3b4c6f6eea026e588c1c2; 169 rows; no final Wine tree lock yet.
+# GE-Proton11-7 main selection: exact upstream bytes; 0196 applies through its RTSP context adapter.
+# GE commit c191f35dcebbeccfacd3b4c6f6eea026e588c1c2; 169 rows; complete selection in patches/ge-proton11-7-selection.md.
 patch	sha256	reason
 0002-win32u-Reorder-KEYEVENTF_SCANCODE-handling-control-f.patch	d44df6a828b1bbdd3ba7d88fb3280089ac2bed7c686994ec381109dcfcfe6b80	unchanged-from-beta3
 0003-winewayland-Assign-a-name-to-the-winewayland-queue.patch	1e64f23461a48daf296c8b8bc2a01e4fc3bd485429e4c83f73e17c298e28cff8	unchanged-from-beta3

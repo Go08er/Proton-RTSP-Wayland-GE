@@ -4,11 +4,12 @@
 
 The scripts build from pinned upstream revisions in a neutral temporary path.
 This avoids embedding a maintainer's home-directory path in binaries and
-generated Wine registry data. Beta 3 uses the exact
-annotated `proton-rtsp-11.0-20260609-3` and `GE-Proton11-6` releases, peeled to
-`f3f25735b3c4e37968c97417ede300bc836a6cd2` and
-`7e88cefffc122ea1584c2156b8d7bae6cf69b2a7` respectively. Its RTSP Wine base
-is `a7fcac55ca756e35d5dc0a7c8b70272d9c6a9675`.
+generated Wine registry data. Beta 4 uses lightweight RTSP tag
+`proton-rtsp-11.0-20260609-4` at `2faa9d3640bdd0139fc77d52bfd45db6b3807acd`
+and annotated GE tag `GE-Proton11-7`, peeled to
+`c191f35dcebbeccfacd3b4c6f6eea026e588c1c2`. Its RTSP Wine base is
+`fe6a2883bbe62967cd1da5044b7ceaf2c9a43dfe`. This is an unbuilt candidate.
+See [the preparation record](BETA4_PREPARATION.md) before doing anything.
 
 ## Requirements
 
@@ -26,8 +27,12 @@ From the repository root:
 ```sh
 ./scripts/fetch-sources.sh
 ./scripts/apply-patches.sh
-./scripts/build.sh
+./scripts/build.sh --check-only
 ```
+
+Stop here until a build is authorized. `--check-only` exercises the source,
+patch, dependency, archive and path gates, then exits without taking the lock,
+configuring, compiling or packaging. Run inside `nix-shell` on NixOS.
 
 Both fetch and preparation clear the prior `.prepared` state before doing any
 work. Preparation writes a new state only after all patches and dependency
@@ -35,12 +40,13 @@ checks succeed. The build compares that state byte-for-byte against the exact
 pins and canonical RTSP/GE source paths, then rechecks the deterministic Wine
 tree. A failed or interrupted preparation therefore cannot authorize a build.
 
-The Beta 3 replay gate requires 160 exact main WineWayland selections, GE's
-exact DDB cursor patch, and three local Wine follow-ups: 164 commits and final
-tree `b256fa0664b725fdd55ab1f27820c52ea291000d`. It rejects the separate
-58-patch child-rendering stack, including its SNI and Reflex dependencies, and
-every other `em-fixups` patch rather than silently broadening the selected GE
-subset.
+The Beta 4 replay gate requires 176 Wine commits and final tree
+`0c7b3be3791ce1a4f5e53e2655b31d72cabcd3f6`: 169 main GE selections
+(0196 context-adapted), three EM follow-ups (0048 context-adapted), the exact
+cursor repair, and three established local follow-ups. It excludes the
+85-patch child-rendering subsystem, SNI, Reflex and overlay bridge.
+Every patch passes a strict application check; no three-way fallback or fuzz
+is used. See [the selection record](../patches/ge-proton11-7-selection.md).
 
 The build defaults to `JOBS=1`. `scripts/build.sh` also re-executes itself with
 `nice -n 19` and, when available, idle-class `ionice` so the preparation build
@@ -60,7 +66,7 @@ Make builds remain governed by the outer jobserver.
 
 Advanced local testing can set `ORCHESTRATOR_JOBS` and `COMPONENT_JOBS`
 explicitly, but their product must not exceed `JOBS`. Both Proton project
-wrappers also take the same workspace build lock, so the two experimental
+wrappers also take `$HOME/Documents/.proton-build.lock`, so the two experimental
 distributions cannot compile concurrently by accident.
 
 Interrupted builds can leave downloaded Gecko, Mono, Xalia, and xrandr inputs
@@ -81,7 +87,7 @@ are never excluded from scanning.
 The default work directory is:
 
 ```text
-/tmp/proton-rtsp-wayland-ge-beta3-20260609-3
+/tmp/proton-rtsp-wayland-ge-beta4-20260609-4
 ```
 
 Keep custom work paths similarly short. The pinned eSpeak NG phoneme compiler
@@ -101,7 +107,7 @@ The default is `PACKAGE_RELEASE=0`. It builds and verifies the compatibility
 tool at:
 
 ```text
-/tmp/proton-rtsp-wayland-ge-beta3-20260609-3/sources/proton-ge-rtsp/build/Proton-RTSP-Wayland-GE-Beta3
+/tmp/proton-rtsp-wayland-ge-beta4-20260609-4/sources/proton-ge-rtsp/build/Proton-RTSP-Wayland-GE-Beta4
 ```
 
 It does not create release archives, push commits, publish a GitHub release, or
@@ -134,7 +140,8 @@ Build products and fetched source trees are excluded from version control.
 
 Treat every release change as a new source state:
 
-1. Fetch the annotated tag and record both its tag object and peeled commit.
+1. Fetch the release tag and pin its type (annotated or lightweight), exact
+   ref object and peeled commit; reject mismatches rather than relaxing checks.
 2. Use a new work path, build name, and display name. Advance the prefix
    version only when prefix contents or migration behavior change.
 3. Regenerate the selected Wayland bundle from the tagged tree and audit every
