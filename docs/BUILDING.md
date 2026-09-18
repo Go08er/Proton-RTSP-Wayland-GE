@@ -8,7 +8,7 @@ generated Wine registry data. Beta 4 uses lightweight RTSP tag
 `proton-rtsp-11.0-20260609-4` at `2faa9d3640bdd0139fc77d52bfd45db6b3807acd`
 and annotated GE tag `GE-Proton11-7`, peeled to
 `c191f35dcebbeccfacd3b4c6f6eea026e588c1c2`. Its RTSP Wine base is
-`fe6a2883bbe62967cd1da5044b7ceaf2c9a43dfe`. This is an unbuilt candidate.
+`fe6a2883bbe62967cd1da5044b7ceaf2c9a43dfe`. This is the published Beta 4.
 See [the preparation record](BETA4_PREPARATION.md) before doing anything.
 
 ## Requirements

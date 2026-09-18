@@ -2,7 +2,7 @@
 
 # Source and redistribution notice
 
-Proton-RTSP-Wayland-GE Beta 4 is an unbuilt, unofficial candidate
+Proton-RTSP-Wayland-GE Beta 4 is an unofficial redistribution
 based on the projects listed below. Published Beta 3, Beta 2, Beta 1, and Alpha 3
 remain available separately and retain their own immutable source records.
 This project is not affiliated with or endorsed by Valve, CodeWeavers,
@@ -24,7 +24,8 @@ and two context adapters) plus three retained local follow-ups: 176 commits.
 See `patches/ge-proton11-7-selection.md` for scope and attribution. The
 85-patch child-rendering subsystem is excluded. Other component pins remain
 as in the Beta 3 record below; prefix identity advances to `11.0-105`.
-No compilation or runtime qualification is claimed for this candidate.
+The tool was compiled and statically verified; runtime evidence is a
+maintainer smoke-test attestation, not a route-by-route qualification.
 
 ## Published Beta 3 pinned revisions
 

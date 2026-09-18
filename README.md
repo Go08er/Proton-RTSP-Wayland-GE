@@ -1,17 +1,11 @@
 <!-- SPDX-License-Identifier: BSD-3-Clause -->
 
-> **Local Beta 4 preparation branch:** see
-> [the source preparation record](docs/BETA4_PREPARATION.md).
-> Build inputs now target RTSP 11-4 plus selected GE-Proton11-7 backports,
-> with 176 Wine commits and prefix identity `11.0-105`. No Beta 4 binary or
-> runtime result exists yet. Use [the build instructions](docs/BUILDING.md)
-> for preparation; do not build until authorized. The Nix package and the
-> published release/install record below deliberately remain on Beta 3.
+# Proton-RTSP-Wayland-GE Beta 4
 
-# Proton-RTSP-Wayland-GE Beta 3
-
-This release combines Proton-RTSP 11-3 with the reviewed
-GE-Proton11-6 Wayland work. Beta 2 remains available as a fallback.
+This release combines Proton-RTSP 11-4 with the reviewed
+GE-Proton11-7 Wayland work. Beta 3 remains available as a fallback, and
+[the source preparation record](docs/BETA4_PREPARATION.md) documents how the
+selection was derived.
 
 ## Why you'd want it
 
@@ -19,30 +13,38 @@ GE-Proton11-6 Wayland work. Beta 2 remains available as a fallback.
 - Use correct fractional scaling and per-monitor refresh rates.
 - Work better with Wayland-first compositors that have limited X11 support.
 - Keep Proton's normal XR routing for the VRChat → XRizer → WiVRn route that
-  passed on Beta 2; Beta 3 has a maintainer-reported quick smoke pass.
+  passed on Beta 2; Beta 4 has a maintainer-reported smoke pass.
 
 ## Current status
 
-**Beta 3 is published as `v11.1.0-beta.3`.** It moves two source inputs
-forward from the published Beta 2 release:
+**Beta 4 is published as `v11.1.0-beta.4`.** It moves two source inputs
+forward from the published Beta 3 release:
 
-- **RTSP base** to `proton-rtsp-11.0-20260609-3` at `f3f25735`, with Wine at
-  `a7fcac55`. This upstream source adds anti-starvation sample-pump scheduling
-  in `mfmediaengine`; it has not yet established any runtime improvement here.
-- **GE source** to `GE-Proton11-6` at `7e88ceff`. The release replays 160
-  exact main WineWayland selections plus GE's exact DDB cursor patch. The
-  58-patch child-rendering stack, including its SNI and Reflex dependencies,
-  and every other `em-fixups` patch are intentionally excluded.
+- **RTSP base** to `proton-rtsp-11.0-20260609-4` at `2faa9d36`, with Wine at
+  `fe6a2883`. That upstream source changes only the media-engine video queue,
+  defaulting to five instead of two with `WINE_MFME_VIDEO_QUEUE_SIZE` capped at
+  sixteen; it has not established any runtime improvement here. Leave the
+  override unset for a first comparison.
+- **GE source** to `GE-Proton11-7` at `c191f35d`. The release replays 169 main
+  WineWayland selections, three `em-fixups` follow-ups, and GE's exact DDB
+  cursor patch. Two of those apply through context-only RTSP adapters that
+  preserve every upstream added and removed line; their originals and
+  attribution are retained. The 85-patch child-rendering stack, including its
+  SNI, Reflex and overlay-bridge dependencies, remains excluded.
 
-Those 161 GE-derived patches plus three local follow-ups produce 164 Wine
+Those 173 GE-derived selections plus three local follow-ups produce 176 Wine
 commits above the RTSP Wine base and tree
-`b256fa0664b725fdd55ab1f27820c52ea291000d`. Beta 3 uses prefix identity
-`11.0-104`. The 1,465,937,982-byte tool passed build-integrated,
-standalone, and staged-copy verification. On 2026-09-05 the maintainer
-reported a quick click/smoke test and stability comparable to the prior build,
-and accepted these exact tool bytes for release. This is maintainer
-attestation, without an instrumented Beta 3 log or a completed route-by-route
-checklist. It does not establish a media improvement or broad qualification.
+`0c7b3be3791ce1a4f5e53e2655b31d72cabcd3f6`. Beta 4 uses prefix identity
+`11.0-105`. The 1,465,947,110-byte tool passed build-integrated, standalone,
+and staged-copy verification, and its archive extracts byte-for-byte to the
+tested tree. On 2026-09-17 the maintainer reported the build as tested and
+accepted these exact tool bytes for release. This is maintainer attestation,
+without an instrumented Beta 4 log or a completed route-by-route checklist. It
+does not establish a media improvement or broad qualification.
+
+Note for Wayland sessions: GE main patch 0293 makes `wl_output` version 4 a
+requirement, so a compositor advertising an older `wl_output` will not have its
+outputs registered. Every current mainstream compositor satisfies this.
 
 ### Published Beta 2 record
 

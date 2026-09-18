@@ -2,7 +2,7 @@
 
 # Corresponding source
 
-## Beta 4 candidate source record — not built or published
+## Published Beta 4 record
 
 The active recipe uses RTSP lightweight tag `proton-rtsp-11.0-20260609-4`
 at `2faa9d3640bdd0139fc77d52bfd45db6b3807acd`, Wine base
@@ -20,11 +20,17 @@ video sample queue from two to five by default. These are source facts, not
 compilation or playback claims. The 85-patch child-rendering subsystem and
 unselected EM changes are excluded. GE Wine is provenance only, never the base.
 
-If later accepted and explicitly packaged, the paired archive names will be
-`Proton-RTSP-Wayland-GE-Beta4.tar.gz` and
-`Proton-RTSP-Wayland-GE-Beta4-source.tar.gz`, each with a `.sha512sum`.
-Neither archive exists from this preparation. The Nix package remains on
-published Beta 3. Historical records and bundles below remain unchanged.
+Beta 4 is published as `v11.1.0-beta.4`. Its release files are:
+
+- `Proton-RTSP-Wayland-GE-Beta4.tar.gz`
+- `Proton-RTSP-Wayland-GE-Beta4.tar.gz.sha512sum`
+- `Proton-RTSP-Wayland-GE-Beta4-source.tar.gz`
+- `Proton-RTSP-Wayland-GE-Beta4-source.tar.gz.sha512sum`
+
+The binary archive preserves the exact tested tool, including its build-time
+SOURCE and NOTICE records that still describe the pre-publication candidate.
+No binaries were rebuilt for publication. The Nix package now installs Beta 4.
+Historical records and bundles below remain unchanged.
 
 ## Published Beta 3 record
 
