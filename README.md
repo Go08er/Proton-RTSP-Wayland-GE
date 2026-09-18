@@ -6,8 +6,8 @@ Run Steam games on native Wayland from the RTSP Proton 11 base with selected
 Proton-GE Wayland work.
 
 Each release pins an exact upstream RTSP Proton release and an exact GE-Proton
-release. Which ones is recorded in [`NOTICE.md`](NOTICE.md) and
-[`SOURCE.md`](SOURCE.md) on that release's branch and tag.
+release. Those pins are recorded in `NOTICE.md` and `SOURCE.md` on that
+release's branch and tag; the current release's records are linked below.
 
 ## Why you'd want it
 
@@ -24,16 +24,16 @@ The current download is the latest entry on the
 Every release publishes a binary archive, a corresponding-source archive, and a
 `.sha512sum` for each.
 
-Per-release detail lives with the release rather than on this page, so this page
-does not go stale:
+Per-release detail lives with the release rather than on this page. The links
+below target Beta 4; use the matching branch or tag for an older release:
 
 | What | Where |
 | --- | --- |
 | What changed, and how it was tested | that release's notes on the Releases page |
-| Exact pinned upstream revisions | [`NOTICE.md`](NOTICE.md) on that release's tag |
-| Corresponding-source record | [`SOURCE.md`](SOURCE.md) on that release's tag |
-| Gate results and game-test checklists | [`docs/TESTING.md`](docs/TESTING.md) |
-| Component licence map | [`licenses/COMPONENTS.md`](licenses/COMPONENTS.md) |
+| Exact pinned upstream revisions | [Beta 4 NOTICE](https://github.com/Go08er/Proton-RTSP-Wayland-GE/blob/beta4/NOTICE.md) |
+| Corresponding-source record | [Beta 4 SOURCE](https://github.com/Go08er/Proton-RTSP-Wayland-GE/blob/beta4/SOURCE.md) |
+| Gate results and game-test checklists | [Beta 4 testing record](https://github.com/Go08er/Proton-RTSP-Wayland-GE/blob/beta4/docs/TESTING.md) |
+| Component licence map | [Beta 4 licence map](https://github.com/Go08er/Proton-RTSP-Wayland-GE/blob/beta4/licenses/COMPONENTS.md) |
 
 Each release states its evidence explicitly and distinguishes machine-checked
 gates from maintainer attestation. Read that before relying on a build.
@@ -48,7 +48,7 @@ release stays available as a fallback.
 Download the latest release from the
 [Releases page](https://github.com/Go08er/Proton-RTSP-Wayland-GE/releases).
 Each release contains, where `<Release>` is that release's name such as
-`Beta2`:
+`Beta4`:
 
 - `Proton-RTSP-Wayland-GE-<Release>.tar.gz`
 - `Proton-RTSP-Wayland-GE-<Release>-source.tar.gz`
@@ -56,8 +56,8 @@ Each release contains, where `<Release>` is that release's name such as
 
 ### Upgrading from Alpha 2 or Alpha 3
 
-Remove `PROTON_XR_MODE=xrizer` from the game's Steam launch options. No release
-since Alpha 4 defines or reads this retired selector, so leaving it set is inert and
+Remove `PROTON_XR_MODE=xrizer` from the game's Steam launch options. Beta 1 and
+later releases do not define or read this retired selector, so leaving it set is inert and
 does nothing. This is separate from the still-supported advanced
 `WINEDLLOVERRIDES="wineopenxr=d"` diagnostic fallback documented in
 [Troubleshooting](#troubleshooting).
@@ -78,25 +78,26 @@ does nothing. This is separate from the still-supported advanced
    ~/.var/app/com.valvesoftware.Steam/data/Steam/compatibilitytools.d/
    ```
 3. Start Steam again.
-4. Open a game's **Properties → Compatibility**, enable the option to force a compatibility tool, and select the entry matching the release you installed, for example **Proton RTSP Wayland GE Beta 2**.
+4. Open a game's **Properties → Compatibility**, enable the option to force a compatibility tool, and select the entry matching the release you installed, for example **Proton RTSP Wayland GE Beta 4**.
 
-Verify both archives before extraction:
+Verify both archives before extraction (Beta 4 example):
 
 ```sh
-sha512sum -c Proton-RTSP-Wayland-GE-<Release>.tar.gz.sha512sum
-sha512sum -c Proton-RTSP-Wayland-GE-<Release>-source.tar.gz.sha512sum
+sha512sum -c Proton-RTSP-Wayland-GE-Beta4.tar.gz.sha512sum
+sha512sum -c Proton-RTSP-Wayland-GE-Beta4-source.tar.gz.sha512sum
 ```
 
 Keep the matching source archive with the binary.
 
 ### NixOS
 
-The repository's Nix package pins one verified release archive. Substitute the
-tag of the release you want:
+The Nix package extracts a hash-pinned prebuilt archive; it does not compile
+Proton. Pin the release tag, not `main`, whose package may lag the latest
+release. For Beta 4:
 
 ```nix
 inputs.proton-rtsp-wayland-ge.url =
-  "github:Go08er/Proton-RTSP-Wayland-GE/v11.1.0-beta.2";  # or a later tag
+  "github:Go08er/Proton-RTSP-Wayland-GE/v11.1.0-beta.4";
 inputs.proton-rtsp-wayland-ge.inputs.nixpkgs.follows = "nixpkgs";
 
 programs.steam = {
@@ -108,7 +109,8 @@ programs.steam = {
 ```
 
 Rebuild NixOS and restart Steam. Nix rejects an archive whose bytes differ
-from the hash pinned in [`nix/package.nix`](nix/package.nix).
+from the hash pinned in that tag's
+[`nix/package.nix`](https://github.com/Go08er/Proton-RTSP-Wayland-GE/blob/v11.1.0-beta.4/nix/package.nix).
 
 ## Launch options
 
@@ -124,7 +126,7 @@ from the hash pinned in [`nix/package.nix`](nix/package.nix).
 interface is available. Disable logging after testing because detailed Wine
 logs can become large and reduce performance.
 
-Both betas use Proton's normal XR routing. See the
+Beta releases use Proton's normal XR routing. See the
 [upgrade note](#upgrading-from-alpha-2-or-alpha-3) if old launch options still
 contain the retired selector.
 
@@ -168,7 +170,8 @@ Sanitize logs before posting them — see [`docs/REPORTING.md`](docs/REPORTING.m
 
 ## Repository layout and provenance
 
-`main` is the project front page and tracks the latest release's content. Each
+`main` is the project front page; its recipe is not the current release recipe.
+Use the chosen release branch or tag for source and build instructions. Each
 release has its own branch and immutable tag carrying a release-specific README,
 `NOTICE.md`, and `SOURCE.md`. Published branches and tags are never rewritten,
 and each release branch builds on the previous one without modifying it.
