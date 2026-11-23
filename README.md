@@ -2,6 +2,15 @@
 
 # Proton-RTSP-Wayland-GE
 
+> [!NOTE]
+> **Maintenance mode.** This repository now gets updates for only two reasons:
+>
+> - to fix an issue that happens here but not in upstream
+>   [Proton-RTSP](https://github.com/SpookySkeletons/Proton-RTSP), or
+> - to re-apply this patch set to a newer Proton-RTSP release.
+>
+> If an issue also happens in upstream Proton-RTSP, please report it there.
+
 Run Steam games on native Wayland from the RTSP Proton 11 base with selected
 Proton-GE Wayland work.
 
